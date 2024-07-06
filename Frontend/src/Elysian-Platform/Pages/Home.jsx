@@ -60,17 +60,17 @@ function Home () {
 		<>
 
 			{/* MOBILE VIEW */}
-			<div className='w-full h-[95vh] flex justify-center items-center sm:hidden z-0'>
-			<div className='mt-[70px] w-full h-[calc(95vh-90px)] flex flex-col items-center justify-center gap-5 '>
-				<div className='w-full h-auto  flex flex-col px-8 py-5 gap-7'>
-					<span className='anton text-6xl'>
+			<div className='w-full h-auto relative flex justify-center items-center sm:hidden'>
+			<div className='mt-[70px] w-full h-auto flex flex-col items-center justify-center gap-5 '>
+				<div className='w-full h-auto  flex flex-col px-8 py-2 gap-2'>
+					<span className='anton text-[3.2rem]'>
 						Show the World
 					</span>
-					<span className='cabin font-bold text-4xl pl-16 sm:hidden'>
-						- the stories of <span className='text-5xl radio'>your dreams</span> 
+					<span className='cabin font-bold text-[2rem] pl-16 sm:hidden'>
+						- the stories of <span className='text-[2.4rem] radio'>your dreams</span> 
 					</span>
 				</div>
-				<div className='w-[90%] h-[45%] flex flex-row justify-center gap-10 items-center'>
+				<div className='w-[90%] h-[300px] flex flex-row justify-center gap-10 items-center'>
 					<div className='w-[70%] h-full min-h-[350px] max-w-[250px] bg-cover bg-center rounded-3xl shadow-md shadow-black/50 relative' style={{
 						backgroundImage: `url("${randomImage?.url}")`,
 					}}>
@@ -92,11 +92,53 @@ function Home () {
 
 				<div className='w-[90%] h-[20%] flex items-center justify-end'>
 					<div 
-						onClick={() => setOpenForm(true)} className='cursor-pointer inline-block text-xl px-8 py-3 bg-[#111111] rounded-lg text-white dosis font-bold shadow-md shadow-black/50'>
+						onClick={() => setOpenForm(true)} className='cursor-pointer inline-block text-[1rem] px-8 py-3 bg-[#111111] rounded-[20px] text-white radio shadow-md shadow-black/50 hover:scale-110 duration-300 ease-in-out'>
 						START NOW!
 					</div>
 				</div>
 			</div>
+
+				{/* FORM */}
+				<div className={`${openForm ? 'formShow' : 'formHidden'} fixed w-[90%] max-w-[700px] h-[70%] bg-[#111111]/50 dark:bg-[#ffffff]/40 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center gap-6 z-10`}>
+					<svg 
+					onClick={() => setOpenForm(false)}
+					className='absolute top-0 right-0 m-4 cursor-pointer'
+					width="50px" 
+					height="50px" 
+					viewBox="0 0 24 24" 
+					fill="#111111" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M10.4269 2.42136C11.4003 1.85938 12.5996 1.85938 13.573 2.42136L19.5087 5.84836C20.4821 6.41034 21.0817 7.44892 21.0817 8.57288V15.4269C21.0817 16.5508 20.4821 17.5894 19.5087 18.1514L13.573 21.5784C12.5996 22.1404 11.4003 22.1404 10.4269 21.5784L4.49122 18.1514C3.51784 17.5894 2.91821 16.5508 2.91821 15.4269V8.57288C2.91821 7.44892 3.51784 6.41034 4.49122 5.84836L10.4269 2.42136ZM9.34833 9.34832C9.64123 9.05543 10.1161 9.05543 10.409 9.34832L11.9999 10.9393L13.5909 9.34833C13.8838 9.05544 14.3587 9.05544 14.6516 9.34833C14.9444 9.64123 14.9444 10.1161 14.6516 10.409L13.0606 11.9999L14.6516 13.591C14.9445 13.8839 14.9445 14.3587 14.6516 14.6516C14.3587 14.9445 13.8839 14.9445 13.591 14.6516L11.9999 13.0606L10.4089 14.6516C10.116 14.9445 9.64115 14.9445 9.34825 14.6516C9.05536 14.3587 9.05536 13.8839 9.34825 13.591L10.9393 11.9999L9.34833 10.409C9.05544 10.1161 9.05544 9.64122 9.34833 9.34832Z" fill="#ffffff" fill-rule="evenodd"/></svg>
+					<div className='bg-white px-10 py-6 rounded-3xl flex flex-col items-center gap-3 justify-center'>
+						<div className='flex flex-col'>
+							<span className='text-2xl text-[#232323] anton'>
+								Already Elysian?
+							</span>
+							<span className='text-xl kanit'>
+								Enter Now
+							</span>
+						</div>
+						<Link to={'/login'} className='px-6 py-3 dosis font-bold text-white text-xl bg-[#111111] inline-block rounded-xl shadow-md shadow-black/30'>
+							LOG IN
+						</Link>
+					</div>
+
+					<div className='bg-blue-500 px-10 py-6 rounded-3xl flex flex-col items-center gap-3 justify-center'>
+						<div className='flex flex-col text-[#ffffff]'>
+							<span className='text-2xl anton'>
+								Don't have an account?
+							</span>
+							<span className='text-xl protest pt-4'>
+								Enter Elysian.
+							</span>
+							<span className='text-xl protest pb-4'>
+								Create Your Story.
+							</span>
+						</div>
+						<Link to={'/signup'} className='px-6 py-3 dosis font-bold text-black text-xl bg-white inline-block rounded-xl shadow-md shadow-black/50'>
+							REGISTER
+						</Link>
+					</div>
+				</div>
+
 			</div>
 
 
