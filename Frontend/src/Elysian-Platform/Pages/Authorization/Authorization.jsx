@@ -44,10 +44,10 @@ function Authorization ({type}) {
 	}
 
 	return (
-	<div className='w-[100vw] h-[94vh] flex justify-center items-end '>
+	<div className='w-[100vw] h-[95vh] flex justify-center items-end '>
 
 		{/* MOBILE VIEW */}
-		<div className='w-full h-[calc(94vh-70px)] flex flex-col items-center justify-end'>
+		<div className='w-full h-[calc(95vh-70px)] flex flex-col items-center justify-end'>
 			<form action="" className={`backdrop-blur-sm w-full rounded-t-3xl bg-[#232323] flex flex-col items-center justify-center ${animateForm ? 'formShow' : 'formHidden'}`}>
 
 				<div className='w-full h-auto px-6 py-8 text-3xl belanosima text-white'>
