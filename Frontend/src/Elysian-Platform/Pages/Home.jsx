@@ -57,10 +57,11 @@ function Home () {
 	}, [wallpapers.length]); // Run effect only when wallpapers change
 	
 	return (
-		<div className='w-full h-full flex justify-center items-center relative'>
+		<>
 
 			{/* MOBILE VIEW */}
-			<div className='mt-[70px] w-full h-[calc(100vh-90px)] flex flex-col items-center justify-center gap-5 sm:hidden'>
+			<div className='w-full h-[95vh] flex justify-center items-center sm:hidden z-0'>
+			<div className='mt-[70px] w-full h-[calc(95vh-90px)] flex flex-col items-center justify-center gap-5 '>
 				<div className='w-full h-auto  flex flex-col px-8 py-5 gap-7'>
 					<span className='anton text-6xl'>
 						Show the World
@@ -96,10 +97,12 @@ function Home () {
 					</div>
 				</div>
 			</div>
+			</div>
 
 
 			{/* COMPUTER VIEW */}
-			<div className='hidden sm:flex mt-[70px] w-full h-[calc(100vh-70px)] items-center justify-center flex-row '>
+			<div className='w-full h-[100vh] justify-center items-center relative hidden sm:flex'>
+			<div className='flex w-full mt-[70px] h-[calc(100vh-70px)] items-center justify-center flex-row '>
 
 				{/* LEFT DIV */}
 				<div className='flex flex-col h-[90%] w-[45%] lg:w-[30%] items-center'>
@@ -281,7 +284,7 @@ function Home () {
 			</div>
 
 			{/* FORM */}
-			<div className={`${openForm ? 'formShow' : 'formHidden'} fixed w-[90%] max-w-[700px] h-[70%] bg-[#111111]/50 dark:bg-[#ffffff]/40 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center gap-6`}>
+			<div className={`${openForm ? 'formShow' : 'formHidden'} fixed w-[90%] max-w-[700px] h-[70%] bg-[#111111]/50 dark:bg-[#ffffff]/40 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center gap-6 z-10`}>
 				<svg 
 				onClick={() => setOpenForm(false)}
 				className='absolute top-0 right-0 m-4 cursor-pointer'
@@ -320,7 +323,8 @@ function Home () {
 					</Link>
 				</div>
 			</div>
-		</div>
+			</div>
+		</>
 	)
 }
 

@@ -6,9 +6,9 @@
 }
 
 .inputAction:focus + .placeholder {
-    margin-top: -70px;
+    margin-top: -79.21px;
     font-size: 14px;
-    background-color:#ffffff ;
-    color:black;
+    background-color:#111111 ;
+    color:white;
     border-radius: 5px;
 }
