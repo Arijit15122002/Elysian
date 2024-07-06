@@ -1,0 +1,100 @@
+/* Scroll CSS */
+#scrollHome{
+
+}
+#scrollHome::-webkit-scrollbar{
+    width: 0rem;
+}
+#scrollHome::-webkit-scrollbar-track{
+    visibility: hidden;
+}
+#scrollHome::-webkit-scrollbar-thumb{
+    width: 0.4rem;
+    border-radius:20px ;
+}
+#scrollHome:hover::-webkit-scrollbar-thumb{
+    visibility: hidden;
+}
+
+
+
+
+/* Fonts */
+.cedarville{
+  font-family: "Cedarville Cursive", cursive;
+}
+
+.radio {
+  font-family: "Radio Canada Big", sans-serif;
+}
+
+.cabin {
+  font-family: "Cabin Sketch", sans-serif;
+}
+
+.kanit {
+  font-family: "Kanit", sans-serif;
+}
+
+.anton {
+  font-family: "Anton", sans-serif;
+}
+
+.belanosima {
+  font-family: "Belanosima", sans-serif;
+}
+
+.mooli {
+  font-family: "Mooli", sans-serif;
+}
+
+.protest {
+  font-family: "Protest Guerrilla", sans-serif;
+}
+
+.mono {
+  font-family: "Major Mono Display", monospace;
+}
+
+.dosis {
+  font-family: "Dosis", sans-serif;
+}
+
+.playwrite {
+  font-family: "Playwrite FR Moderne", cursive;
+}
+
+.itim {
+  font-family: "Itim", cursive;
+}
+
+.monoton {
+  font-family: "Monoton", sans-serif;
+}
+
+.grand {
+  font-family: "Grand Hotel", cursive;
+}
+
+
+.glowup {
+  text-shadow: 0px 0px 10px rgb(0,255,195);
+}
+
+
+
+
+/* Home Animation */
+.formHidden {
+  opacity: 0;
+  filter: blur(5px);
+  transform: translateY(200%);
+  transition: all 600ms
+}
+
+.formShow {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+  transition: all 600ms
+}

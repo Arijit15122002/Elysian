@@ -1,0 +1,14 @@
+
+.placeholder {
+    transition: 0.3s;
+    color: #999999;
+    pointer-events: none;
+}
+
+.inputAction:focus + .placeholder {
+    margin-top: -70px;
+    font-size: 14px;
+    background-color:#ffffff ;
+    color:black;
+    border-radius: 5px;
+}
