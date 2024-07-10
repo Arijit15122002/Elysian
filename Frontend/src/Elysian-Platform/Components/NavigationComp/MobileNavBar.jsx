@@ -21,7 +21,7 @@ function MobileNavBar () {
                 <path d="m56 8-4 4"/>
                 </g>
             </svg>
-            <div className='text-[3rem] flex text-[#232323] grand items-end'>
+            <div className='text-[2.5rem] flex text-[#232323] grand items-end'>
                 <span className=''>Elysian</span>
             </div>
         </div>
