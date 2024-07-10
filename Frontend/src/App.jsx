@@ -14,6 +14,7 @@ const FeedLayout = lazy(() => import('./Elysian-Platform/Pages/FeedComponent/Fee
 const Feed = lazy(() => import('./Elysian-Platform/Pages/FeedComponent/Feed'))
 const Search = lazy(() => import('./Elysian-Platform/Pages/Search'))
 const CreatePost = lazy(() => import('./Elysian-Platform/Pages/Posts/CreatePost'))
+const NotFound = lazy(() => import('./Elysian-Platform/Pages/NotFound'))
 
 // MOJO
 const MojoHome = lazy(() => import('./Mojo-Platform/Pages/MojoHome'))
@@ -22,6 +23,7 @@ const Chat = lazy(() => import('./Mojo-Platform/Pages/Chat'))
 const Group = lazy(() => import('./Mojo-Platform/Pages/Group'))
 
 import './App.css'
+import ProtectRoute from './ProtectRoute'
 
 
 function App() {
@@ -76,29 +78,47 @@ function App() {
 								<BrowserRouter>
 									<Suspense fallback={<div>Loading...</div>}>
 										<Routes>
+
 											<Route path="/" element={<Layout />}>
 												<Route path="" element={<Home />} />
 												<Route path="/login" element={<Authorization type='login' />} />
 												<Route path="/signup" element={<Authorization type='signup' />} /> 
 											</Route>
 
-											<Route path="/feed" element={<FeedLayout />}>
+											<Route path="/feed" element={
+												<ProtectRoute>
+													<FeedLayout />
+												</ProtectRoute>
+											}>
 												<Route path="" element={<Feed />} />
 											</Route>
 
-											<Route path="/search" element={<FeedLayout />}>
+											<Route path="/search" element={
+												<ProtectRoute>
+													<FeedLayout />
+												</ProtectRoute>
+											}>
 												<Route path="" element={<Search />} />
 											</Route>
 
-											<Route path="/post" element={<FeedLayout />}>
+											<Route path="/post" element={
+												<ProtectRoute>
+													<FeedLayout />
+												</ProtectRoute>
+											}>
 												<Route path="" element={<CreatePost />} />
 											</Route>
 
-											<Route path="/mojo" element={<MojoLayout />}>
+											<Route path="/mojo" element={
+												<ProtectRoute>
+													<MojoLayout />
+												</ProtectRoute>
+											}>
 												<Route path="" element={<MojoHome />} />
 												<Route path="/mojo/chat" element={<Chat />} />
 												<Route path="/mojo/group" element={<Group />} />
 											</Route>
+											<Route path="*" element={<NotFound />} />
 										</Routes>
 									</Suspense>
 								</BrowserRouter>

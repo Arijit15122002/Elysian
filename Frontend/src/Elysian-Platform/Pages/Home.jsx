@@ -97,10 +97,17 @@ function Home () {
 				</div>
 
 				<div className='w-[90%] h-[20%] flex items-center justify-end'>
-					<div 
-						onClick={() => setOpenForm(true)} className='cursor-pointer inline-block text-[1rem] px-8 py-3 bg-[#111111] rounded-[20px] text-white radio shadow-md shadow-black/50 hover:scale-110 duration-300 ease-in-out'>
-						START NOW!
-					</div>
+					{
+						userData.loggedIn ? 
+						<Link to={'/feed'} className='bg-black text-white px-6 py-4 rounded-3xl shadow-md shadow-black/50 radio hover:scale-110 duration-300 ease-in-out cursor-pointer'>
+							PROCEED TO DASHBOARD
+						</Link> : 
+						<div 
+						onClick={handleOpenForm}
+						className='bg-black text-white px-6 py-4 rounded-3xl shadow-md shadow-black/50 radio hover:scale-110 duration-300 ease-in-out cursor-pointer'>
+							START NOW!
+						</div>
+					}
 				</div>
 			</div>
 

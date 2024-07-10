@@ -1,11 +1,13 @@
 import React from 'react'
 
 function MojoHome () {
-  return (
-    <div>
-      <h1 className='text-yellow-600 dark:text-green-200'>Mojo Home</h1>
-    </div>
-  )
+return (
+    <>
+	<div className='h-[calc(100vh-140px)] w-full'>
+		Hii
+	</div>
+    </>
+)
 }
 
 export default MojoHome
