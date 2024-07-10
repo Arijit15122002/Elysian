@@ -11,7 +11,7 @@ function MobileNavigation () {
 	console.log(active1);
 
 	return (
-		<div className='h-full w-[90%] bg-black rounded-full flex flex-row justify-center items-center gap-[1.9rem]'>
+		<div className='h-full w-[90%] bg-black rounded-full flex flex-row justify-between items-center px-[10%]'>
 
 			<NavLink to={'/feed'}  className={({ isActive }) =>{ 
 			isActive ? setActive1(true) : setActive1(false)}} >
