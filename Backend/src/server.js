@@ -25,7 +25,7 @@ app.listen(process.env.PORT || 8000, () => {
 
 
 app.use(cors({
-    origin : 'http://localhost:5173'
+    origin : `${process.env.CORS_ORIGIN}`
 }))
 app.use(express.json())
 app.use(express.urlencoded({ extended : true }))
