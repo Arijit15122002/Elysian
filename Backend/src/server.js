@@ -12,7 +12,7 @@ cloudinary.config({
     api_secret : process.env.CLOUDINARY_API_SECRET,
 })
 
-import connectMongoDB from './DataBase/MongoDBconnect.js'
+import MongoDBconnect from './DataBase/MongoDBconnect.js'
 
 
 const app = express()
@@ -20,7 +20,7 @@ const app = express()
 app.listen(process.env.PORT || 8000, () => {
     console.log(`Server running on port ${process.env.PORT || 8000}`)
 
-    connectMongoDB()
+    MongoDBconnect()
 })
 
 

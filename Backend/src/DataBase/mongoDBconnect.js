@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 
-const connectMongoDB = async () => {
+const MongoDBconnect = async () => {
     try {
         
         const connection = await mongoose.connect(process.env.MONGO_DB_URI)
@@ -13,4 +13,4 @@ const connectMongoDB = async () => {
     }
 }
 
-export default connectMongoDB
+export default MongoDBconnect
