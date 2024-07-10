@@ -1,12 +1,9 @@
 import jwt from 'jsonwebtoken'
-
 import User from '../Models/user.model.js'
 
 const protectRoute = async (req, res, next) => {
 
     try {
-
-        const token = req.cookies.jwt
 
         if( !token ) {
             return res.status(401).json({
@@ -31,6 +28,7 @@ const protectRoute = async (req, res, next) => {
         }
 
         req.user = user
+        console.log(req.user);
         next()
         
     } catch (error) {

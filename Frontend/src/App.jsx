@@ -1,7 +1,7 @@
-import { useState, useEffect, lazy, Suspense } from 'react'
+import { useState, useEffect, lazy, Suspense, useContext } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { ThemeProvider } from './context/contextAPI'
+import { ThemeProvider, UserContext } from './context/ContextAPI'
 
 // SplashScreen Animation
 import SplashScreen from './commonComponents/HomeAnimation.jsx/SplashScreen'
@@ -10,6 +10,10 @@ import SplashScreen from './commonComponents/HomeAnimation.jsx/SplashScreen'
 const Home = lazy(() => import('./Elysian-Platform/Pages/Home'))
 const Layout = lazy(() => import('./Elysian-Platform/Pages/Layout'))
 const Authorization = lazy(() => import('./Elysian-Platform/Pages/Authorization/Authorization'))
+const FeedLayout = lazy(() => import('./Elysian-Platform/Pages/FeedComponent/FeedLayout'))
+const Feed = lazy(() => import('./Elysian-Platform/Pages/FeedComponent/Feed'))
+const Search = lazy(() => import('./Elysian-Platform/Pages/Search'))
+const CreatePost = lazy(() => import('./Elysian-Platform/Pages/Posts/CreatePost'))
 
 // MOJO
 const MojoHome = lazy(() => import('./Mojo-Platform/Pages/MojoHome'))
@@ -44,6 +48,9 @@ function App() {
 	}, [theme])
 
 
+	// USERPROVIDER
+	const { userData, setUserData } = useContext(UserContext)
+
 
 	const [isBrowserRouterReady, setIsBrowserRouterReady] = useState(false);
 	
@@ -72,7 +79,19 @@ function App() {
 											<Route path="/" element={<Layout />}>
 												<Route path="" element={<Home />} />
 												<Route path="/login" element={<Authorization type='login' />} />
-												<Route path="/signup" element={<Authorization type='signup' />} />
+												<Route path="/signup" element={<Authorization type='signup' />} /> 
+											</Route>
+
+											<Route path="/feed" element={<FeedLayout />}>
+												<Route path="" element={<Feed />} />
+											</Route>
+
+											<Route path="/search" element={<FeedLayout />}>
+												<Route path="" element={<Search />} />
+											</Route>
+
+											<Route path="/post" element={<FeedLayout />}>
+												<Route path="" element={<CreatePost />} />
 											</Route>
 
 											<Route path="/mojo" element={<MojoLayout />}>

@@ -1,11 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 
-import videoBG from '../../assets/videoplayback.webm'
+import { UserContext } from '../../context/ContextAPI'
 
+import videoBG from '../../assets/videoplayback.webm'
 import { HomeScreenImagesArray, TransitionalBG } from '../../constants/Constant'
 
 function Home () {
+
+	const navigate = useNavigate()
+	const { userData } = useContext(UserContext)
+
 	const [randomImage, setRandomImage] = useState(null); // Store the random image
 
 	useEffect(() => {
@@ -99,7 +105,7 @@ function Home () {
 			</div>
 
 				{/* FORM */}
-				<div className={`${openForm ? 'formShow' : 'formHidden'} fixed w-[90%] max-w-[700px] h-[70%] bg-[#111111]/50 dark:bg-[#ffffff]/40 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center gap-6 z-10`}>
+				<div className={`${openForm ? 'formShow' : 'formHidden'} mt-[70px] fixed w-[90%] max-w-[700px] h-[78vh] bg-[#111111]/50 dark:bg-[#ffffff]/40 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center gap-6 z-10`}>
 					<svg 
 					onClick={() => setOpenForm(false)}
 					className='absolute top-0 right-0 m-4 cursor-pointer'
@@ -316,11 +322,17 @@ function Home () {
 						</div>
 					</div>
 					<div className='h-[12%] w-[90%] flex justify-center items-start '>
-						<div 
-						onClick={handleOpenForm}
-						className='bg-black text-white px-6 py-4 rounded-3xl shadow-md shadow-black/50 radio hover:scale-110 duration-300 ease-in-out cursor-pointer'>
-							START NOW!
-						</div>
+						{
+							userData.loggedIn ? 
+							<Link to={'/feed'} className='bg-black text-white px-6 py-4 rounded-3xl shadow-md shadow-black/50 radio hover:scale-110 duration-300 ease-in-out cursor-pointer'>
+								PROCEED TO DASHBOARD
+							</Link> : 
+							<div 
+							onClick={handleOpenForm}
+							className='bg-black text-white px-6 py-4 rounded-3xl shadow-md shadow-black/50 radio hover:scale-110 duration-300 ease-in-out cursor-pointer'>
+								START NOW!
+							</div>
+						}
 					</div>
 				</div>
 			</div>

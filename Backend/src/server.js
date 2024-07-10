@@ -3,7 +3,8 @@ import dotenv from 'dotenv'
 dotenv.config({
     path : '.env'
 })
-import cookieParser from 'cookie-parser'
+import cors from 'cors'
+
 import { v2 as cloudinary } from 'cloudinary'
 cloudinary.config({
     cloud_name : process.env.CLOUDINARY_CLOUD_NAME,
@@ -22,9 +23,14 @@ app.listen(process.env.PORT || 8000, () => {
     connectMongoDB()
 })
 
+
+app.use(cors({
+    origin : 'http://localhost:5173'
+}))
 app.use(express.json())
 app.use(express.urlencoded({ extended : true }))
-app.use(cookieParser())
+
+
 
 // Authentication Routes
 import authRouter from './Routes/auth.route.js'

@@ -1,7 +1,8 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
+import Navbar from '../Components/NavigationComp/ComputerNavBar'
 
-import Navbar from '../Components/NavbarElysian'
+import { UserContext } from '../../context/ContextAPI'
 
 function Layout () {
 

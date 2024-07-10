@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
 
 import User from '../Models/user.model.js'
 import generateTokenAndSetCookie from '../Utils/generateToken.js'
@@ -7,6 +8,8 @@ import generateTokenAndSetCookie from '../Utils/generateToken.js'
 const signup = async (req, res) => {
 
     try {
+
+        console.log(req.body);
         
         const { username, fullname, email, password } = req.body
 
@@ -75,14 +78,11 @@ const signup = async (req, res) => {
             })
 
         }
-
-
     } catch (error) {
         return res.status(500).json({ 
             message : "Something went wrong while registering user"    
         })
     }
-
 }
 
 const login = async (req, res) => {
@@ -115,9 +115,12 @@ const login = async (req, res) => {
 
         generateTokenAndSetCookie(existingUser._id, res)
 
+        const token = jwt.sign({ userId : existingUser._id }, process.env.JWT_SECRET, { expiresIn : '10d' })
+
         return res.status(200).json({
             message : "User logged in successfully",
-            user : existingUser
+            user : existingUser, 
+            token
         })
         
     } catch (error) {
@@ -149,31 +152,5 @@ const logout = async (req, res) => {
 
 }
 
-const getMe = async (req, res) => {
 
-    try {
-
-        const user = await User.findById(req.user._id).select("-password")
-
-        if( !user ) {
-            return res.status(404).json({
-                message : "User not found"
-            })
-        }
-
-        return res.status(200).json({
-            message : "User found successfully",
-            user
-        })
-        
-    } catch (error) {
-        
-        return res.status(500).json({
-            message : "Something went wrong while getting user"
-        })
-
-    }
-
-}
-
-export { signup, login, logout, getMe }
+export { signup, login, logout }

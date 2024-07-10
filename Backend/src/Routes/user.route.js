@@ -1,22 +1,23 @@
 import express from 'express'
 
-import { getUserProfile, getSuggestedUsers, followOrUnfollowUser, updateUserProfilePic, updateUserCoverImage } from '../Controllers/user.controller.js'
+import { getUserById, getUserProfile, getSuggestedUsers, followOrUnfollowUser, updateUserProfilePic, updateUserCoverImage } from '../Controllers/user.controller.js'
 import protectRoute from '../MiddleWares/protectRoute.js'
 
 
 
 const userRouter = express.Router()
 
+userRouter.get('/profile/:id', getUserById)
 
-userRouter.get('/profile/:username', protectRoute, getUserProfile)
+userRouter.get('/profile/:username', getUserProfile)
 
-userRouter.get('/suggested', protectRoute, getSuggestedUsers)
+userRouter.get('/suggested', getSuggestedUsers)
 
-userRouter.post('/follow/:id', protectRoute, followOrUnfollowUser)
+userRouter.post('/follow/:id', followOrUnfollowUser)
 
-userRouter.post('/update/profilePic', protectRoute, updateUserProfilePic)
+userRouter.post('/update/profilePic', updateUserProfilePic)
 
-userRouter.post('/update/coverPic', protectRoute, updateUserCoverImage)
+userRouter.post('/update/coverPic', updateUserCoverImage)
 
 
 export default userRouter

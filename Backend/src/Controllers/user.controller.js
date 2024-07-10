@@ -4,6 +4,30 @@ import { v2 as cloudinary } from 'cloudinary'
 import User from "../Models/user.model.js"
 import Notification from "../Models/notification.model.js"
 
+
+const getUserById = async (req, res) => {
+    const { id } = req.params
+
+    try {
+
+        const user = await User.findById(id).select("-password")
+        if( !user ) {
+            return res.status(404).json({
+                message : "User not found"
+            })
+        } 
+
+        return res.status(200).json({
+            message : "User found successfully",
+            user
+        })
+
+    } catch (error) {
+        return res.status(401).json({
+            message : "User couldn't be found"
+        })
+    }
+}
 const getUserProfile = async (req, res) => {
 
     const { username } = req.params
@@ -37,9 +61,9 @@ const getSuggestedUsers = async (req, res) => {
 
     try {
 
-        const user = await User.findById(req.user._id);
+        const userId = await User.findById(req.body.userId);
 
-        const usersFollowedByCurrentUser = await User.findById(user._id).select("following");
+        const usersFollowedByCurrentUser = await User.findById(userId).select("following");
 
         const users = await User.aggregate([
             { $match: { _id: { $ne: user._id } } },
@@ -76,11 +100,12 @@ const getSuggestedUsers = async (req, res) => {
 const followOrUnfollowUser = async (req, res) => {
 
     const { id } = req.params;
+    const { userId } = req.body
 
     try {
 
         const userToModify = await User.findById(id);
-        const currentUser = await User.findById(req.user._id);
+        const currentUser = await User.findById(userId);
 
         if( !userToModify || !currentUser ) {
             return res.status(404).json({
@@ -114,7 +139,6 @@ const followOrUnfollowUser = async (req, res) => {
             await currentUser.updateOne({ 
                 $push : { following : userToModify._id } 
             });
-
             //Send notification to the UserToModify
             const newNotification = new Notification({
                 type : 'follow',
@@ -142,8 +166,9 @@ const followOrUnfollowUser = async (req, res) => {
 
 const updateUserProfilePic = async (req, res) => {
 
-    const { profilePic } = req.body
-    const { userId } = req.user._id
+    const { profilePic, userId } = req.body
+
+    const user = await User.findById(userId)
 
     try {
 
@@ -184,4 +209,4 @@ const updateUserCoverImage = async (req, res) => {
 
 }
 
-export { getUserProfile, getSuggestedUsers, followOrUnfollowUser, updateUserProfilePic, updateUserCoverImage } 
+export { getUserById, getUserProfile, getSuggestedUsers, followOrUnfollowUser, updateUserProfilePic, updateUserCoverImage } 

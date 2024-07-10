@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import useTheme from '../../context/contextAPI'
+import { useTheme } from '../../context/ContextAPI'
 
 import './SplashScreen.css'
 

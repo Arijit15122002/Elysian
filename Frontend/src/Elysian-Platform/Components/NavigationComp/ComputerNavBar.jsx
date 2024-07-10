@@ -1,12 +1,14 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 
-import SearchBar from './SearchComponent/SearchBar'
-import useTheme  from '../../context/contextAPI'
+import SearchBar from '../SearchComponent/SearchBar'
+import { useTheme, UserContext }  from '../../../context/ContextAPI'
 
 function Navbar () {
 
 	const { theme } = useTheme()
+
+	const { userData } = useContext(UserContext)
 
 	return (
 		<nav className='w-full h-[70px] fixed bg-white dark:bg-[#232323] flex flex-row items-center justify-between z-50'>
@@ -30,28 +32,31 @@ function Navbar () {
 				</div>
 			</Link>
 
-			<div className=''>
-				<SearchBar />
-			</div>
+			{
+				userData.loggedIn ?
+				<div className=''>
+					<SearchBar />
+				</div> : ''
+			}
 
-			<div>
+			{
+				userData.loggedIn ? 
+				<div className='hidden sm:flex flex-row gap-16 mx-16 dosis text-lg font-semibold'>
+					<NavLink>
+						Hii
+					</NavLink>
+				</div> : 
+				<div className=' hidden sm:flex flex-row gap-16 mx-16 dosis text-lg font-semibold'>
+					<NavLink to={'/signup'} className={({isActive}) => `${isActive ? 'bg-[#111111] text-white shadow-md shadow-black/50' : ''} hover:bg-[#111111] hover:text-white hover:shadow-md hover:shadow-black/50 px-4 py-2 rounded-2xl duration-300 ease-in-out`}>
+						REGISTER
+					</NavLink>
 
-				
+					<NavLink to={'/login'} className={({isActive}) => `${isActive ? 'bg-[#111111] text-white shadow-md shadow-black/50' : ''} hover:bg-[#111111] hover:text-white hover:shadow-md hover:shadow-black/50 px-4 py-2 rounded-2xl duration-300 ease-in-out`}>
+						LOGIN
+					</NavLink>
+				</div> 
 
-			</div>
-
-			<div className=' hidden sm:flex flex-row gap-16 mx-16 dosis text-lg font-semibold'>
-
-				<NavLink to={'/signup'} className={({isActive}) => `${isActive ? 'bg-[#111111] text-white shadow-md shadow-black/50' : ''} hover:bg-[#111111] hover:text-white hover:shadow-md hover:shadow-black/50 px-4 py-2 rounded-2xl duration-300 ease-in-out`}>
-					REGISTER
-				</NavLink>
-
-				<NavLink to={'/login'} className={({isActive}) => `${isActive ? 'bg-[#111111] text-white shadow-md shadow-black/50' : ''} hover:bg-[#111111] hover:text-white hover:shadow-md hover:shadow-black/50 px-4 py-2 rounded-2xl duration-300 ease-in-out`}>
-					LOGIN
-				</NavLink>
-
-			</div>
-
+			}
 		</nav>
 	)
 }
