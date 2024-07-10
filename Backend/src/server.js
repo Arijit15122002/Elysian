@@ -12,7 +12,7 @@ cloudinary.config({
     api_secret : process.env.CLOUDINARY_API_SECRET,
 })
 
-import MongoDBconnect from './DataBase/MongoDBconnect.js'
+import MongoDBconnect from './DataBase/mongoDBconnect.js'
 
 
 const app = express()
