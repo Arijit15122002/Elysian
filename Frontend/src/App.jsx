@@ -6,7 +6,7 @@ import axios from 'axios'
 import { useTheme } from './context/contextAPI'
 import { useDispatch } from 'react-redux'
 import { userExists } from './redux/reducers/auth.reducer'
-
+import { setDeviceType } from './redux/reducers/deviceType.reducer'
 
 
 // SplashScreen Animation
@@ -37,6 +37,16 @@ function App() {
 
 	const dispatch = useDispatch()
 
+	//SETTING UP DEVICETYPE 
+	useEffect(() => {
+		const userAgent = navigator.userAgent
+		const isMobile = userAgent.match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i)
+		dispatch(setDeviceType(isMobile ? 'mobile' : 'desktop'))
+	}, [])
+
+	
+
+
 	//FETCHING USER ASYNC FUNCTION 
 	async function fetchUser(userId) {
 		const response  = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/user/profile/${userId}`)
@@ -57,7 +67,6 @@ function App() {
 		fetchUser(decoded.userId)
 		
 	}, [])
-
 
 
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Outlet } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 import MobileNavBar from '../../Components/NavigationComp/MobileNavBar'
 import MobileNavigation from '../../Components/MobileView/MobileNavigation'
@@ -7,13 +8,8 @@ import Navbar from '../../Components/NavigationComp/ComputerNavBar'
 
 function FeedLayout () {
 
-	const [ deviceType, setDeviceType ] = useState(null)
-
-	useEffect(() => {
-		const userAgent = navigator.userAgent
-		const isMobile = userAgent.match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i)
-		setDeviceType(isMobile ? 'mobile' : 'desktop')
-	}, [])
+	const deviceType = useSelector(state => state.device.deviceType)
+	console.log(deviceType)
 
 	return (
 		<div className=' w-full'>
