@@ -55,16 +55,17 @@ function App() {
 	//SETTING USER TO THE import { connect } from 'react-redux'
 	useEffect(() => {
 		const token = localStorage.getItem('token')
-		const decoded = jwtDecode(token)
-		console.log(decoded);
-
-		const currentTime = Math.floor(Date.now() / 1000);
-		if( decoded.exp < currentTime ) {
-			localStorage.removeItem('token')
-			return
-		} else {
-			fetchUser(decoded.userId)
+		if( token ) {
+			const currentTime = Math.floor(Date.now() / 1000);
+			if( decoded.exp < currentTime ) {
+				localStorage.removeItem('token')
+				return
+			} else {
+				fetchUser(decoded.userId)
+			}
 		}
+
+		
 		
 		async function fetchUser(userId) {
 			const response  = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/user/profile/${userId}`)

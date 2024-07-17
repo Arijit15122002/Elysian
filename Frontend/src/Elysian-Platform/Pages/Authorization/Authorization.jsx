@@ -81,6 +81,7 @@ function Authorization ({type}) {
 				dispatch(userExists(response.data.user))
 				localStorage.setItem('token', response.data.token)
 				toast.success(response.data.message)
+				navigate('/feed');
 
 			}
 
@@ -92,10 +93,11 @@ function Authorization ({type}) {
 
 			if( response.data?.user ) {
 
+				console.log(response.data);
 				dispatch(userExists(response.data.user))
 				localStorage.setItem('token', response.data.token)
-				navigate('/feed');
 				toast.success(response.data.message)
+				navigate('/feed');
 
 			}
 		}
