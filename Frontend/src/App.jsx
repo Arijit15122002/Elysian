@@ -56,6 +56,15 @@ function App() {
 	useEffect(() => {
 		const token = localStorage.getItem('token')
 		const decoded = jwtDecode(token)
+		console.log(decoded);
+
+		const currentTime = Math.floor(Date.now() / 1000);
+		if( decoded.exp < currentTime ) {
+			localStorage.removeItem('token')
+			return
+		} else {
+			fetchUser(decoded.userId)
+		}
 		
 		async function fetchUser(userId) {
 			const response  = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/user/profile/${userId}`)
@@ -64,7 +73,7 @@ function App() {
 				dispatch(userExists(response.data.user))
 			}
 		}
-		fetchUser(decoded.userId)
+		
 		
 	}, [])
 
