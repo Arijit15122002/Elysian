@@ -20,7 +20,7 @@ postRouter.post('/save/:id', protectRoute, savePost)
 
 postRouter.get('/post/:id', protectRoute, getPost)
 
-postRouter.get('/posts', protectRoute, getAllPosts)
+postRouter.get('/posts', getAllPosts)
 
 postRouter.get('/posts/:id', protectRoute, getUserPosts)
 

@@ -9,7 +9,6 @@ import Navbar from '../../Components/NavigationComp/ComputerNavBar'
 function FeedLayout () {
 
 	const deviceType = useSelector(state => state.device.deviceType)
-	console.log(deviceType)
 
 	return (
 		<div className=' w-full'>
@@ -19,7 +18,17 @@ function FeedLayout () {
 			<div className={`${deviceType === 'mobile' ? 'hidden' : 'block'} w-full fixed top-0`} >
 				<Navbar />
 			</div>
-			<Outlet />
+			<div className='w-full h-[100vh] flex items-end'>
+				<div className='w-full h-[calc(100vh-70px)] '>
+					{
+						deviceType === 'mobile' ? 
+						<Outlet /> : 
+						<div className='w-full h-full bg-green-200'>
+							<Outlet />
+						</div>
+					}
+				</div>
+			</div>
 			<div className={`${deviceType === 'mobile' ? 'flex' : 'hidden' } w-full h-16  fixed bottom-6 justify-center`}>
 				<MobileNavigation />
 			</div>
