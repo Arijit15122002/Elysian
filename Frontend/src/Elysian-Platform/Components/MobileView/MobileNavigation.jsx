@@ -8,8 +8,6 @@ function MobileNavigation () {
 	const [ active3, setActive3 ] = useState(false)
 	const [ active4, setActive4 ] = useState(false)
 
-	console.log(active1);
-
 	return (
 		<div className='h-full w-[90%] bg-black rounded-full flex flex-row justify-between items-center px-[10%]'>
 

@@ -8,12 +8,10 @@ import generateTokenAndSetCookie from '../Utils/generateToken.js'
 const signup = async (req, res) => {
 
     try {
-
-        console.log(req.body);
         
         const { username, fullname, email, password } = req.body
 
-        console.log(username, fullname, email, password)
+        const profilePic = "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"
 
         const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
 
@@ -54,6 +52,7 @@ const signup = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10)
 
         const newUser = new User({
+            profilePic,
             username,
             fullname,
             email,
@@ -64,11 +63,12 @@ const signup = async (req, res) => {
 
             await newUser.save()
 
-            generateTokenAndSetCookie(newUser._id, res)
+            const token = jwt.sign({ userId : newUser._id }, process.env.JWT_SECRET, { expiresIn : '10d' })
 
             return res.status(201).json({
                 message : "User created successfully",
-                user : newUser
+                user : newUser,
+                token
             })
 
         } else {
@@ -112,8 +112,6 @@ const login = async (req, res) => {
                 message : "Invalid credentials (Password is not correct)"
             })
         }
-
-        generateTokenAndSetCookie(existingUser._id, res)
 
         const token = jwt.sign({ userId : existingUser._id }, process.env.JWT_SECRET, { expiresIn : '10d' })
 

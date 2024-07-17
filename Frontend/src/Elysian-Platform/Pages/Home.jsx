@@ -2,15 +2,16 @@ import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 
-import { UserContext } from '../../context/ContextAPI'
-
 import videoBG from '../../assets/videoplayback.webm'
 import { HomeScreenImagesArray, TransitionalBG } from '../../constants/Constant'
+
+import { useSelector } from 'react-redux'
 
 function Home () {
 
 	const navigate = useNavigate()
-	const { userData } = useContext(UserContext)
+	
+	const loggedIn = useSelector(state => state.auth.loggedIn)
 
 	const [randomImage, setRandomImage] = useState(null); // Store the random image
 
@@ -98,7 +99,7 @@ function Home () {
 
 				<div className='w-[90%] h-[20%] flex items-center justify-end'>
 					{
-						userData.loggedIn ? 
+						loggedIn ? 
 						<Link to={'/feed'} className='bg-black text-white px-6 py-4 rounded-3xl shadow-md shadow-black/50 radio hover:scale-110 duration-300 ease-in-out cursor-pointer'>
 							PROCEED TO DASHBOARD
 						</Link> : 
@@ -330,7 +331,7 @@ function Home () {
 					</div>
 					<div className='h-[12%] w-[90%] flex justify-center items-start '>
 						{
-							userData.loggedIn ? 
+							loggedIn ? 
 							<Link to={'/feed'} className='bg-black text-white px-6 py-4 rounded-3xl shadow-md shadow-black/50 radio hover:scale-110 duration-300 ease-in-out cursor-pointer'>
 								PROCEED TO DASHBOARD
 							</Link> : 

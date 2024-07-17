@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { useTheme } from '../../context/ContextAPI'
+import { useTheme } from '../../context/contextAPI.js'
 
 import './SplashScreen.css'
 
 function SplashScreen () {
 
-    const { theme } = useTheme()
+    const { theme } = useTheme();
 
     const [animate, setAnimate] = useState(false);
     const [vanish, setVanish] = useState(false);

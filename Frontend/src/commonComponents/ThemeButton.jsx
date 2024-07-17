@@ -1,5 +1,5 @@
 import React from 'react'
-import { useTheme } from '../context/ContextAPI'
+import { useTheme } from '../context/contextAPI'
 
 function ThemeButton () {
 

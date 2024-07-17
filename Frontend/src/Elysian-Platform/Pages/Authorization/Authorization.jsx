@@ -1,25 +1,22 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { useTheme, UserContext } from '../../../context/ContextAPI'
+import { useDispatch } from 'react-redux'
+
+import { useTheme } from '../../../context/contextAPI'
 
 import { TransitionalBG } from '../../../constants/Constant'
 import './Authorization.css'
+import { userExists } from '../../../redux/reducers/auth.reducer';
 
 
 function Authorization ({type}) {
 
-	const { userData, setUserData } = useContext(UserContext)
-
-	useEffect(() => {
-		if( userData.loggedIn ) {
-			navigate('/feed')
-		}
-	}, [])
+	const dispatch = useDispatch()
 
 	//Animate Background
 	const [randomImage, setRandomImage] = useState(null);
@@ -75,11 +72,17 @@ function Authorization ({type}) {
 			if( formData.password !== formData.confirmPassword ) {
 				return toast.error('Passwords do not match')
 			}
-	
+			
+			
 			const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/${type}`, formData)
 
-			console.log(response);
+			if( response.data?.user ) {
 
+				dispatch(userExists(response.data.user))
+				localStorage.setItem('token', response.data.token)
+				toast.success(response.data.message)
+
+			}
 
 		} else {
 
@@ -87,26 +90,17 @@ function Authorization ({type}) {
 				email : formData.email, password : formData.password
 			})
 
-			console.log(response);
-
 			if( response.data?.user ) {
 
-				toast.success(response.data.message)
-				const tempData = response.data.user
-				setUserData({
-					loggedIn: true,
-					user : tempData
-				})
-
+				dispatch(userExists(response.data.user))
 				localStorage.setItem('token', response.data.token)
 				navigate('/feed');
+				toast.success(response.data.message)
 
 			}
 		}
 
 	}
-
-	console.log(userData);
 
 	return (
 		<div className='w-full flex flex-row'>

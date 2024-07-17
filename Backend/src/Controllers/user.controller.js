@@ -209,4 +209,37 @@ const updateUserCoverImage = async (req, res) => {
 
 }
 
-export { getUserById, getUserProfile, getSuggestedUsers, followOrUnfollowUser, updateUserProfilePic, updateUserCoverImage } 
+const searchUsers = async (req, res) => {
+
+    try {
+        
+        const { name } = req.params;
+        console.log(name);
+
+        const nameRegex = new RegExp(name, 'i');
+
+        const users = await User.find({
+            $or :[
+                { username : { $regex : nameRegex } },
+                { fullname : { $regex : nameRegex } }
+            ]
+        }).select("-password");
+
+        return res.status(201).json({
+            message : "Users found successfully",
+            users
+        })
+
+
+    } catch (error) {
+        
+        console.log("Error in searchUsers: ", error);
+        return res.status(500).json({
+            message : "Something went wrong while searching users"
+        })
+
+    }
+
+}
+
+export { getUserById, getUserProfile, getSuggestedUsers, followOrUnfollowUser, updateUserProfilePic, updateUserCoverImage, searchUsers } 

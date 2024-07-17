@@ -1,13 +1,13 @@
 import React, { useContext } from 'react'
 import { Navigate } from 'react-router-dom'
 
-import { UserContext } from './context/ContextAPI'
+import { useSelector } from 'react-redux'
 
 function ProtectRoute ({ children, redirect = "/login" }) {
 
-    const { userData } = useContext(UserContext)
+    const loggedIn = useSelector(state => state.auth.loggedIn)
 
-    if( !userData.loggedIn ) {
+    if( !loggedIn ) {
         return <Navigate to={redirect} />
     }
 

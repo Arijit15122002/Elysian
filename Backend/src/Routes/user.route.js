@@ -1,6 +1,6 @@
 import express from 'express'
 
-import { getUserById, getUserProfile, getSuggestedUsers, followOrUnfollowUser, updateUserProfilePic, updateUserCoverImage } from '../Controllers/user.controller.js'
+import { getUserById, getUserProfile, getSuggestedUsers, followOrUnfollowUser, updateUserProfilePic, updateUserCoverImage, searchUsers } from '../Controllers/user.controller.js'
 import protectRoute from '../MiddleWares/protectRoute.js'
 
 
@@ -18,6 +18,8 @@ userRouter.post('/follow/:id', followOrUnfollowUser)
 userRouter.post('/update/profilePic', updateUserProfilePic)
 
 userRouter.post('/update/coverPic', updateUserCoverImage)
+
+userRouter.get('/search/:name', searchUsers)
 
 
 export default userRouter
