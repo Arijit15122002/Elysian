@@ -56,6 +56,7 @@ function App() {
 	useEffect(() => {
 		const token = localStorage.getItem('token')
 		if( token ) {
+			const decoded = jwtDecode(token);
 			const currentTime = Math.floor(Date.now() / 1000);
 			if( decoded.exp < currentTime ) {
 				localStorage.removeItem('token')
