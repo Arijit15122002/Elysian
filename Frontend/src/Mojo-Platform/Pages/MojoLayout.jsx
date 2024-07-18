@@ -2,7 +2,7 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 
 import Title from "../Components/Title";
-import Navbar from "../Components/NavbarMojo";
+import Navbar from "../Components/MojoNavbar";
 import MojoSearch from "../Components/MojoSearch";
 import ChatList from "../Components/Chat/ChatList";
 import Chat from "../Components/Chat/Chat";

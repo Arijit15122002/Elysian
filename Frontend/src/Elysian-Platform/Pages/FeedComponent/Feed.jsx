@@ -15,7 +15,7 @@ function Feed () {
 	}, [])
 
 	return (
-	<div className='w-full h-full'>
+	<div className='w-full h-[-webkit-fill-available]'>
 		hii
 	</div>
 	)

@@ -1,7 +1,7 @@
 import React, { lazy, Suspense, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-const Notifications = lazy(() => import('../Pages/MojoNotification/Notifications'))
+const Notifications = lazy(() => import('../Pages/MojoNotification/MojoNotifications'))
 
 import { NotificationLoader } from '../Pages/MojoLoaders'
 import '../Pages/MojoNotification/Notifications.css'

@@ -12,6 +12,8 @@ function Layout () {
         return <Navigate to="/feed" />
     }
 
+    const deviceType = useSelector(state => state.device.deviceType)
+
     return (
         <>
             <Navbar />
