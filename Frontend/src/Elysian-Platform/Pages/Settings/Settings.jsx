@@ -6,7 +6,7 @@ function Settings ({ settingsOpen, setSettingsOpen }) {
 		<div className={`${settingsOpen ? 'translate-x-0 opacity-100' : 'translate-x-[100%] opacity-0'} duration-500 w-full h-[webkit-fill-available] z-20 fixed flex flex-col items-center justify-end`}>
 			<div className='w-full h-[100px] bg-white'/>
 			
-			<div className='w-[90%] h-[88vh] overflow-y-auto bg-white flex flex-col gap-2 items-center rounded-3xl overflow-hidden' id='settingScroll'>
+			<div className='w-[90%] h-[90vh] overflow-y-auto bg-white flex flex-col gap-2 items-center rounded-3xl overflow-hidden' id='settingScroll'>
 				
 
 				<small className='w-full px-4 text-[#aaaaaa]'>Your Account</small>
