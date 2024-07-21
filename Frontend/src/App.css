@@ -16,6 +16,25 @@
     visibility: hidden;
 }
 
+/* Scroll CSS */
+#settingScroll{
+
+}
+#settingScroll::-webkit-scrollbar{
+    width: 0rem;
+}
+#settingScroll::-webkit-scrollbar-track{
+    visibility: hidden;
+}
+#settingScroll::-webkit-scrollbar-thumb{
+    width: 0.2rem;
+    border-radius:20px ;
+}
+#settingScroll:hover::-webkit-scrollbar-thumb{
+    visibility: hidden;
+}
+
+
 
 
 
@@ -74,11 +93,29 @@
 
 .grand {
   font-family: "Grand Hotel", cursive;
+  font-weight: 0;
 }
+
+.quicksand {
+  font-family: "Quicksand", sans-serif;
+}
+
+.borel {
+  font-family: "Borel", cursive;
+}
+
+.dongle {
+  font-family: "Dongle", sans-serif;
+}
+
 
 
 .glowup {
   text-shadow: 0px 0px 20px #35e8b5;
+}
+
+.custom-height {
+  height: calc(webkit-fill-available - 80px) /* Fallback for other browsers */
 }
 
 

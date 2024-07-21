@@ -1,38 +1,188 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import { useSelector } from 'react-redux'
 import { NavLink } from 'react-router-dom'
 
+import './PostCreate.css'
+import { useTheme } from '../../../context/contextAPI'
+
 function MobileNavigation () {
+
+	const { theme } = useTheme()
+
+	const user = useSelector(state => state.auth.user)
 
 	const [ active1, setActive1 ] = useState(false)
 	const [ active2, setActive2 ] = useState(false)
 	const [ active3, setActive3 ] = useState(false)
 	const [ active4, setActive4 ] = useState(false)
+	const [ active5, setActive5 ] = useState(false)
+
+	const [ active6, setActive6 ] = useState(false)
+	const [ active7, setActive7 ] = useState(false)
+
+	const [ createToggle, setCreateToggle ] = useState(false)
+
+	const [ urlPathValue, setUrlPathValue ] = useState(window.location.pathname)
+
+	useEffect(() => {
+		const urlPath = window.location.pathname
+		if ( urlPath === '/post/story' || urlPath === '/post/create' ) {
+			setActive3(true)
+		} else{
+			setActive3(false)
+			setCreateToggle(false)
+		}
+		setUrlPathValue(urlPath)
+	}, [active1, active2, active4, active5, active6, active7]);
+
+
+
+	  //HANDLING THE SWIPE EVENT
+	const [isSwiping, setIsSwiping] = useState(false);
+
+		const handleTouchStart = (event) => {
+		setIsSwiping(true);
+		// Store the initial touch position (optional for swipe distance calculation)
+		const initialY = event.touches[0].clientY;
+		// ... (store initialY for later use)
+		};
+
+		const handleTouchMove = (event) => {
+		if (!isSwiping) return; // Ignore touches if not in swipe mode
+
+		const currentY = event.touches[0].clientY;
+		const swipeDistance = currentY - initialY; // Calculate swipe distance (optional)
+
+		if (swipeDistance > someThreshold) { // Check for sufficient downward swipe
+			setCreateToggle(false);
+			}
+		};
+
+		const handleTouchEnd = () => {
+		setIsSwiping(false);
+	};
 
 	return (
-		<div className='h-full w-[80%] bg-black rounded-full flex flex-row justify-between items-center px-[10%]'>
+		<>
+			<div className='w-[90%] h-16 flex flex-row justify-between relative'>
+				<div className={`${createToggle ? 'createShow' : 'createHidden'} w-full h-auto absolute duration-500 bottom-20 flex justify-end `}>
+					<div className={` h-auto w-[80%] flex flex-col py-4 px-4 gap-4 items-center z-0 rounded-3xl bg-[#f5f5f5]`}>
 
-			<NavLink to={'/feed'}  className={({ isActive }) =>{ 
-			isActive ? setActive1(true) : setActive1(false)}} >
-				<svg height="40" width="40" viewBox="-2.4 -2.4 28.80 28.80" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#000000" stroke-width="1.5"><g id="SVGRepo_bgCarrier" stroke-width="0"><path transform="translate(-2.4, -2.4), scale(0.8999999999999999)" d="M16,31.98033418506384C19.213869923433503,32.132434968444095,21.392748234297876,28.896308552562793,23.987261285208987,26.993522027041003C26.56680236042788,25.101715779146875,29.95234672543878,23.892237185838617,31.099884310674305,20.906249823376324C32.2655326787994,17.873136711371412,31.121437061948054,14.498535288069473,29.954661186170853,11.46585572635624C28.841150969321127,8.571624069269891,27.17728110835871,5.890853816044578,24.638067679044525,4.110719818756726C22.12758571280467,2.3507282221115195,19.06265083046488,1.8251769320416078,16,1.6828392570217456C12.798779282363718,1.5340615022606503,9.37570237389885,1.4307999343873288,6.75819525777748,3.2797470402801654C4.12625858559341,5.13888685424899,2.7402178552422343,8.327679727460243,2.117322686040996,11.489244704248978C1.543235261433291,14.403081229232836,2.2638847786440457,17.354871066462017,3.4485415639156596,20.07821606233247C4.540716526852084,22.58895947502981,6.556984950718796,24.378648601301673,8.543757677550424,26.262637127271585C10.873471154714084,28.47182462038426,12.792970534483842,31.828557135696688,16,31.98033418506384" fill={active1 ? "#ffffff" : "#000000"} strokewidth="0"></path></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M9 20H7C5.89543 20 5 19.1046 5 18V10.9199C5 10.336 5.25513 9.78132 5.69842 9.40136L10.6984 5.11564C11.4474 4.47366 12.5526 4.47366 13.3016 5.11564L18.3016 9.40136C18.7449 9.78132 19 10.336 19 10.9199V18C19 19.1046 18.1046 20 17 20H15M9 20V14C9 13.4477 9.44772 13 10 13H14C14.5523 13 15 13.4477 15 14V20M9 20H15" stroke={active1 ? "#000000" : "#ffffff" } stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
-			</NavLink>
+						<div className='h-[5px] w-[60px] bg-[#aaaaaa] rounded-full mb-5'
+							onTouchStart={handleTouchStart}
+							onTouchMove={handleTouchMove}
+							onTouchEnd={handleTouchEnd}/>
 
-			<NavLink to={"/search"} className={({ isActive }) =>{ 
-			isActive ? setActive2(true) : setActive2(false)}} 
-			>
-				<svg height="45" width="45" viewBox="-8.4 -8.4 40.80 40.80" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"><path transform="translate(-8.4, -8.4), scale(1.275)" d="M16,27.421501816560824C18.18220924333397,27.344290662984783,19.932102177741886,30.046016652892224,22.080920179543288,29.657970342430453C24.10618913588809,29.292235252002353,25.40986168911896,27.216212659552912,26.565779538378145,25.513470627515048C27.661329108152177,23.899654990157444,28.116093337723456,21.98192811722871,28.578283678236687,20.086932111863987C29.0186981969983,18.281217711101885,29.35950639138284,16.463765601229806,29.22514529369967,14.609981217628238C29.088629694184714,12.726471102999822,28.404964751315163,10.978845562593762,27.78875357854789,9.193759948015217C27.07592697463763,7.128791682972643,26.995327108428864,4.578632041720698,25.290713172919926,3.2124303605096465C23.59885302453438,1.856450492605893,21.10971950846451,2.3253924576922254,18.952107060322668,2.111428237602075C16.963394923921403,1.9142133755839357,14.764291640868617,1.0146084973361824,13.023338808337666,1.995910131989346C11.178754136091056,3.0356246609006785,11.29411280947385,5.934848798473962,9.6987920868951,7.327131351272518C8.290656632703843,8.556051904425289,5.9364895837764955,8.135502921722868,4.551033499101116,9.389936108763013C3.096799221478496,10.706643119370712,2.150036610392517,12.579609054512314,1.7717110078170517,14.504546566337558C1.3849014242752191,16.47265095109077,1.6884447599202677,18.542738321713074,2.382276858309659,20.42466646658184C3.0666373735398547,22.28090419014388,4.535420448803038,23.669897331073273,5.731734301625499,25.245587962741176C7.011897226059469,26.931718004853582,7.653377026375136,29.656299937539526,9.724426398724217,30.09516908580789C11.97340048582014,30.571741665515102,13.70252358500722,27.502791365148898,16,27.421501816560824" fill={active2 ? "#ffffff" : "#000000"} strokewidth="0"></path></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M11 6C13.7614 6 16 8.23858 16 11M16.6588 16.6549L21 21M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke={active2 ? "#000000" : "#ffffff"} stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
-			</NavLink>
+						<NavLink to={'/post/story'}
+						onClick={() => setCreateToggle(false)}
+						className={({ isActive }) => {
+							isActive ? setActive6(true) : setActive6(false)
+							return `${isActive ? 'bg-blue-100 text-blue-600' : 'bg-[#ffffff]'} border-[1px] border-[#bbbbbb] flex flex-row items-center rounded-2xl py-3 px-3 w-full`
+						}} >
+							
+							<div className='w-[25%] h-full flex items-center'><svg className='ml-[10px]' xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 24 24" fill={active6 ? "rgb(59 130 246)" : "#232323"} stroke={active6 ? "rgb(59 130 246)" : "#232323"} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gallery-horizontal-end"><path d="M2 7v10"/><path d="M6 5v14"/><rect width="12" height="18" x="10" y="3" rx="2"/></svg></div>
 
-			<NavLink to={"/post"} className={({ isActive }) =>{ 
-			isActive ? setActive3(true) : setActive3(false)}}>
-				<svg heigth="42" width="42" viewBox="-8.16 -8.16 40.32 40.32" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"><path transform="translate(-8.16, -8.16), scale(1.26)" d="M16,29.665860722107546C17.921629548115646,29.69757033894637,19.747471170866632,29.094388503644264,21.59628881713428,28.56947048067252C23.648424507741108,27.986826209747413,26.219300074631825,28.065801200012476,27.538944997903542,26.38971274304268C28.8796751434393,24.686843826400604,28.167131019663895,22.169123245357582,28.336699636095968,20.00843669827691C28.476951223505992,18.22131521023348,28.384534307183173,16.48185726289751,28.457071636395234,14.690709012006932C28.540113295382227,12.640179665789034,29.73888323588902,10.43487058889521,28.798272747889012,8.610913783844031C27.867382150383452,6.8058050148692875,25.56524669096372,6.1855842727543635,23.680601412231454,5.428559077859269C22.01795756544632,4.760707521729669,20.15152279107009,5.028607530957511,18.453807342560168,4.455744093332143C16.515469595351163,3.801687003777024,15.030900665383923,1.7653893706099275,12.985911613377066,1.81982902366439C10.986412968758025,1.8730576765948823,9.163564530563875,3.2586277533414396,7.818311326007931,4.738871630193543C6.525990992767304,6.16087103798708,6.743011844335024,8.456133390990676,5.570989707428135,9.978808100202247C4.179398873884772,11.786743378113698,1.1434014782364574,12.200666754225704,0.4115814011733754,14.361591184169068C-0.2790424316484924,16.40087100037074,1.0972663193238277,18.59291045930304,1.9902509407186955,20.552043408640923C2.8334781781593907,22.402012853880375,3.9825075940543977,24.096594374654696,5.477083818439123,25.474876287684587C6.9122808746810716,26.79839937869746,8.671591758327688,27.663757773068756,10.485342259097877,28.38612408156169C12.25784876535331,29.092064055753145,14.09234708724575,29.63438173960323,16,29.665860722107546" fill={active3 ? "#ffffff" : "#000000"} strokewidth="0"></path></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M8 12H16" stroke={active3 ? "#000000" : "#ffffff"} stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M12 16V8" stroke={active3 ? "#000000" : "#ffffff"} stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke={active3 ? "#000000" : "#ffffff"} stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
-			</NavLink>
+							<div className='flex flex-col w-[75%] h-full'>
+								<div className='text-[1.1rem] font-semibold quicksand'>STORY</div>
+								<div className='text-[0.8rem] radio text-black'> Share content that disappears after 24 hours</div>
+							</div>
 
-			<NavLink to={"/mojo"} className={({ isActive }) =>{ 
-			isActive ? setActive4(true) : setActive4(false)}}>
-				<svg height="47" width="47" viewBox="-14.72 -14.72 93.44 93.44" xmlns="http://www.w3.org/2000/svg" fill="none" stroke={ active4 ? '#000000' : '#ffffff'} stroke-width="4.16"><g id="SVGRepo_bgCarrier" stroke-width="0"><path transform="translate(-14.72, -14.72), scale(2.92)" d="M16,29.399161520931457C18.08681135830932,30.37783169315359,20.7138311261371,31.100626541640676,22.791651358135216,30.103009363227343C24.869000360431293,29.105618434822794,25.290994301623233,26.332952476301898,26.487757938917206,24.36370786532664C27.553353249825037,22.610297452364453,28.77767665977073,21.00304731334723,29.49108866873756,19.079252951058244C30.266686673678922,16.987767174880133,31.14603303233285,14.82190234238889,30.84589016582068,12.61152244813853C30.53943468035653,10.354653739498973,29.76850819446353,7.731348081583503,27.795645403238417,6.59328668622431C25.66367517987873,5.363442919058788,22.855801582433173,7.373896461193335,20.504612707659778,6.646075329272829C18.623969290565277,6.0639136683129085,17.821290564467255,3.689308641010019,16,2.941891393727726C13.88139342155487,2.0724622494556235,11.395509091706604,1.1701047346163882,9.2763790914704,2.038257320997147C7.175764150901789,2.898824767751916,6.621694777933328,5.617799966909966,5.182673051871378,7.373469620026912C3.7237220635199386,9.153453847675276,0.3169495229116065,10.23682277035074,0.6958166592202382,12.506920021596573C1.161334901816413,15.296213633121386,5.228592049759885,15.831023463442268,6.966504519609154,18.061836394332122C7.862532050235005,19.211992018640874,7.408268174003215,20.991036562108413,8.238864099868808,22.189299347854508C9.086707851113896,23.41244478308598,10.620541917481628,23.893456180347137,11.710913917212885,24.906379022648064C13.247091852667802,26.333442191038742,14.101647753293358,28.50887466638422,16,29.399161520931457" fill={active4 ? '#ffffff' : '#000000'} strokewidth="0"></path></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M12 56v-6.91a43.27 43.27 0 0 1 7.26-24L20 24"></path><path d="m44 24 .74 1.11a43.27 43.27 0 0 1 7.26 24V56"></path><path d="m44 44-2.74.91a29.19 29.19 0 0 1-18.52 0L20 44V20A12 12 0 0 1 32 8a12 12 0 0 1 12 12z"></path><line x1="28" y1="36" x2="28" y2="24"></line></g></svg>
-			</NavLink>
+						</NavLink>
+						<NavLink to={'/post/create'} 
+						onClick={() => setCreateToggle(false)}
+						className={({ isActive }) => {
+							isActive ? setActive7(true) : setActive7(false)
+							return `${isActive ? 'text-blue-500 bg-blue-100' : 'bg-[#ffffff]'} border-[1px] border-[#bbbbbb] flex flex-row items-center rounded-2xl py-2 px-3 w-full`
+						}} >
 
-		</div>
+							<div className='w-[25%] h-full flex items-center' ><svg className='ml-[10px]' xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24" fill={active7 ? "rgb(59 130 246)" : "#232323"} stroke={active7 ? "rgb(59 130 246)" : "#232323"} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-milestone"><path d="M18 6H5a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h13l4-3.5L18 6Z"/><path d="M12 13v8"/><path d="M12 3v3"/></svg></div>
+							
+							<div className='flex flex-col w-[75%] h-full'>
+								<div className='text-[1.1rem] font-semibold quicksand'>POST</div>
+								<div className='text-[0.8rem] radio text-black'>Share moment with your followers</div>
+							</div>
+
+						</NavLink>
+					</div>
+				</div>
+				<div className='h-full w-[73%] bg-[#eeeeee] dark:bg-[#222222] rounded-full flex flex-row justify-between items-center px-[3%] z-20'>
+
+					<NavLink to={'/feed'}  
+					onClick={() => {
+						if(active3) {
+							setActive3(false)
+						}
+						if(createToggle) {
+							setCreateToggle(false)
+						}
+					}}
+					className={({ isActive }) =>{ 
+						isActive ? setActive1(true) : setActive1(false)
+					}} >
+						<div className={`flex items-center justify-center h-[45px] w-[45px] rounded-full ${active1 ? 'bg-blue-200 dark:bg-blue-400' : ''}`}>
+							<svg className='h-[30px] w-[30px]' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M9 20H7C5.89543 20 5 19.1046 5 18V10.9199C5 10.336 5.25513 9.78132 5.69842 9.40136L10.6984 5.11564C11.4474 4.47366 12.5526 4.47366 13.3016 5.11564L18.3016 9.40136C18.7449 9.78132 19 10.336 19 10.9199V18C19 19.1046 18.1046 20 17 20H15M9 20V14C9 13.4477 9.44772 13 10 13H14C14.5523 13 15 13.4477 15 14V20M9 20H15" stroke={theme === 'dark' ? "#ffffff" : active1 ? '#063581' : '#232323'} stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
+						</div>
+					</NavLink>
+
+					<NavLink to={"/search"} 
+					onClick={() => {
+						if(active3) {
+							setActive3(false)
+						}
+						if(createToggle) {
+							setCreateToggle(false)
+						}
+					}}
+					className={({ isActive }) =>{ 
+					isActive ? setActive2(true) : setActive2(false)
+					}}>
+						<div className={`flex items-center justify-center h-[45px] w-[45px] rounded-full ${active2 ? ' bg-blue-200 dark:bg-blue-400' : ''}`}>
+							<svg className='h-[25px] w-[25px]' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M11 6C13.7614 6 16 8.23858 16 11M16.6588 16.6549L21 21M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke={theme === 'dark' ? "#ffffff" : active2 ? '#063581' : '#232323'} stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+						</div>
+					</NavLink>
+
+					<NavLink to={"/notifications"} 
+					onClick={() => {
+						if(active3) {
+							setActive3(false)
+						}
+						if(createToggle) {
+							setCreateToggle(false)
+						}
+					}}
+					className={({ isActive }) =>{ 
+					isActive ? setActive5(true) : setActive5(false)
+					}}>
+						<div className={`flex items-center justify-center h-[45px] w-[45px] rounded-full ${active5 ? 'bg-blue-200 dark:bg-blue-400' : ''}`}>
+							<svg className='h-[24px] w-[24px]' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12.02 2.90991C8.70997 2.90991 6.01997 5.59991 6.01997 8.90991V11.7999C6.01997 12.4099 5.75997 13.3399 5.44997 13.8599L4.29997 15.7699C3.58997 16.9499 4.07997 18.2599 5.37997 18.6999C9.68997 20.1399 14.34 20.1399 18.65 18.6999C19.86 18.2999 20.39 16.8699 19.73 15.7699L18.58 13.8599C18.28 13.3399 18.02 12.4099 18.02 11.7999V8.90991C18.02 5.60991 15.32 2.90991 12.02 2.90991Z" stroke={theme === 'dark' ? "#ffffff" : active5 ? '#063581' : '#232323'} stroke-width="1.104" stroke-miterlimit="10" stroke-linecap="round"></path> <path d="M13.87 3.19994C13.56 3.10994 13.24 3.03994 12.91 2.99994C11.95 2.87994 11.03 2.94994 10.17 3.19994C10.46 2.45994 11.18 1.93994 12.02 1.93994C12.86 1.93994 13.58 2.45994 13.87 3.19994Z" stroke={theme === 'dark' ? "#ffffff" : active5 ? '#063581' : '#232323'} stroke-width="1.104" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M15.02 19.0601C15.02 20.7101 13.67 22.0601 12.02 22.0601C11.2 22.0601 10.44 21.7201 9.90002 21.1801C9.36002 20.6401 9.02002 19.8801 9.02002 19.0601" stroke={theme === 'dark' ? "#ffffff" : active5 ? '#063581' : '#232323'} stroke-width="1.104" stroke-miterlimit="10"></path> </g></svg>
+						</div>
+					</NavLink>
+
+					<NavLink to={'/profile'} className={({isActive}) => {
+						return ` rounded-full overflow-hidden border-2 border-black ${isActive ? 'ring-4 ring-blue-300 dark:ring-blue-400 h-[37px] w-[37px]' : ' h-[35px] w-[35px]'} duration-200`
+					}}>
+					<img src={user?.profilePic} className='w-full h-full object-cover' />
+					</NavLink>
+
+				</div>
+				<div className='w-[20%] h-full flex justify-center items-center '>
+					<div onClick={() => {
+						if( urlPathValue === '/post/story' || urlPathValue === '/post/create' ) {
+							if( active3 ) {
+								setCreateToggle(!createToggle)
+							}
+						}
+						else {
+							setActive3(!active3)
+							setCreateToggle(!createToggle)
+						}
+					}} className={`${active3 ? ' dark:bg-blue-400' : 'bg-[#eeeeee] dark:bg-[rgb(35,35,35)] p-5'} cursor-pointer flex items-center justify-center rounded-full duration-200 ease-in-out z-20`}>
+						<svg className={`${active3 ? 'w-16 h-16' : 'w-10 h-10'} duration-200`} viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke={theme === 'dark' ? active3 ? "#232323" : "#ffffff" : active3 ? 'rgb(147 197 253)' : '#303030'}><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M15 12L12 12M12 12L9 12M12 12L12 9M12 12L12 15" stroke={theme === 'dark' ? active3 ? "#232323" : "#ffffff" : active3 ? '#232323' : '#303030'} stroke-width="1.2" stroke-linecap="round"></path> <path d="M7 3.33782C8.47087 2.48697 10.1786 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 10.1786 2.48697 8.47087 3.33782 7" stroke={theme === 'dark' ? active3 ? "#232323" : "#ffffff" : active3 ? '#232323' : '#303030'} stroke-width="1.2" stroke-linecap="round"></path> </g></svg>
+					</div>
+				</div>
+				
+			</div>
+		</>
 	)
 }
 

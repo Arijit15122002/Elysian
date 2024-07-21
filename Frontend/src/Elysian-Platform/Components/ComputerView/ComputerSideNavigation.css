@@ -1,0 +1,21 @@
+.parent-div { /* Assuming your parent div has a class */
+    width: 60px; /* Initial width */
+    transition: width 0.2s ease-in-out; /* Smooth transition */
+    overflow: hidden; /* Hide overflow on hover */
+}
+
+.parent-div:hover {
+    width: 180px; /* Expand on hover (initial width + text width) */
+}
+
+.text-div {
+    display: none; /* Initially hide text */
+    transition: display 0.9s ease-in-out;
+    transition-duration: 500ms ease-in-out; /* Smooth transition */
+}
+
+.parent-div:hover .text-div {
+    display: block; /* Show text on hover */
+    transition: display 0.9s ease-in-out;
+    transition-duration: 500ms ease-in-out;
+}

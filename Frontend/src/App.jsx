@@ -21,6 +21,8 @@ const Feed = lazy(() => import('./Elysian-Platform/Pages/FeedComponent/Feed'))
 const Search = lazy(() => import('./Elysian-Platform/Pages/Search'))
 const CreatePost = lazy(() => import('./Elysian-Platform/Pages/Posts/CreatePost'))
 const NotFound = lazy(() => import('./Elysian-Platform/Pages/NotFound'))
+const Notification = lazy(() => import('./Elysian-Platform/Components/Notifications/Notification'))
+const MyProfile = lazy(() => import('./Elysian-Platform/Pages/MyProfile'))
 
 // MOJO
 const MojoHome = lazy(() => import('./Mojo-Platform/Pages/MojoHome'))
@@ -31,6 +33,7 @@ const Group = lazy(() => import('./Mojo-Platform/Pages/Group'))
 import './App.css'
 import ProtectRoute from './ProtectRoute'
 import { Loader } from './Elysian-Platform/Pages/ElysianLoaders'
+import CreateStory from './Elysian-Platform/Pages/Posts/CreateStory'
 
 
 function App() {
@@ -159,7 +162,24 @@ function App() {
 												<FeedLayout />
 											</ProtectRoute>
 										}>
-											<Route path="" element={<CreatePost />} />
+											<Route path="/post/create" element={<CreatePost />} />
+											<Route path="/post/story" element={<CreateStory />} />
+										</Route>
+
+										<Route path="/notifications" element={
+											<ProtectRoute>
+												<FeedLayout />
+											</ProtectRoute>
+										}>
+											<Route path="" element={<Notification />} />
+										</Route>
+
+										<Route path="/profile" element={
+											<ProtectRoute>
+												<FeedLayout />
+											</ProtectRoute>
+										}>
+											<Route path="" element={<MyProfile />} />
 										</Route>
 
 										<Route path="/mojo" element={
