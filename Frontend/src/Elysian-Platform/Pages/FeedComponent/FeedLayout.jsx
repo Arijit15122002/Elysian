@@ -48,7 +48,7 @@ function FeedLayout () {
 				</div>
 			</div>
 
-			<div className={`${deviceType === 'mobile' ? 'flex' : 'hidden' } w-full h-auto fixed bottom-6 justify-center z-10`}>
+			<div className={`${deviceType === 'mobile' ? 'flex' : 'hidden' } w-full h-auto fixed bottom-4 justify-center z-10`}>
 				<MobileNavigation />
 			</div>
 

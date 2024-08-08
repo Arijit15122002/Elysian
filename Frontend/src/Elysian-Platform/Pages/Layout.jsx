@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { Outlet, Navigate } from 'react-router-dom'
-import Navbar from '../Components/NavigationComp/ComputerNavBar'
+import RegistrationNavbar from '../Components/NavigationComp/RegistrationNavbar'
 
 import { useSelector } from 'react-redux'
 
@@ -16,7 +16,7 @@ function Layout () {
 
     return (
         <>
-            <Navbar />
+            <RegistrationNavbar />
             <Outlet />
         </>
     )

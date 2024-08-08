@@ -2,31 +2,64 @@ import User from "../Models/user.model.js"
 import Post from "../Models/post.model.js"
 import Notification from "../Models/notification.model.js"
 
+import { v2 as cloudinary } from 'cloudinary'
+import pLimit from 'p-limit'
+
+
+const limit = pLimit(10)
+cloudinary.config({
+    cloud_name : process.env.CLOUDINARY_CLOUD_NAME,
+    api_key : process.env.CLOUDINARY_API_KEY,
+    api_secret : process.env.CLOUDINARY_API_SECRET,
+})
+
 const createPost = async (req, res) => {
 
     try {
 
-        const { text } = req.body
-        let { image } = req.body
-        const { userId } = req.user._id.toString()
+        const { user, postType, message, images, taggedPeople, checkIn, backgroundColor, feelingActivity } = req.body
 
-        const user = await User.findById(userId)
+        const rightUser = await User.findById(user._id)
 
-        if( !text && !image ) {
+        if( !rightUser ) {
+            return res.status(404).json({
+                message : "User not found"
+            })
+        }   
+
+        if( !message && !images ) {
             return res.status(400).json({
                 message : "Post text or image is required"
             })
         }
 
-        if( image ) {
-            const response = await cloudinary.uploader.upload(image)
-            image = response.secure_url
+        const imageURLs = []
+
+        if( images ) {
+            const imagesToUpload = images.map((image) => {
+                return limit( async() => {
+                    const result = await cloudinary.uploader.upload(image)
+                    return result
+                })
+            })
+
+            let uploads = await Promise.all(imagesToUpload)
+            uploads.forEach((upload) => {
+                imageURLs.push(upload.secure_url)
+            })
         }
 
         const post = new Post({
-            user : req.user._id,
-            text,
-            image,
+            postType,
+            user,
+            text : message,
+            images : imageURLs,
+            likes : [],
+            comments : [],
+            taggedPeople,
+            checkIn,
+            backgroundColor,
+            feelingActivity
         })
 
         await post.save()

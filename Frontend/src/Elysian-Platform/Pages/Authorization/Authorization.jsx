@@ -13,6 +13,8 @@ import { TransitionalBG } from '../../../constants/Constant'
 import './Authorization.css'
 import { userExists } from '../../../redux/reducers/auth.reducer';
 
+import ScaleLoader from "react-spinners/ScaleLoader";
+
 
 function Authorization ({type}) {
 
@@ -60,52 +62,77 @@ function Authorization ({type}) {
 
 	//Handle Submit
 	const navigate = useNavigate()
+
+	const [ loading, setLoading ] = useState(false)
 	const handleSubmit = async (e) => {
 
 		e.preventDefault()
 
-		if( type === 'signup') {
-			if( !formData.username || !formData.fullname || !formData.email || !formData.password || !formData.confirmPassword ) {
-				return toast.error('All fields are required')
-			}
+		setLoading(true)
+
+		try {
+			if( type === 'signup') {
+				if( !formData.username || !formData.fullname || !formData.email || !formData.password || !formData.confirmPassword ) {
+					return toast.error('All fields are required')
+				}
+		
+				if( formData.password !== formData.confirmPassword ) {
+					return toast.error('Passwords do not match')
+				}
+				
+				
+				const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/${type}`, formData)
 	
-			if( formData.password !== formData.confirmPassword ) {
-				return toast.error('Passwords do not match')
+				if( response.data?.user ) {
+	
+					dispatch(userExists(response.data.user))
+					localStorage.setItem('token', response.data.token)
+					toast.success(response.data.message)
+					navigate('/feed')
+	
+				}
+	
+			} else {
+	
+				console.log(formData);
+	
+				const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/${type}`, {
+					email : formData.email, password : formData.password
+				})
+	
+				console.log(response);
+	
+				if( response.data?.user ) {
+	
+					console.log(response.data);
+					dispatch(userExists(response.data.user))
+					localStorage.setItem('token', response.data.token)
+					toast.success(response.data.message)
+					navigate('/feed')
+	
+				}
 			}
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setLoading(false)
 			
-			
-			const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/${type}`, formData)
-
-			if( response.data?.user ) {
-
-				dispatch(userExists(response.data.user))
-				localStorage.setItem('token', response.data.token)
-				toast.success(response.data.message)
-				navigate('/feed');
-
-			}
-
-		} else {
-
-			const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/${type}`, {
-				email : formData.email, password : formData.password
-			})
-
-			if( response.data?.user ) {
-
-				console.log(response.data);
-				dispatch(userExists(response.data.user))
-				localStorage.setItem('token', response.data.token)
-				toast.success(response.data.message)
-				navigate('/feed');
-
-			}
 		}
 
 	}
 
 	return (
 		<div className='w-full flex flex-row'>
+
+			{/* THE LOADING PAGE */}
+			<div className={`${loading ? 'block' : 'hidden'} h-[100svh] w-full bg-white absolute z-40 flex flex-row items-center justify-center`}>
+			<ScaleLoader 
+				color='#232323'
+				loading={loading}
+				size={40}
+			/>
+			</div>
+
 			< ToastContainer />
 			<div className='hidden md:flex w-[50vw] h-[100vh] items-center justify-center relative'>
 				<div className='w-[800px] h-[800px] fixed bg-[#222222] rounded-full -left-[10%] top-[5%]'>

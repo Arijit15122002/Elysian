@@ -65,8 +65,8 @@ function MobileNavigation () {
 	return (
 		<>
 			<div className='w-[90%] h-16 flex flex-row justify-between relative'>
-				<div className={`${createToggle ? 'createShow' : 'createHidden'} w-full h-auto absolute duration-500 bottom-20 flex justify-end `}>
-					<div className={` h-auto w-[80%] flex flex-col py-4 px-4 gap-4 items-center z-0 rounded-3xl bg-[#f5f5f5]`}>
+				<div className={`${createToggle ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-[100%] opacity-0 scale-0'} w-full h-auto absolute duration-500 ease-in-out bottom-20 flex justify-end `}>
+					<div className={` h-auto w-full flex flex-col py-4 px-4 gap-4 items-center z-0 rounded-3xl bg-[#f5f5f5]`}>
 
 						<div className='h-[5px] w-[60px] bg-[#aaaaaa] rounded-full mb-5'
 							onTouchStart={handleTouchStart}
@@ -77,12 +77,12 @@ function MobileNavigation () {
 						onClick={() => setCreateToggle(false)}
 						className={({ isActive }) => {
 							isActive ? setActive6(true) : setActive6(false)
-							return `${isActive ? 'bg-blue-100 text-blue-600' : 'bg-[#ffffff]'} border-[1px] border-[#bbbbbb] flex flex-row items-center rounded-2xl py-3 px-3 w-full`
+							return `${isActive ? 'border-[#0051A2]' : 'border-[#bbbbbb]'} bg-white border-[1px] border-[#bbbbbb] flex flex-row items-center rounded-2xl py-3 px-3 w-full`
 						}} >
 							
-							<div className='w-[25%] h-full flex items-center'><svg className='ml-[10px]' xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 24 24" fill={active6 ? "rgb(59 130 246)" : "#232323"} stroke={active6 ? "rgb(59 130 246)" : "#232323"} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gallery-horizontal-end"><path d="M2 7v10"/><path d="M6 5v14"/><rect width="12" height="18" x="10" y="3" rx="2"/></svg></div>
+							<div className='w-[15%] h-full flex items-center'><svg className='ml-[10px]' xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill={active6 ? "#0051A2" : "#0051A2"} stroke={active6 ? "#0051A2" : "#0051A2"} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gallery-horizontal-end"><path d="M2 7v10"/><path d="M6 5v14"/><rect width="12" height="18" x="10" y="3" rx="2"/></svg></div>
 
-							<div className='flex flex-col w-[75%] h-full'>
+							<div className='flex flex-col w-[85%] h-full'>
 								<div className='text-[1.1rem] font-semibold quicksand'>STORY</div>
 								<div className='text-[0.8rem] radio text-black'> Share content that disappears after 24 hours</div>
 							</div>
@@ -92,12 +92,12 @@ function MobileNavigation () {
 						onClick={() => setCreateToggle(false)}
 						className={({ isActive }) => {
 							isActive ? setActive7(true) : setActive7(false)
-							return `${isActive ? 'text-blue-500 bg-blue-100' : 'bg-[#ffffff]'} border-[1px] border-[#bbbbbb] flex flex-row items-center rounded-2xl py-2 px-3 w-full`
+							return `${isActive ? 'border-[#0051A2]' : 'border-[#bbbbbb]'} bg-white border-[1px] flex flex-row items-center rounded-2xl py-2 px-3 w-full`
 						}} >
 
-							<div className='w-[25%] h-full flex items-center' ><svg className='ml-[10px]' xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24" fill={active7 ? "rgb(59 130 246)" : "#232323"} stroke={active7 ? "rgb(59 130 246)" : "#232323"} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-milestone"><path d="M18 6H5a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h13l4-3.5L18 6Z"/><path d="M12 13v8"/><path d="M12 3v3"/></svg></div>
+							<div className='w-[15%] h-full flex items-center' ><svg className='ml-[10px]' xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill={active7 ? "#0051A2" : "#0051A2"} stroke={active7 ? "#0051A2" : "#0051A2"} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-milestone"><path d="M18 6H5a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h13l4-3.5L18 6Z"/><path d="M12 13v8"/><path d="M12 3v3"/></svg></div>
 							
-							<div className='flex flex-col w-[75%] h-full'>
+							<div className='flex flex-col w-[85%] h-full'>
 								<div className='text-[1.1rem] font-semibold quicksand'>POST</div>
 								<div className='text-[0.8rem] radio text-black'>Share moment with your followers</div>
 							</div>

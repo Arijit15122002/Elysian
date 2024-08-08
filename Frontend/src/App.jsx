@@ -7,7 +7,7 @@ import { useTheme } from './context/contextAPI'
 import { useDispatch } from 'react-redux'
 import { userExists } from './redux/reducers/auth.reducer'
 import { setDeviceType } from './redux/reducers/deviceType.reducer'
-
+import 'react-image-crop/dist/ReactCrop.css'
 
 // SplashScreen Animation
 import SplashScreen from './commonComponents/HomeAnimation.jsx/SplashScreen'

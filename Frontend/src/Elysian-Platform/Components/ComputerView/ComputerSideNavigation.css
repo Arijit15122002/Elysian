@@ -5,7 +5,7 @@
 }
 
 .parent-div:hover {
-    width: 180px; /* Expand on hover (initial width + text width) */
+    width: 190px; /* Expand on hover (initial width + text width) */
 }
 
 .text-div {

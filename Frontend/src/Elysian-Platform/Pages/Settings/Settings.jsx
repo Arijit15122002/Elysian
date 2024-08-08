@@ -1,9 +1,14 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
+import { useTheme } from '../../../context/contextAPI'
+
 function Settings ({ settingsOpen, setSettingsOpen }) {
+
+	const { theme } = useTheme()
+
 	return (
-		<div className={`${settingsOpen ? 'translate-x-0 opacity-100' : 'translate-x-[100%] opacity-0'} duration-500 w-full h-[webkit-fill-available] z-20 fixed flex flex-col items-center justify-end`}>
+		<div className={`${settingsOpen ? 'translate-x-0 opacity-100' : 'translate-x-[100%] opacity-0'} duration-500 w-full h-[webkit-fill-available] z-20 fixed flex flex-col items-center justify-end bg-white`}>
 			<div className='w-full h-[100px] bg-white'/>
 			
 			<div className='w-[90%] h-[90vh] overflow-y-auto bg-white flex flex-col gap-2 items-center rounded-3xl overflow-hidden' id='settingScroll'>
@@ -192,6 +197,20 @@ function Settings ({ settingsOpen, setSettingsOpen }) {
 				<div className='w-full h-[1px] bg-inherit my-1'/>
 
 				<small className='w-full px-4 text-[#aaaaaa]'>What you see</small>
+				<Link
+				onClick={() => setSettingsOpen( !settingsOpen )} 
+				className='w-full mx-auto px-6 py-4 bg-[#f1f1f1] rounded-xl flex flex-row justify-between items-center'>
+					<div className='flex flex-row items-center gap-4'>
+						<svg className='w-[1.7rem] h-[1.7rem]' fill="#232323" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#232323"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>moon</title> <path d="M10.895 7.574c0 7.55 5.179 13.67 11.567 13.67 1.588 0 3.101-0.38 4.479-1.063-1.695 4.46-5.996 7.636-11.051 7.636-6.533 0-11.83-5.297-11.83-11.83 0-4.82 2.888-8.959 7.023-10.803-0.116 0.778-0.188 1.573-0.188 2.39z"></path> </g></svg>
+						<div className='radio text-[1.1rem]'>
+							Switch to {theme === 'dark' ? 'Light' : 'Dark'} mode
+						</div>
+					</div>
+					<div className=''>
+						<svg className='w-[1.2rem] h-[1.2rem]' xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+					</div>
+				</Link>
+
 				<Link
 				onClick={() => setSettingsOpen( !settingsOpen )} 
 				className='w-full mx-auto px-6 py-4 bg-[#f1f1f1] rounded-xl flex flex-row justify-between items-center'>

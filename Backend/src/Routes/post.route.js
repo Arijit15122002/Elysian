@@ -6,7 +6,7 @@ import protectRoute from '../MiddleWares/protectRoute.js'
 const postRouter = express.Router()
 
 
-postRouter.post('/create', protectRoute, createPost)
+postRouter.post('/create', createPost)
 
 postRouter.delete('/delete/:id', protectRoute, deletePost)
 

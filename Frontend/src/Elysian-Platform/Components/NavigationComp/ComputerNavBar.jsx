@@ -106,16 +106,16 @@ function Navbar ({ postCreation, setPostCreation }) {
 				
 				<div className='flex flex-row gap-4 mx-4 dosis text-lg font-semibold items-center relative'>
 
-					<div className={`${postCreateButton ? 'bg-violet-200' : 'bg-[#232323]'} w-[2.2rem] h-[2.2rem] cursor-pointer rounded-full flex items-center justify-center`}
+					<div className={`${postCreateButton ? 'bg-blue-200' : 'bg-[#232323]'} duration-300 ease-in-out w-[2.2rem] h-[2.2rem] cursor-pointer rounded-full flex items-center justify-center`}
 					onClick={() => {
-						if( !postCreateButton ) {
-							setPostCreateButton( !postCreateButton )
-							setPostCreation( !postCreation )
+						if( urlPathValue === '/post/story' || urlPathValue === '/post/create' ) {
+							setPostCreation(!postCreation)
 						} else {
-							setPostCreation( !postCreation )
+							setPostCreateButton(!postCreateButton)
+							setPostCreation(!postCreation)
 						}
 					}}>
-						<svg className='w-[1.5rem] h-[1.5rem]' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M15 12L12 12M12 12L9 12M12 12L12 9M12 12L12 15" stroke={postCreateButton ? "#232323" : "#ffffff"} stroke-width="1.5" stroke-linecap="round"></path> <path d="M7 3.33782C8.47087 2.48697 10.1786 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 10.1786 2.48697 8.47087 3.33782 7" stroke={postCreateButton ? "#232323" : "#ffffff"} stroke-width="1.5" stroke-linecap="round"></path> </g></svg>
+						<svg className='w-[1.5rem] h-[1.5rem]' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M15 12L12 12M12 12L9 12M12 12L12 9M12 12L12 15" stroke={postCreateButton ? "#14579a" : "#ffffff"} stroke-width="1.5" stroke-linecap="round"></path> <path d="M7 3.33782C8.47087 2.48697 10.1786 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 10.1786 2.48697 8.47087 3.33782 7" stroke={postCreateButton ? "#14579a" : "#ffffff"} stroke-width="1.5" stroke-linecap="round"></path> </g></svg>
 					</div>
 
 					<Link to={'/mojo'} className='p-1.5 rounded-full bg-[#232323] '>

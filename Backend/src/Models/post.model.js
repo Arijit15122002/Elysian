@@ -2,6 +2,14 @@ import mongoose from "mongoose";
 
 const postSchema = new mongoose.Schema({
 
+    postType : {
+
+        type : String,
+        required : true,
+        enum : ['Public', 'Private'],
+
+    },
+
     user : {
 
         type : mongoose.Schema.Types.ObjectId,
@@ -13,14 +21,15 @@ const postSchema = new mongoose.Schema({
     text : {
 
         type : String,
+        required : true
 
     },
 
-    image : {
-
-        type : String,
-
-    },
+    images : [
+        {
+            type : String
+        }
+    ],
 
     likes : [
         {
@@ -47,7 +56,32 @@ const postSchema = new mongoose.Schema({
                 required : true
             }
         }
-    ]
+    ],
+
+    taggedPeople : [
+        {
+            type : mongoose.Schema.Types.ObjectId,
+            ref : 'User',
+        }
+    ],
+
+    checkIn : {
+
+        type : String,
+
+    },
+
+    backgroundColor : {
+        
+        type : String
+
+    },
+
+    feelingActivity : {
+
+        type : String
+
+    }
 
 }, {
 
