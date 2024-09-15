@@ -10,7 +10,13 @@ function CreatePhotoStory () {
     {
         deviceType === 'mobile' ? 
         <>
-            
+            <div className='kanit text-[#777777] text-[1.3rem] py-3 px-10'>
+                Create a Photo Story
+            </div>
+
+            <div>
+                
+            </div>
         </> : <>
 
         </>

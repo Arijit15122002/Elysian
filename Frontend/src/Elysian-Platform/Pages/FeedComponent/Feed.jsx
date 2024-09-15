@@ -45,7 +45,7 @@ function Feed () {
 								</div>
 								<Link to={'/post/story'}>
 									<div className='absolute bottom-[30px] h-[50px] w-full flex items-center justify-center rounded-full'>
-										<div className='h-[50px] w-[50px] rounded-full flex items-center justify-center bg-blue-600'>
+										<div className='h-[50px] w-[50px] rounded-full flex items-center justify-center bg-[#111111] shadow-md shadow-[#111111]/50'>
 											<svg className='w-[32px] h-[32px]' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M4 12H20M12 4V20" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
 										</div>
 									</div>
