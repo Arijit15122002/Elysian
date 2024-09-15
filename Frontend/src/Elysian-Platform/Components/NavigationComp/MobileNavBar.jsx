@@ -18,7 +18,7 @@ function MobileNavBar ({ settingsOpen, setSettingsOpen }) {
 	}
 
   return (
-    <div className='justify-center h-[65px] flex items-center w-full '>
+    <div className='justify-center h-[65px] flex items-center w-full bg-white '>
         <nav className=' w-full h-full flex flex-row items-center justify-between'>
             <div className='w-auto h-full flex flex-row items-center pl-4 pr-3 gap-2'>
                 <svg width="48px" height="48px" viewBox="-8.96 -8.96 81.92 81.92" xmlns="http://www.w3.org/2000/svg" fill="none" stroke={theme === 'dark' ? '#232323' : '#232323'} stroke-width="3">

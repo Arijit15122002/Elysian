@@ -162,9 +162,7 @@ function DragAndDropImage ({ totalImages, setTotalImages }) {
 				<svg className='w-[50px] h-[50px]' viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title></title> <g id="Complete"> <g data-name="add" id="add-2"> <g> <line fill="none" stroke="#aaaaaa" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" x1="12" x2="12" y1="19" y2="5"></line> <line fill="none" stroke="#aaaaaa" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" x1="5" x2="19" y1="12" y2="12"></line> </g> </g> </g> </g></svg>
 			</div>
 
-			</div> : <div className='xl:h-[90px] h-0 w-full'>
-
-			</div>
+			</div> : <div></div>
 		}
 
 		<div className={`${ imagesrc ? 'scale-100 blur-none opacity-100' : 'scale-0 blur-3xl opacity-0' } duration-500 ease-in-out fixed mt-[70px] h-[calc(100vh-70px)] w-[100vw] bg-black/50 backdrop-blur-sm left-0 top-0 flex flex-col items-center justify-center`}>

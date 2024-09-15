@@ -77,14 +77,14 @@ function MobileNavigation () {
 						onClick={() => setCreateToggle(false)}
 						className={({ isActive }) => {
 							isActive ? setActive6(true) : setActive6(false)
-							return `${isActive ? 'border-[#0051A2]' : 'border-[#bbbbbb]'} bg-white border-[1px] border-[#bbbbbb] flex flex-row items-center rounded-2xl py-3 px-3 w-full`
+							return `${isActive ? 'bg-[#232323] text-white' : 'bg-white text-[#232323]'} flex flex-row items-center rounded-2xl py-3 px-3 w-full`
 						}} >
 							
-							<div className='w-[15%] h-full flex items-center'><svg className='ml-[10px]' xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill={active6 ? "#0051A2" : "#0051A2"} stroke={active6 ? "#0051A2" : "#0051A2"} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gallery-horizontal-end"><path d="M2 7v10"/><path d="M6 5v14"/><rect width="12" height="18" x="10" y="3" rx="2"/></svg></div>
+							<div className='w-[15%] h-full flex items-center'><svg className='ml-[10px]' xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill={active6 ? "#0051A2" : "#232323"} stroke={active6 ? "#0051A2" : "#232323"} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gallery-horizontal-end"><path d="M2 7v10"/><path d="M6 5v14"/><rect width="12" height="18" x="10" y="3" rx="2"/></svg></div>
 
 							<div className='flex flex-col w-[85%] h-full'>
 								<div className='text-[1.1rem] font-semibold quicksand'>STORY</div>
-								<div className='text-[0.8rem] radio text-black'> Share content that disappears after 24 hours</div>
+								<div className={`${active6 ? 'text-[white' : 'text-[#232323]'} text-[0.9rem]`}> Share content that disappears after 24 hours</div>
 							</div>
 
 						</NavLink>
@@ -92,14 +92,14 @@ function MobileNavigation () {
 						onClick={() => setCreateToggle(false)}
 						className={({ isActive }) => {
 							isActive ? setActive7(true) : setActive7(false)
-							return `${isActive ? 'border-[#0051A2]' : 'border-[#bbbbbb]'} bg-white border-[1px] flex flex-row items-center rounded-2xl py-2 px-3 w-full`
+							return `${isActive ? 'bg-[#232323] text-white' : 'bg-white text-[#232323]'} flex flex-row items-center rounded-2xl py-2 px-3 w-full`
 						}} >
 
-							<div className='w-[15%] h-full flex items-center' ><svg className='ml-[10px]' xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill={active7 ? "#0051A2" : "#0051A2"} stroke={active7 ? "#0051A2" : "#0051A2"} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-milestone"><path d="M18 6H5a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h13l4-3.5L18 6Z"/><path d="M12 13v8"/><path d="M12 3v3"/></svg></div>
+							<div className='w-[15%] h-full flex items-center' ><svg className='ml-[10px]' xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill={active7 ? "#0051A2" : "#232323"} stroke={active7 ? "#0051A2" : "#232323"} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-milestone"><path d="M18 6H5a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h13l4-3.5L18 6Z"/><path d="M12 13v8"/><path d="M12 3v3"/></svg></div>
 							
 							<div className='flex flex-col w-[85%] h-full'>
 								<div className='text-[1.1rem] font-semibold quicksand'>POST</div>
-								<div className='text-[0.8rem] radio text-black'>Share moment with your followers</div>
+								<div className={`${active7 ? 'text-white' : ''} text-[0.8rem] radio`}>Share moment with your followers</div>
 							</div>
 
 						</NavLink>

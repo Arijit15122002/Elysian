@@ -23,6 +23,8 @@ const CreatePost = lazy(() => import('./Elysian-Platform/Pages/Posts/CreatePost'
 const NotFound = lazy(() => import('./Elysian-Platform/Pages/NotFound'))
 const Notification = lazy(() => import('./Elysian-Platform/Components/Notifications/Notification'))
 const MyProfile = lazy(() => import('./Elysian-Platform/Pages/MyProfile'))
+const CreatePhotoStory = lazy(() => import('./Elysian-Platform/Pages/Story/CreatePhotoStory'))
+const CreateTextStory = lazy(() => import('./Elysian-Platform/Pages/Story/CreateTextStory'))
 
 // MOJO
 const MojoHome = lazy(() => import('./Mojo-Platform/Pages/MojoHome'))
@@ -34,6 +36,7 @@ import './App.css'
 import ProtectRoute from './ProtectRoute'
 import { Loader } from './Elysian-Platform/Pages/ElysianLoaders'
 import CreateStory from './Elysian-Platform/Pages/Posts/CreateStory'
+
 
 
 function App() {
@@ -164,6 +167,8 @@ function App() {
 										}>
 											<Route path="/post/create" element={<CreatePost />} />
 											<Route path="/post/story" element={<CreateStory />} />
+											<Route path="/post/story/photo" element={<CreatePhotoStory/>} />
+											<Route path="/post/story/text" element={<CreateTextStory/>} />
 										</Route>
 
 										<Route path="/notifications" element={

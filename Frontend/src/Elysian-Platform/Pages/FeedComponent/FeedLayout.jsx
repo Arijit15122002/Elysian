@@ -9,6 +9,9 @@ import ComputerSideNavigation from '../../Components/ComputerView/ComputerSideNa
 import PostCreation from '../Posts/PostCreation'
 import Settings from '../Settings/Settings'
 
+import FeedOptions from './FeedOptions'
+import FeedFriendSuggestions from './FeedFriendSuggestions'
+
 function FeedLayout () {
 
 	const deviceType = useSelector(state => state.device.deviceType)
@@ -16,6 +19,17 @@ function FeedLayout () {
 	const [postCreation, setPostCreation] = useState(false)
 
 	const [settingsOpen, setSettingsOpen] = useState(false)
+
+	const [ nowOnPostScreen, setNowOnPostScreen ] = useState(false)
+
+	useEffect(() => {
+		const urlPath = window.location.pathname
+		if ( urlPath === '/post/story' || urlPath === '/post/create' ) {
+			setNowOnPostScreen(true)
+		} else{
+			setNowOnPostScreen(false)
+		}
+	}, [window.location.pathname]);
 
 	return (
 		<div className=' w-full h-[webkit-fill-available]'>
@@ -38,11 +52,23 @@ function FeedLayout () {
 					{
 						deviceType === 'mobile' ? 
 						<Outlet /> : 
-						<div className='w-full h-full relative flex items-center'>
+						<div className='w-full h-full relative flex flex-row items-center justify-end'>
 							<div className='absolute left-2 lg:hidden z-50'>
 								<ComputerSideNavigation/>
 							</div>
-							<Outlet />
+							<div className='w-[calc(100vw-77px)] lg:w-full h-full flex flex-row justify-center gap-[10px] lg:gap-[15px] pr-[10px] lg:px-[15px]'>
+							{
+								nowOnPostScreen ?
+								<>
+									<div className='w-[100%] h-full'><Outlet/></div>
+								</> : 
+								<>
+									<div className='w-[25%] min-w-[230px] h-full hidden lg:flex'><FeedOptions/></div>
+									<div className='w-[100%] md:w-[65%] h-full'><Outlet/></div>
+									<div className='w-[35%] h-full hidden md:flex bg-red-500'><FeedFriendSuggestions/></div>
+								</>
+							}
+							</div>
 						</div>
 					}
 				</div>

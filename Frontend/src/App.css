@@ -41,6 +41,42 @@
     visibility: hidden;
 }
 
+#menuScroll{
+
+}
+#menuScroll::-webkit-scrollbar{
+    width: 0.1rem;
+}
+#menuScroll::-webkit-scrollbar-track{
+    visibility: hidden;
+}
+#menuScroll::-webkit-scrollbar-thumb{
+    width: 0.1rem;
+    border-radius:20px ;
+}
+#menuScroll:hover::-webkit-scrollbar-thumb{
+    background-color: #a2bcff9d;
+    
+}
+
+#feedScroll{
+
+}
+#feedScroll::-webkit-scrollbar{
+    width: 0.4rem;
+}
+#feedScroll::-webkit-scrollbar-track{
+    visibility: hidden;
+}
+#feedScroll::-webkit-scrollbar-thumb{
+    width: 0.2rem;
+    border-radius:20px ;
+}
+#feedScroll:hover::-webkit-scrollbar-thumb{
+    visibility: none;
+    
+}
+
 
 
 

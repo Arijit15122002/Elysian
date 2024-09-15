@@ -1,6 +1,6 @@
 import express from 'express'
 
-import { createPost, deletePost, getPost, getAllPosts, updatePost, likePost, commentPost, savePost, getUserPosts, getFollowingPosts } from '../Controllers/post.controller.js'
+import { createPost, deletePost, getPost, getAllPosts, updatePost, likePost, commentPost, commentReplyPost, likeCommentReply, likeComment, savePost, getUserPosts, getFollowingPosts } from '../Controllers/post.controller.js'
 import protectRoute from '../MiddleWares/protectRoute.js'
 
 const postRouter = express.Router()
@@ -8,23 +8,29 @@ const postRouter = express.Router()
 
 postRouter.post('/create', createPost)
 
-postRouter.delete('/delete/:id', protectRoute, deletePost)
+postRouter.delete('/delete/:id', deletePost)
 
-postRouter.post('/update/:id', protectRoute, updatePost)
+postRouter.post('/update/:id', updatePost)
 
-postRouter.post('/like/:id', protectRoute, likePost)
+postRouter.post('/like/:id', likePost)
 
-postRouter.post('/comment/:id', protectRoute, commentPost)
+postRouter.post('/comment/:id', commentPost)
 
-postRouter.post('/save/:id', protectRoute, savePost)
+postRouter.post('/comment/like/:id', likeComment)
 
-postRouter.get('/post/:id', protectRoute, getPost)
+postRouter.post('/comment/reply/:id', commentReplyPost)
+
+postRouter.post('/comment/reply/like/:id', likeCommentReply)
+
+postRouter.post('/save/:id', savePost)
+
+postRouter.get('/likes/:id', getPost)
 
 postRouter.get('/posts', getAllPosts)
 
-postRouter.get('/posts/:id', protectRoute, getUserPosts)
+postRouter.get('/posts/:id', getUserPosts)
 
-postRouter.get('/posts/following', protectRoute, getFollowingPosts)
+postRouter.get('/posts/following', getFollowingPosts)
 
 
 export default postRouter

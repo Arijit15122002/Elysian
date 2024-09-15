@@ -113,6 +113,10 @@ app.use('/api/user', userRouter)
 import postRouter from './Routes/post.route.js'
 app.use('/api/post', postRouter)
 
+// Story Routes
+import storyRouter from './Routes/story.route.js'
+app.use('/api/story', storyRouter)
+
 // Notification Routes
 import notificationRouter from './Routes/notification.route.js'
 app.use('/api/notification', notificationRouter)

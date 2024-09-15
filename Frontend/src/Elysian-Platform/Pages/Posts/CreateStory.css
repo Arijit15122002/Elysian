@@ -1,0 +1,63 @@
+.shadow1 {
+    position: relative;
+}
+
+.shadow1::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: linear-gradient(45deg, #45AAB8, rgba(1, 79, 69, 0.5));
+    z-index: -1;
+    filter: blur(10px);
+}
+
+.shadow2 {
+    position: relative;
+}
+
+.shadow2::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: linear-gradient(45deg, rgba(1, 170, 63, 0.9), rgba(235, 0, 137, 0.9));
+    z-index: -1;
+    filter: blur(10px);
+}
+
+.shadow3 {
+    position: relative;
+}
+
+.shadow3::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: linear-gradient(45deg, rgba(8, 186, 88, 0.968), #037d52);
+    z-index: -1;
+    filter: blur(10px);
+}
+
+.shadow4 {
+    position: relative;
+}
+
+.shadow4::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: linear-gradient(45deg, rgba(212, 8, 76, 0.968), #d01e06);
+    z-index: -1;
+    filter: blur(10px);
+}

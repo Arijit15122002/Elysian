@@ -51,10 +51,55 @@ const postSchema = new mongoose.Schema({
                 required : true
             },
 
+            userImage : {
+                type : String,
+                required : true
+            }, 
+
+            likes : [
+                {
+                    type : mongoose.Schema.Types.ObjectId,
+                    ref : 'User',
+                }
+            ],
+
             commentedUsername : {
                 type : String,
                 required : true
-            }
+            }, 
+
+            replies : [
+                {
+                    text : {
+                        type : String,
+                        required : true
+                    }, 
+
+                    user : {
+                        type : mongoose.Schema.Types.ObjectId,
+                        ref : 'User',
+                        required : true
+                    },
+
+                    userImage : {
+                        type : String,
+                        required : true
+                    },
+
+                    likes : [
+                        {
+                            type : mongoose.Schema.Types.ObjectId,
+                            ref : 'User',
+                        }
+                    ],
+
+                    commentedUsername : {
+                        type : String,
+                        required : true
+                    }, 
+                }
+            ]
+
         }
     ],
 
