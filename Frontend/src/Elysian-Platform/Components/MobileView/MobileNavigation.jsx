@@ -105,6 +105,7 @@ function MobileNavigation () {
 						</NavLink>
 					</div>
 				</div>
+				<div className='w-full flex flex-row justify-center gap-[7%]'>
 				<div className='h-full w-[73%] bg-[#eeeeee] dark:bg-[#222222] rounded-full flex flex-row justify-between items-center px-[3%] z-20'>
 
 					<NavLink to={'/feed'}  
@@ -164,8 +165,8 @@ function MobileNavigation () {
 					<img src={user?.profilePic} className='w-full h-full object-cover' />
 					</NavLink>
 
-				</div>
-				<div className='w-[20%] h-full flex justify-center items-center '>
+					</div>
+					<div className='w-[20%] h-full flex justify-center items-center '>
 					<div onClick={() => {
 						if( urlPathValue === '/post/story' || urlPathValue === '/post/create' ) {
 							if( active3 ) {
@@ -178,6 +179,7 @@ function MobileNavigation () {
 						}
 					}} className={`${active3 ? ' dark:bg-blue-400' : 'bg-[#eeeeee] dark:bg-[rgb(35,35,35)] p-5'} cursor-pointer flex items-center justify-center rounded-full duration-200 ease-in-out z-20`}>
 						<svg className={`${active3 ? 'w-16 h-16' : 'w-10 h-10'} duration-200`} viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg" stroke={theme === 'dark' ? active3 ? "#232323" : "#ffffff" : active3 ? 'rgb(147 197 253)' : '#303030'}><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M15 12L12 12M12 12L9 12M12 12L12 9M12 12L12 15" stroke={theme === 'dark' ? active3 ? "#232323" : "#ffffff" : active3 ? '#232323' : '#303030'} stroke-width="1.2" stroke-linecap="round"></path> <path d="M7 3.33782C8.47087 2.48697 10.1786 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 10.1786 2.48697 8.47087 3.33782 7" stroke={theme === 'dark' ? active3 ? "#232323" : "#ffffff" : active3 ? '#232323' : '#303030'} stroke-width="1.2" stroke-linecap="round"></path> </g></svg>
+					</div>
 					</div>
 				</div>
 				
