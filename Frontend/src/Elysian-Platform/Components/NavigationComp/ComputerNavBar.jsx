@@ -44,18 +44,26 @@ function Navbar ({ postCreation, setPostCreation }) {
 
 	//Clicking at any point outside of this div would cause to close the dropDown Box
 	const divRef = useRef(null);
+	const profilePicRef = useRef(null) // Track the toggle state
 
 	// Function to handle outside click 
-	const handleClickOutside = (event) => { if (divRef.current && !divRef.current.contains(event.target)) { setSettingsDropDown(false); } };
+	const handleClickOutside = (event) => { 
+		if ( divRef.current && !divRef.current.contains(event.target) && profilePicRef.current && !profilePicRef.current.contains(event.target) ) { 
+			setSettingsDropDown(false); 
+		} 
+	};
 
 	useEffect(() => { 
-		// Bind the event listener 
-		document.addEventListener("mousedown", handleClickOutside); return () => { 
-			// Unbind the event listener on clean up 
+		document.addEventListener("mousedown", handleClickOutside); 
+		return () => { 
 			document.removeEventListener("mousedown", handleClickOutside); 
 		}; 
 	}, []);
-	
+		
+	const handleProfileClick = (e) => { 
+		e.stopPropagation(); 
+		setSettingsDropDown(!settingsDropDown); 
+	}
 
 	//Logging Out User
 	const dispatch = useDispatch()
@@ -155,7 +163,11 @@ function Navbar ({ postCreation, setPostCreation }) {
 						<svg className='w-[20px] h-[20px]' fill="#ffffff" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M3 11v8h.051c.245 1.692 1.69 3 3.449 3 1.174 0 2.074-.417 2.672-1.174a3.99 3.99 0 0 0 5.668-.014c.601.762 1.504 1.188 2.66 1.188 1.93 0 3.5-1.57 3.5-3.5V11c0-4.962-4.037-9-9-9s-9 4.038-9 9zm6 1c-1.103 0-2-.897-2-2s.897-2 2-2 2 .897 2 2-.897 2-2 2zm6-4c1.103 0 2 .897 2 2s-.897 2-2 2-2-.897-2-2 .897-2 2-2z"></path></g></svg>
 					</Link>
 
-					<div className={`${settingsDropDown ? 'ring-4 ring-blue-600' : ''} border-2 border-black rounded-full cursor-pointer`} onClick={() => setSettingsDropDown(!settingsDropDown)}>
+					<div 
+						className={`${settingsDropDown ? 'ring-4 ring-blue-600' : ''} border-2 border-black rounded-full cursor-pointer`} 
+						onClick={handleProfileClick}
+						ref={profilePicRef}
+						>
 						<img src={user.profilePic} alt="" className='h-[35px] w-[35px] object-cover object-center rounded-full'/>
 					</div>
 
