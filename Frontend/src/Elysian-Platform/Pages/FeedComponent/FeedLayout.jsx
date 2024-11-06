@@ -32,7 +32,7 @@ function FeedLayout () {
 	}, [window.location.pathname]);
 
 	return (
-		<div className=' w-full h-[webkit-fill-available]'>
+		<div className=' w-full h-[webkit-fill-available] bg-[#f7f7f7]'>
 
 			<div className={`${deviceType === 'mobile' ? 'block' : 'hidden'} w-full h-[70px] fixed z-50`}>
 				<MobileNavBar settingsOpen={settingsOpen} setSettingsOpen={setSettingsOpen} />
@@ -56,16 +56,16 @@ function FeedLayout () {
 							<div className='absolute left-2 lg:hidden z-50'>
 								<ComputerSideNavigation/>
 							</div>
-							<div className='w-[calc(100vw-77px)] lg:w-full h-full flex flex-row justify-center gap-[10px] lg:gap-[15px] pr-[10px] lg:px-[15px]'>
+							<div className='w-[calc(100vw-77px)] lg:w-full h-full flex flex-row justify-center pr-[10px] lg:px-[15px]'>
 							{
 								nowOnPostScreen ?
 								<>
 									<div className='w-[100%] h-full'><Outlet/></div>
 								</> : 
 								<>
-									<div className='w-[25%] min-w-[230px] h-full hidden lg:flex'><FeedOptions/></div>
-									<div className='w-[100%] md:w-[65%] h-full'><Outlet/></div>
-									<div className='w-[35%] h-full hidden md:flex bg-red-500'><FeedFriendSuggestions/></div>
+									<div className='w-[25%] min-w-[230px] h-full hidden lg:flex '><FeedOptions/></div>
+									<div className='w-[100%] md:w-[60%] h-full'><Outlet/></div>
+									<div className='w-[30%] h-full hidden md:flex'><FeedFriendSuggestions/></div>
 								</>
 							}
 							</div>

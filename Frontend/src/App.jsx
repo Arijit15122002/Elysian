@@ -3,11 +3,13 @@ import { jwtDecode } from 'jwt-decode'
 import { AnimatePresence, motion } from 'framer-motion'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import axios from 'axios'
-import { useTheme } from './context/contextAPI'
+import { ThemeProvider, useTheme } from './context/contextAPI'
 import { useDispatch } from 'react-redux'
 import { userExists } from './redux/reducers/auth.reducer'
+import { setSuggestedUsers } from './redux/reducers/suggestedUsers.reducer'
 import { setDeviceType } from './redux/reducers/deviceType.reducer'
 import 'react-image-crop/dist/ReactCrop.css'
+import { useSelector } from 'react-redux'
 
 // SplashScreen Animation
 import SplashScreen from './commonComponents/HomeAnimation.jsx/SplashScreen'
@@ -25,6 +27,7 @@ const Notification = lazy(() => import('./Elysian-Platform/Components/Notificati
 const MyProfile = lazy(() => import('./Elysian-Platform/Pages/MyProfile'))
 const CreatePhotoStory = lazy(() => import('./Elysian-Platform/Pages/Story/CreatePhotoStory'))
 const CreateTextStory = lazy(() => import('./Elysian-Platform/Pages/Story/CreateTextStory'))
+const Explore = lazy(() => import('./Elysian-Platform/Pages/ExplorePeople/Explore'))
 
 // MOJO
 const MojoHome = lazy(() => import('./Mojo-Platform/Pages/MojoHome'))
@@ -42,6 +45,23 @@ import CreateStory from './Elysian-Platform/Pages/Posts/CreateStory'
 function App() {
 
 	const dispatch = useDispatch()
+	const user = useSelector(state => state.auth.user)
+
+	//SETTING UP DEVICETYPE 
+	// useEffect(() => {
+	// 	const handleResize = () => {
+	// 	  if (window.innerWidth >= 768) {
+	// 		dispatch(setDeviceType('desktop'))
+	// 	  } else {
+	// 		dispatch(setDeviceType('mobile'))
+	// 	  }
+	// 	}
+	// 	window.addEventListener('resize', handleResize)
+	// 	handleResize()
+	// 	return () => {
+	// 	  window.removeEventListener('resize', handleResize)
+	// 	}
+	//   }, [])
 
 	//SETTING UP DEVICETYPE 
 	useEffect(() => {
@@ -50,14 +70,8 @@ function App() {
 		dispatch(setDeviceType(isMobile ? 'mobile' : 'desktop'))
 	}, [])
 
+
 	
-
-
-	//FETCHING USER ASYNC FUNCTION 
-	async function fetchUser(userId) {
-		const response  = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/user/profile/${userId}`)
-		return response?.data?.user
-	}
 	//SETTING USER TO THE import { connect } from 'react-redux'
 	useEffect(() => {
 		const token = localStorage.getItem('token')
@@ -72,11 +86,9 @@ function App() {
 			}
 		}
 
-		
-		
 		async function fetchUser(userId) {
 			const response  = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/user/profile/${userId}`)
-			
+			console.log(response);
 			if(response?.data?.user) {
 				dispatch(userExists(response.data.user))
 			}
@@ -85,8 +97,23 @@ function App() {
 		
 	}, [])
 
-
-
+	useEffect(() => {
+		const calculateSuggestedUsers = async () => {
+		  // Check if user object is available before making the API call
+		  if (user) {
+			const response = await axios.get(
+			  `${import.meta.env.VITE_BASE_URL}/api/user/suggested/${user._id}`
+			);
+			if ( response?.data?.suggestedUsers.length ) {
+			  dispatch(setSuggestedUsers(response?.data?.suggestedUsers));
+			}
+		  } else {
+			console.log("User object is not yet available");
+		  }
+		};
+	  
+		calculateSuggestedUsers();
+	  }, [ user ]);
 
 
 	//SETTING THEME
@@ -98,14 +125,6 @@ function App() {
 	const darkMode = () => {
 		setTheme('dark')
 	}
-
-	const handleThemeChange = (newTheme) => {
-		setTheme(newTheme);
-		document.querySelector('html').classList.remove('light', 'dark');
-		document.querySelector('html').classList.add(newTheme);
-	  };
-
-
 	useEffect(() => {
 		document.querySelector('html').classList.remove('light', 'dark')
 		document.querySelector('html').classList.add(theme)
@@ -126,86 +145,96 @@ function App() {
 
 	return (
 		<>
-			<AnimatePresence mode='wait'> {/* Ensure smooth transitions */}
-				{isBrowserRouterReady ? (
-						<motion.div
-							key="router"
-							initial={{ opacity: 0 }} // Initial opacity: 0 (hidden)
-							animate={{ opacity: 1 }} // Animate to opacity: 1 (visible)
-							transition={{ duration: 0.7, ease: 'easeInOut' }} // Transition for 0.5s with easeInOut easing
-							>
-							<BrowserRouter>
-								<Suspense fallback={<Loader/>}>
-									<Routes>
+			<ThemeProvider value={{theme, darkMode, lightMode}}>
+				<AnimatePresence mode='wait'> {/* Ensure smooth transitions */}
+					{isBrowserRouterReady ? (
+							<motion.div
+								key="router"
+								initial={{ opacity: 0 }} // Initial opacity: 0 (hidden)
+								animate={{ opacity: 1 }} // Animate to opacity: 1 (visible)
+								transition={{ duration: 0.7, ease: 'easeInOut' }} // Transition for 0.5s with easeInOut easing
+								>
+								<BrowserRouter>
+									<Suspense fallback={<Loader/>}>
+										<Routes>
 
-										<Route path="/" element={<Layout />}>
-											<Route path="" element={<Home />} />
-											<Route path="/login" element={<Authorization type='login' />} />
-											<Route path="/signup" element={<Authorization type='signup' />} /> 
-										</Route>
+											<Route path="/" element={<Layout />}>
+												<Route path="" element={<Home />} />
+												<Route path="/login" element={<Authorization type='login' />} />
+												<Route path="/signup" element={<Authorization type='signup' />} /> 
+											</Route>
 
-										<Route path="/feed" element={
-											<ProtectRoute>
-												<FeedLayout />
-											</ProtectRoute>
-										}>
-											<Route path="" element={<Feed />} />
-										</Route>
+											<Route path="/feed" element={
+												<ProtectRoute>
+													<FeedLayout />
+												</ProtectRoute>
+											}>
+												<Route path="" element={<Feed />} />
+											</Route>
 
-										<Route path="/search" element={
-											<ProtectRoute>
-												<FeedLayout />
-											</ProtectRoute>
-										}>
-											<Route path="" element={<Search />} />
-										</Route>
+											<Route path="/search" element={
+												<ProtectRoute>
+													<FeedLayout />
+												</ProtectRoute>
+											}>
+												<Route path="" element={<Search />} />
+											</Route>
 
-										<Route path="/post" element={
-											<ProtectRoute>
-												<FeedLayout />
-											</ProtectRoute>
-										}>
-											<Route path="/post/create" element={<CreatePost />} />
-											<Route path="/post/story" element={<CreateStory />} />
-											<Route path="/post/story/photo" element={<CreatePhotoStory/>} />
-											<Route path="/post/story/text" element={<CreateTextStory/>} />
-										</Route>
+											<Route path="/post" element={
+												<ProtectRoute>
+													<FeedLayout />
+												</ProtectRoute>
+											}>
+												<Route path="/post/create" element={<CreatePost />} />
+												<Route path="/post/story" element={<CreateStory />} />
+												<Route path="/post/story/photo" element={<CreatePhotoStory/>} />
+												<Route path="/post/story/text" element={<CreateTextStory/>} />
+											</Route>
 
-										<Route path="/notifications" element={
-											<ProtectRoute>
-												<FeedLayout />
-											</ProtectRoute>
-										}>
-											<Route path="" element={<Notification />} />
-										</Route>
+											<Route path="/notifications" element={
+												<ProtectRoute>
+													<FeedLayout />
+												</ProtectRoute>
+											}>
+												<Route path="" element={<Notification />} />
+											</Route>
 
-										<Route path="/profile" element={
-											<ProtectRoute>
-												<FeedLayout />
-											</ProtectRoute>
-										}>
-											<Route path="" element={<MyProfile />} />
-										</Route>
+											<Route path="/explore" element={
+												<ProtectRoute>
+													<FeedLayout />
+												</ProtectRoute>
+											}>
+												<Route path="" element={<Explore />} />
+											</Route>
 
-										<Route path="/mojo" element={
-											<ProtectRoute>
-												<MojoLayout />
-											</ProtectRoute>
-										}>
-											<Route path="" element={<MojoHome />} />
-											<Route path="/mojo/chat/:chatId" element={<Chat />} />
-											<Route path="/mojo/groups" element={<Group />} />
-										</Route>
-										<Route path="*" element={<NotFound />} />
-									</Routes>
-								</Suspense>
-							</BrowserRouter>
-						</motion.div>
-					) : (
-						<SplashScreen />
-					)
-				}
-			</AnimatePresence>
+											<Route path="/profile" element={
+												<ProtectRoute>
+													<FeedLayout />
+												</ProtectRoute>
+											}>
+												<Route path="" element={<MyProfile />} />
+											</Route>
+
+											<Route path="/mojo" element={
+												<ProtectRoute>
+													<MojoLayout />
+												</ProtectRoute>
+											}>
+												<Route path="" element={<MojoHome />} />
+												<Route path="/mojo/chat/:chatId" element={<Chat />} />
+												<Route path="/mojo/groups" element={<Group />} />
+											</Route>
+											<Route path="*" element={<NotFound />} />
+										</Routes>
+									</Suspense>
+								</BrowserRouter>
+							</motion.div>
+						) : (
+							<SplashScreen />
+						)
+					}
+				</AnimatePresence>
+			</ThemeProvider>
 		</>
 	)
 }

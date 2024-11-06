@@ -45,13 +45,13 @@ function MobileNavBar ({ settingsOpen, setSettingsOpen }) {
 				</Link>
 				
                 <div 
-				className={`${ settingsOpen ? 'bg-[#dcff91]' : 'bg-[#e1ffa1]' } h-[38px] w-[38px] rounded-full  flex flex-col items-center justify-center cursor-pointer duration-200`}
+				className={`${ settingsOpen ? 'bg-[#000000]' : 'bg-[#e1ffa1]' } h-[38px] w-[38px] rounded-full  flex flex-col items-center justify-center cursor-pointer duration-200`}
 				onClick={() => {
 					toggleMenus()
 				}}
 				>
-                    <div className={`w-[45%] py-[0.8px] mb-[6px] ] rounded-full ${settingsOpen ? 'rotate-45 translate-y-[3.8px] scale-110 bg-[#577b0b]' : 'bg-[#577b0b]'} duration-200 ease-in-out`}></div>
-					<div className={`w-[45%] py-[0.8px] ] rounded-full ${settingsOpen ? '-rotate-45  -translate-y-[3.8px] scale-110 bg-[#577b0b]' : 'bg-[#577b0b]'} duration-200 ease-in-out`}></div>
+                    <div className={`w-[45%] py-[0.8px] mb-[6px] ] rounded-full ${settingsOpen ? 'rotate-45 translate-y-[3.8px] scale-110 bg-[#ffffff]' : 'bg-[#000000]'} duration-200 ease-in-out`}></div>
+					<div className={`w-[45%] py-[0.8px] ] rounded-full ${settingsOpen ? '-rotate-45  -translate-y-[3.8px] scale-110 bg-[#ffffff]' : 'bg-[#000000]'} duration-200 ease-in-out`}></div>
 				</div>
 
 			</div>

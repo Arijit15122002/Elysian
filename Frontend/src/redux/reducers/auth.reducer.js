@@ -16,10 +16,14 @@ const authSlice = createSlice({
         userDoesNotExist : (state) => {
             state.user = {},
             state.loggedIn = false
+        },
+        updateLocalUser : (state, action ) => {
+            state.user = {
+                ...state.user, ...action.payload
+            }
         }
     }
 }) 
 
 export default authSlice
 export const { userExists, userDoesNotExist } = authSlice.actions
-

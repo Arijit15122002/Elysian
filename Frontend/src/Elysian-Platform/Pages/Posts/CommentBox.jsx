@@ -13,6 +13,7 @@ import CommentCard from './CommentCard'
 function CommentBox ({ post, commentBoxOpen, setCommentBoxOpen, likeCount, setLikeCount, commentCount, setCommentCount, likedPost, setLikedPost, handleLike }) {
 
 	const user = useSelector(state => state.auth.user)
+	const deviceType = useSelector(state => state.device.deviceType)
 
 	const creationDate = moment(post.createdAt)
     let formattedTime = creationDate.fromNow()
@@ -56,7 +57,7 @@ function CommentBox ({ post, commentBoxOpen, setCommentBoxOpen, likeCount, setLi
 
 	const submitCommentReply = async () => {
 		const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/post/comment/reply/${post._id}`, { userId : user._id, text : comment, commentId })
-		if( response?.data?.post ) {
+		if( response?.data ) {
 			fetchAndSetComments()
 			clearReply()
 		}

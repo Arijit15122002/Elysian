@@ -1,0 +1,21 @@
+.link-container:hover .svg-wrapper {
+    animation: slide 0.5s;
+  }
+  
+  @keyframes slide {
+    0% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(10%);
+    }
+    50% {
+      transform: translateX(-10%);
+    }
+    75% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }

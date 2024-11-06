@@ -48,6 +48,8 @@
     width: 0.1rem;
 }
 #menuScroll::-webkit-scrollbar-track{
+    margin-top: 20px;
+    margin-bottom: 20px;
     visibility: hidden;
 }
 #menuScroll::-webkit-scrollbar-thumb{
@@ -55,7 +57,7 @@
     border-radius:20px ;
 }
 #menuScroll:hover::-webkit-scrollbar-thumb{
-    background-color: #a2bcff9d;
+    background-color: #0749f09d;
     
 }
 
@@ -124,6 +126,18 @@
 
 .playwrite {
   font-family: "Playwrite FR Moderne", cursive;
+}
+
+.playwrite2 {
+  font-family: "Playwrite DE Grund", cursive;
+}
+
+.nunito {
+  font-family: "Nunito", sans-serif;
+}
+
+.exo {
+  font-family: "Exo", sans-serif;
 }
 
 .itim {
