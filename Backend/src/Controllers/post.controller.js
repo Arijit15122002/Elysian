@@ -17,7 +17,7 @@ const createPost = async (req, res) => {
 
     try {
 
-        const { user, postType, message, images, taggedPeople, checkIn, backgroundColor, feelingActivity } = req.body
+        const { user, postType, message, images, hashTags, taggedPeople, checkIn, backgroundColor, feelingActivity } = req.body
 
         const rightUser = await User.findById(user._id)
 
@@ -56,6 +56,7 @@ const createPost = async (req, res) => {
             images : imageURLs,
             likes : [],
             comments : [],
+            hashTags,
             taggedPeople,
             checkIn,
             backgroundColor,
@@ -63,6 +64,10 @@ const createPost = async (req, res) => {
         })
 
         await post.save()
+
+        await User.findByIdAndUpdate(user._id, {
+            $push : { posts : post._id }
+        })
 
         return res.status(201).json({
             message : "Post created successfully",
@@ -505,12 +510,6 @@ const getPost = async (req, res) => {
         const post = await Post.findById(id).populate({
             path : "user",
             select : "-password"
-        }).populate({ 
-            path : "comments.user", 
-            select : "-password" 
-        }).populate({
-            path : "comments.replies.user",
-            select : "-password"
         })
 
         if( !post ) {
@@ -569,27 +568,27 @@ const getUserPosts = async (req, res) => {
 
     try {
         
-        const { id } = req.params
+        // const { id } = req.params
 
-        const user = await User.findById(id)
+        // const user = await User.findById(id)
 
-        if( !user ) {
-            return res.status(404).json({
-                message : "User not found"
-            })
-        }
+        // if( !user ) {
+        //     return res.status(404).json({
+        //         message : "User not found"
+        //     })
+        // }
 
-        const posts = await Post.find({ user : id }).sort({ createdAt : -1 }).populate({
-            path : "user",
-            select : "-password"
-        }).populate({
-            path : "comments.user",
-            select : "-password"
-        })
+        // const posts = await Post.find({ user : id }).sort({ createdAt : -1 }).populate({
+        //     path : "user",
+        //     select : "-password"
+        // }).populate({
+        //     path : "comments.user",
+        //     select : "-password"
+        // })
 
-        return res.status(200).json({
-            posts
-        })
+        // return res.status(200).json({
+        //     posts
+        // })
 
     } catch (error) {
         
@@ -636,4 +635,81 @@ const getFollowingPosts = async (req, res) => {
     }
 }
 
-export { createPost, deletePost, getPost, getAllPosts, updatePost, likePost, commentPost, commentReplyPost, likeComment, likeCommentReply, savePost, getUserPosts, getFollowingPosts };
+const getProfilePosts = async (req, res) => {
+
+    try {
+
+        const { postIds } = req.body
+        console.log(req.body);
+        
+        const posts = await Post.find({ _id : { $in : postIds } }).sort({ createdAt : -1 })
+
+        return res.status(200).json({
+            message : "Posts fetched successfully",
+            posts
+        })
+        
+    } catch (error) {
+        return res.status(500).json({
+            message : "Something went wrong while fetching posts"
+        })
+    }
+
+}
+
+const getSearchSuggestions = async (req, res) => {
+
+    try {
+        
+        const {query} = req.params
+        const userNames = await User.find({
+            $or : [
+                { fullname : { $regex : query, $options : "i" } },
+                { username : { $regex : query, $options : "i" } }
+            ]
+        }).select("_id fullname")
+
+        const uniqueUsernames = [...new Set(userNames)];
+
+        return res.status(200).json({
+            message : "Users fetched successfully",
+            uniqueUsernames
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            message : "Something went wrong while fetching posts"
+        })
+    }
+
+}
+
+const getPostSearchResults = async (req, res) => {
+
+    try {
+
+        const {query} = req.params
+        
+        const posts = await Post.find({
+            $or : [
+                {
+                    text : { $regex : query, $options : "i" },
+                    hashTags : { $regex : query, $options : "i" }
+                }
+            ]
+        })
+        
+        return res.status(200).json({
+            message : "Posts fetched successfully",
+            posts
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            message : "Something went wrong while fetching posts"
+        })
+    }
+    
+}
+
+export { createPost, deletePost, getPost, getAllPosts, updatePost, likePost, commentPost, commentReplyPost, likeComment, likeCommentReply, savePost, getUserPosts, getFollowingPosts, getProfilePosts, getSearchSuggestions, getPostSearchResults };

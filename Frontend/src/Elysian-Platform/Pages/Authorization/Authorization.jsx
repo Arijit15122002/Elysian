@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
@@ -120,6 +120,25 @@ function Authorization ({type}) {
 		}
 
 	}
+
+
+	//Handling ENTER button press
+	const authRef = useRef(null);
+		
+	useEffect(() => {
+		const handleKeyDown = (e) => {
+			if (e.key === 'Enter') {
+				authRef.current?.click(); // Simulate click on the div
+			}
+		};
+	
+		document.addEventListener('keydown', handleKeyDown);
+	
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown); // Cleanup
+		};
+	}, []);
+
 
 	return (
 		<div className='w-full flex flex-row'>
@@ -365,6 +384,7 @@ function Authorization ({type}) {
 						</div>
 
 						<div
+						ref={authRef}
 						onClick={handleSubmit}
 						className=' mt-[4rem] mb-4 dosis font-bold text-[1.3rem] bg-green-300 px-8 py-3 rounded-3xl hover:scale-110 duration-300 ease-in-out cursor-pointer'>
 							{

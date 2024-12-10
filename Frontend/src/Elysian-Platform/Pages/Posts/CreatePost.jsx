@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import axios from 'axios'
+import ScaleLoader from "react-spinners/ScaleLoader";
 
 import { postTypes, postTypesChange } from '../../../constants/Constant'
 
 import './PostCreation.css'
+import './CreatePost.css'
 import MobileImageSelector from '../../Components/ImageSelector/MobileImageSelector'
-import ScaleLoader from "react-spinners/ScaleLoader";
 import DragAndDropImage from '../../Components/DragAndDropImage/DragAndDropImage'
 import Carousel from '../../Components/Carousel/Carousel'
 import FeelingActivityConstants from '../../../constants/FeelingActivityConstants'
@@ -27,6 +28,8 @@ function CreatePost () {
 	const [ postable, setPostable ] = useState(false)
 	const [ postType, setPostType ] = useState('Public')
 	const [message, setMessage] = useState('');
+	const [hashTagMessage, setHashTagMessage] = useState('#');
+	const [hashTags, setHashTags] = useState([])
 	const [taggedPeople, setTaggedPeople] = useState([])
 	const [checkIn, setCheckIn] = useState('')
 	const [backgroundColor, setBackgroundColor] = useState('')
@@ -35,11 +38,8 @@ function CreatePost () {
 
 	//HANDLING POST BUTTON COLOR CHANGE
 	const handleMessageChange = (event) => {
-		if( event.target.value.length >= 3 ) {
-			setPostable(true)
-		}
 		setMessage(event.target.value);
-	};
+	  };
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
@@ -51,6 +51,33 @@ function CreatePost () {
 		}, 2000);
 		return () => clearTimeout(timer);
 	}, [message, totalImages]);
+
+
+
+	//Handling the HashTags
+	const handleHashTagChange = (e) => {
+		const inputValue = e.target.value;
+	
+		// Split the input by spaces and check if each word starts with '#'
+		const words = inputValue.split(' ');
+		const allWordsAreHashtags = words.every(word => word === '' || word.startsWith('#'));
+	
+		// Update state only if all words start with '#'
+		if (allWordsAreHashtags) {
+		  setHashTagMessage(inputValue);
+		}
+	};
+
+	useEffect(() => {
+		// Extract hashtags without '#' and update the hashtags state
+		const updatedHashtags = hashTagMessage
+		.split(' ')
+		.filter(word => word.startsWith('#') && word.length > 1) // Check that the word is not just '#'
+		.map(word => word.slice(1)); // Remove the '#' from each word
+	
+		setHashTags(updatedHashtags);
+	}, [hashTagMessage]);
+	
 
 
 	//HANDLING SETTING, CROPPING & UPLOADING PHOTOS AND VIDEOS
@@ -71,11 +98,13 @@ function CreatePost () {
 		postType,
 		message,
 		images : totalImages,
+		hashTags,
 		taggedPeople,
 		checkIn,
 		backgroundColor,
 		feelingActivity
 	}
+	console.log(postData);
 
 	const [loading, setLoading] = useState(false)
 
@@ -88,6 +117,7 @@ function CreatePost () {
 		
 		try {
 			const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/post/create`, postData);
+			console.log(response);
 		} catch (error) {
 			console.error(error);
 		} finally {
@@ -303,7 +333,7 @@ function CreatePost () {
 			<div className='w-[calc(100%-75px)] lg:w-full h-full flex flex-row items-center'>
 
 				{/* THE LOADING PAGE */}
-				<div className={`${loading ? 'block' : 'hidden'} h-[100svh] w-full bg-white absolute z-40 flex flex-row items-center justify-center`}>
+				<div className={`${loading ? 'block' : 'hidden'} h-[100svh] w-full bg-[#f7f7f7] absolute z-40 flex flex-row items-center justify-center`}>
 				<ScaleLoader 
 					color='#232323'
 					loading={loading}
@@ -311,7 +341,7 @@ function CreatePost () {
 				/>
 				</div>
 				
-				<div className='w-[40%] xl:w-[32%] h-full hidden lg:flex flex-col items-center'>
+				<div className='w-[40%] xl:w-[32%] h-full hidden lg:flex flex-col items-center overflow-y-auto' id='scrollHome'>
 					<div className='w-[80%] kanit text-[1.4rem] text-[#cccccc] py-4'>
 						Your Post Preview
 					</div>
@@ -320,8 +350,14 @@ function CreatePost () {
 							<div className=' h-auto flex flex-row'>
 								<img src={user?.profilePic} alt="" className='w-[40px] h-[40px] rounded-full object-cover'/>
 								<div className='flex flex-col w-auto h-full px-3 mb-[3px]'>
-									<div className='text-[1rem] kanit text-[#232323]'>Arijit Biswas, {
-										checkIn.length > 0 ? <span className='text-[#444444] text-[0.8rem]'>at {checkIn}</span> : <span></span>
+									<div className='text-[1rem] kanit text-[#232323]'>{user?.fullname} 
+									{
+										checkIn.length > 0 ? 
+											<>
+												<span className='text-[1rem] -ml-[0.5px] mr-[2px] kanit text-[#232323]'>,</span>
+												<span className='text-[#444444] text-[0.8rem]'>at {checkIn}</span>
+											</>
+											 : <span></span>
 									}</div>
 									<div className='text-[0.7rem] kanit text-[#aaaaaa]'>Now</div>
 								</div>
@@ -330,8 +366,20 @@ function CreatePost () {
 								<svg className='w-[20px] h-[20px]' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M5 14C6.10457 14 7 13.1046 7 12C7 10.8954 6.10457 10 5 10C3.89543 10 3 10.8954 3 12" stroke="#555555" stroke-width="1.5" stroke-linecap="round"></path> <circle cx="12" cy="12" r="2" stroke="#555555" stroke-width="1.5"></circle> <path d="M21 12C21 13.1046 20.1046 14 19 14C17.8954 14 17 13.1046 17 12C17 10.8954 17.8954 10 19 10" stroke="#555555" stroke-width="1.5" stroke-linecap="round"></path> </g></svg>
 							</div>
 						</div>
-						<div className='text-[0.9rem] text-[#232323] px-6 pt-8 pb-4 kanit'>
+						<div className='text-[0.9rem] text-[#232323] px-6 pt-8 pb-1 kanit'>
 							{message}
+						</div>
+						<div className='text-[0.8rem] text-blue-600 px-6 pt-2 pb-4 kanit'>
+						{
+							hashTags.length > 0 ?
+							<>
+							{
+								hashTags.map((tag, index) => (
+								<span>#{tag} </span>
+								))
+							}
+							</> : <></>
+						}
 						</div>
 						<div className='w-full h-auto'>
 						{
@@ -370,7 +418,7 @@ function CreatePost () {
 				<div className='h-[90%] my-auto w-[1.5px] bg-[#dddddd] rounded-full hidden lg:flex'></div>
 
 				<div className=' w-full max-w-[800px] mx-auto lg:w-[60%] xl:w-[68%] h-full flex flex-col items-center overflow-y-auto' id='scrollHome'>
-					<div className='w-full lg:w-[80%] h-[50px] flex flex-row items-center justify-between px-6 py-3'>
+					<div className='w-full lg:w-[80%] h-[50px] flex flex-row items-center justify-between px-6 py-3 relative'>
 						<div className=' text-[1.5rem] font-semibold text-[#cccccc]'>
 							Create Post
 						</div>
@@ -379,6 +427,21 @@ function CreatePost () {
 							onClick={post}
 						>
 							POST
+						</div>
+						<div 
+							className={`${ postable ? 'flex' : 'hidden' } absolute -right-[60px] text-[1rem] font-semibold bg-red-200 px-[1rem] py-1 text-red-600 rounded-xl dosis cursor-pointer`}
+							onClick={() => {
+								setPostable(false)
+								setPostType('Public')
+								setMessage('')
+								setTaggedPeople([])
+								setCheckIn('')
+								setBackgroundColor('')
+								setFeelingActivity('')
+								setTotalImages([])
+							}}
+						>
+							CANCEL
 						</div>
 					</div>
 					<div className='mt-[20px] w-[85%] lg:w-[70%] h-[70px] flex flex-row gap-3 items-center'>
@@ -472,14 +535,21 @@ function CreatePost () {
 						</div>
 						<div className='w-full h-full flex flex-col items-center justify-center'>
 							<div className='w-[90%] h-[90%] flex flex-col justify-center'>
-								<div className='w-full flex justify-center'>
+								<div className='w-full flex flex-col items-center'>
 									<textarea
 										id="message"
 										name="message"
-										placeholder="What's on your mind?" 
+										placeholder="What's on your mind?"
 										value={message}
 										onChange={handleMessageChange}
-										className='w-full min-w-[380px] max-w-[450px] min-h-[4rem] h-[4rem] text-[#232323] bg-[#eeeeee] focus:outline-none p-4 rounded-2xl radio border-2 border-[#dddddd] m-2'
+										className='w-full min-w-[380px] max-w-[450px] min-h-[4rem] h-[4rem] text-[#232323] bg-[#eeeeee] focus:outline-none p-4 rounded-2xl radio border-2 border-[#dddddd] m-4'
+									/>
+									<input 
+										type="text"
+										value={hashTagMessage}
+										onChange={handleHashTagChange}
+										placeholder='Your #hashtags'
+										className='w-full min-w-[380px] max-w-[450px] radio text-[0.9rem] p-2 rounded-xl focus:outline-none bg-[#eeeeee] border-2 border-[#dddddd] focus:border-blue-500 text-blue-600 italic'
 									/>
 								</div>
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 
@@ -31,10 +31,19 @@ function Explore () {
 
 	}, [user.followers, user.following])
 
+	const [ loading, setLoading ] = useState(false)
+	const dispatch = useDispatch()
 	const followOrUnfollow = async (followUserId) => {
-		const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/user/follow/${followUserId}`, { userId : user._id })
-		console.log(response?.data);
-		dispatchEvent(updateLocalUser(response?.data?.following))
+		try {
+			setLoading(true);
+			const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/user/follow/${followUserId}`, { userId : user._id })
+			if(  response?.data?.currentUser ) {
+				dispatch(userExists(response?.data?.currentUser))
+				setLoading(false);
+			}
+		} catch (error) {
+			console.log("Error occured while following or unfollowing user: ", error);
+		}
 	}
 
 	return (

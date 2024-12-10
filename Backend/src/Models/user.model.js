@@ -65,12 +65,38 @@ const userSchema = new mongoose.Schema({
             default: ''
         },
         work: {
-            type: String,
-            default: ''
+            offices: [
+                {
+                    name: {
+                        type: String,
+                        default: ''
+                    },
+                    designation: {
+                        type: String,
+                        default: ''
+                    }
+                }
+            ]
         },
         education: {
-            type: String,
-            default: ''
+            schools: [
+                {
+                    type: String,
+                    default: ''
+                }
+            ],
+            colleges: [
+                {
+                    name: {
+                        type: String,
+                        default: ''
+                    }, 
+                    degree: {
+                        type: String,
+                        default: ''
+                    }
+                }
+            ]
         },
         interests: {
             type: [String],
@@ -95,10 +121,31 @@ const userSchema = new mongoose.Schema({
         default: []
     }, 
 
+    posts : [
+        {
+            type : mongoose.Schema.Types.ObjectId,
+            ref : 'Post'
+        }
+    ],
+
     savedPosts : [
         {
             type : mongoose.Schema.Types.ObjectId,
             ref : 'Post',
+        }
+    ],
+
+    stories : [
+        {
+            type : mongoose.Schema.Types.ObjectId,
+            ref : 'Story'
+        }
+    ], 
+
+    savedStories : [
+        {
+            type : mongoose.Schema.Types.ObjectId,
+            ref : 'Story'
         }
     ]
 

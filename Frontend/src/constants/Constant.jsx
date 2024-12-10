@@ -68,3 +68,216 @@ export const postTypesChange = [
 
     }
 ]
+
+
+export const interests = [
+    {
+        name: "Arts & Creativity",
+        list: [
+            'Painting',
+            'Drawing',
+            'Photography',
+            'Graphic Design',
+            'Calligraphy',
+            'Writing/Poetry',
+            'Acting/Theatre',
+            'Music Composition',
+            'Singing',
+            'Dancing',
+            'Fashion Designing',
+            'Crafting/DIY Projects'
+        ]
+    },
+    {
+        name: "Entertainment & Media",
+        list: [
+            'Movies',
+            'TV Shows',
+            'Anime',
+            'Gaming',
+            'Podcasts',
+            'Stand-up Comedy',
+            'Blogging/Vlogging',
+            'Celebrity News',
+            'Reading Novels',
+            'Concerts/Live Performances'
+        ]
+    },
+    {
+        name: "Sports & Fitness",
+        list: [
+            'Football (Soccer)',
+            'Basketball',
+            'Cricket',
+            'Tennis',
+            'Golf',
+            'Yoga',
+            'Hiking',
+            'Running/Marathons',
+            'Gym Workouts',
+            'Martial Arts',
+            'Swimming',
+            'Adventure Sports (Skydiving, Surfing, etc.)'
+        ]
+    },
+    {
+        name: "Technology & Science",
+        list: [
+            'Artificial Intelligence',
+            'Coding/Programming',
+            'Web Development',
+            'Space Exploration',
+            'Cryptocurrency',
+            'Video Editing',
+            'Robotics',
+            'Science Experiments',
+            'Tech Gadgets',
+            'Blockchain/Fintech'
+        ]
+    },
+    {
+        name: "Travel & Exploration",
+        list: [
+            'Solo Travel',
+            'Backpacking',
+            'Luxury Travel',
+            'Road Trips',
+            'Nature Exploration',
+            'Cultural Tourism',
+            'Historical Places',
+            'Beach Vacations',
+            'Food Tourism',
+            'Camping'
+        ]
+    },
+    {
+        name: "Food & Drink",
+        list: [
+            'Cooking',
+            'Baking',
+            'Coffee Brewing',
+            'Wine Tasting',
+            'Vegan Recipes',
+            'International Cuisines',
+            'Street Food',
+            'Healthy Eating',
+            'Fast Food Enthusiast',
+            'Food Blogging'
+        ]
+    },
+    {
+        name: "Lifestyle & Wellness",
+        list: [
+            'Meditation',
+            'Mental Health Advocacy',
+            'Minimalism',
+            'Fashion Styling',
+            'Personal Finance',
+            'Home Decor',
+            'Self-improvement',
+            'Gardening',
+            'Parenting',
+            'Pets/Animal Care'
+        ]
+    },
+    {
+        name: "Social Causes & Advocacy",
+        list: [
+            'Environmental Conservation',
+            'Climate Change',
+            'Human Rights',
+            'Animal Welfare',
+            'LGBTQ+ Rights',
+            'Volunteering',
+            'Education for All',
+            'Gender Equality',
+            'Disaster Relief',
+            'Anti-Bullying Advocacy'
+        ]
+    },
+    {
+        name: "Hobbies & Pastimes",
+        list: [
+            'Reading',
+            'Board Games',
+            'Collecting (Stamps, Coins, etc.)',
+            'Knitting/Sewing',
+            'Playing Musical Instruments',
+            'Bird Watching',
+            'Origami',
+            'Puzzles/Riddles',
+            'Magic Tricks',
+            'Model Building'
+        ]
+    },
+    {
+        name: "Others",
+        list: [
+            'Astrology',
+            'Astronomy',
+            'E-sports',
+            'Meme Culture',
+            'History Buff',
+            'Language Learning',
+            'Mythology',
+            'Urban Exploration',
+            'DIY Repairs',
+            'Science Fiction/Fantasy'
+        ]
+    }
+];
+
+
+
+//All exports for Text Story
+export const randomColorGenerator = () => {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color
+}
+
+export const fontFamilies = [
+    'cedarville',
+    'radio',
+    'cabin',
+    'kanit',
+    'anton',
+    'belanosima',
+    'mooli',
+    'protest',
+    'mono',
+    'dosis',
+    'playwrite',
+    'playwrite2',
+    'nunito',
+    'exo',
+    'itim',
+    'monoton',
+    'grand',
+    'quicksand',
+    'borel',
+    'dongle',
+]
+
+export const isColorLight = (color) => {
+    // Convert hex to RGB
+    const hexToRgb = (hex) => {
+      hex = hex.replace('#', '');
+      const bigint = parseInt(hex, 16);
+      const r = (bigint >> 16) & 255;
+      const g = (bigint >> 8) & 255;
+      const b = bigint & 255;
+      return { r, g, b };
+    };
+  
+    const { r, g, b } = hexToRgb(color);
+  
+    // Calculate relative luminance
+    const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+  
+    // Return true if light, false if dark
+    return luminance > 0.5;
+  };

@@ -1,0 +1,93 @@
+.container {
+    width: 100%;
+    height: 160px;
+    border-radius: 20px;
+    border-top-left-radius: 0px;
+    background-color: rgb(59 130 246);
+    position: relative;
+}
+
+.subcontainer {
+    position: absolute;
+    top: -49px;
+    left: 0px;
+    height: 70px;
+    width: 100px;
+    background-color: rgb(59 130 246);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px
+}
+
+.subcontainer::before {
+    content: '';
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background-color: rgb(59 130 246);
+    clip-path: polygon(80% 0%, 100% 100%, 0% 100%);
+    rotate: 90deg;
+    right: -92px;
+    top: 3.9px;
+    box-shadow: -9px 9px 0px #004385;
+} 
+
+.subcontainer::after {
+    content: '';
+    position: absolute;
+    width: 69px;
+    height: 69px;
+    border-radius: 50%;
+    /* border-top-left-radius: 0px; */
+    border-bottom-right-radius: 0px;
+    background-color: #f7f7f7;
+    bottom: 21px;
+    right: -94.5px;
+    box-shadow: -24px 60px 0px rgb(59 130 246);
+}
+
+.subcontainerWhiteBlock {
+    position: absolute;
+    top: -70px;
+    left: 140px;
+    background-color: #232323;
+    width: 60%;
+    height: 60px;
+    border-radius: 15px;
+    border-bottom-left-radius: 19.5px;
+    border-top-left-radius: 0px;
+}
+
+.subcontainerWhiteBlock::before {
+    content: '';
+    position: absolute;
+    width: 69px;
+    height: 57px;
+    background-color: #232323;
+    clip-path: polygon(0% 0%, 100% 100%, 0% 100%);
+    rotate: 180deg;
+    left: -60px;
+    bottom: 3px;
+}
+
+.subcontainerWhiteBlock::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #232323;
+    box-shadow: -5px -3px 0px #f7f7f7;
+    left: -42px;
+    top: 0.7px;
+}
+
+.shadowContainer {
+    content: '';
+    position: absolute;
+    background-color: #f7f7f7;
+    width: 30px;
+    height: 30px;
+    top: -88px;
+    left: 65px;
+
+}

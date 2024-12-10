@@ -81,7 +81,7 @@ function CommentBox ({ post, commentBoxOpen, setCommentBoxOpen, likeCount, setLi
 				{post?.user?.fullname.split(' ')[0]}'s post
 			</div>
 
-			<div className='absolute top-2 right-2 text-[#aaaaaa] hover:text-white hover:font-semibold bg-[#f4f4f4] hover:bg-[#232323] hover:scale-110 duration-300 ease-in-out px-5 py-1.5 rounded-xl dosis cursor-pointer z-30' onClick={() => setCommentBoxOpen(!commentBoxOpen)}>BACK</div>
+			<div className='absolute top-2 right-2 text-white hover:font-semibold bg-[#232323] hover:scale-110 duration-300 ease-in-out px-5 py-1.5 rounded-xl dosis cursor-pointer z-30' onClick={() => setCommentBoxOpen(!commentBoxOpen)}>BACK</div>
 
 			<div className='w-full h-full overflow-hidden overflow-y-auto' id='menuScroll'>
 

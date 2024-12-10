@@ -8,8 +8,10 @@ import { useDispatch } from 'react-redux'
 import { userExists } from './redux/reducers/auth.reducer'
 import { setSuggestedUsers } from './redux/reducers/suggestedUsers.reducer'
 import { setDeviceType } from './redux/reducers/deviceType.reducer'
+import { addNotifications, setNotifications } from './redux/reducers/notifications.reducer'
 import 'react-image-crop/dist/ReactCrop.css'
 import { useSelector } from 'react-redux'
+import io from 'socket.io-client'
 
 // SplashScreen Animation
 import SplashScreen from './commonComponents/HomeAnimation.jsx/SplashScreen'
@@ -20,13 +22,12 @@ const Layout = lazy(() => import('./Elysian-Platform/Pages/Layout'))
 const Authorization = lazy(() => import('./Elysian-Platform/Pages/Authorization/Authorization'))
 const FeedLayout = lazy(() => import('./Elysian-Platform/Pages/FeedComponent/FeedLayout'))
 const Feed = lazy(() => import('./Elysian-Platform/Pages/FeedComponent/Feed'))
-const Search = lazy(() => import('./Elysian-Platform/Pages/Search'))
+const Search = lazy(() => import('./Elysian-Platform/Pages/Search/Search'))
 const CreatePost = lazy(() => import('./Elysian-Platform/Pages/Posts/CreatePost'))
 const NotFound = lazy(() => import('./Elysian-Platform/Pages/NotFound'))
 const Notification = lazy(() => import('./Elysian-Platform/Components/Notifications/Notification'))
-const MyProfile = lazy(() => import('./Elysian-Platform/Pages/MyProfile'))
-const CreatePhotoStory = lazy(() => import('./Elysian-Platform/Pages/Story/CreatePhotoStory'))
-const CreateTextStory = lazy(() => import('./Elysian-Platform/Pages/Story/CreateTextStory'))
+const Profile = lazy(() => import('./Elysian-Platform/Pages/MyProfile/Profile'))
+const StoryViewer = lazy(() => import('./Elysian-Platform/Pages/FeedComponent/Story/StoryViewer'))
 const Explore = lazy(() => import('./Elysian-Platform/Pages/ExplorePeople/Explore'))
 
 // MOJO
@@ -38,7 +39,7 @@ const Group = lazy(() => import('./Mojo-Platform/Pages/Group'))
 import './App.css'
 import ProtectRoute from './ProtectRoute'
 import { Loader } from './Elysian-Platform/Pages/ElysianLoaders'
-import CreateStory from './Elysian-Platform/Pages/Posts/CreateStory'
+import CreateStory from './Elysian-Platform/Pages/FeedComponent/Story/CreateStory'
 
 
 
@@ -73,6 +74,8 @@ function App() {
 
 	
 	//SETTING USER TO THE import { connect } from 'react-redux'
+	const [ userId, setUserId ] = useState(null)
+
 	useEffect(() => {
 		const token = localStorage.getItem('token')
 		if( token ) {
@@ -83,33 +86,31 @@ function App() {
 				return
 			} else {
 				fetchUser(decoded.userId)
+				initializeSocket(decoded.userId);
+        		fetchNotifications(decoded.userId);
 			}
 		}
 
 		async function fetchUser(userId) {
 			const response  = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/user/profile/${userId}`)
-			console.log(response);
 			if(response?.data?.user) {
 				dispatch(userExists(response.data.user))
 			}
 		}
 		
-		
 	}, [])
 
 	useEffect(() => {
 		const calculateSuggestedUsers = async () => {
-		  // Check if user object is available before making the API call
-		  if (user) {
-			const response = await axios.get(
-			  `${import.meta.env.VITE_BASE_URL}/api/user/suggested/${user._id}`
-			);
-			if ( response?.data?.suggestedUsers.length ) {
-			  dispatch(setSuggestedUsers(response?.data?.suggestedUsers));
+			// Check if user object is available before making the API call
+			if (user) {
+				const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/user/suggested/${user._id}`);
+				if ( response?.data?.suggestedUsers.length ) {
+					dispatch(setSuggestedUsers(response?.data?.suggestedUsers));
+				}
+			} else {
+				console.log("User object is not yet available");
 			}
-		  } else {
-			console.log("User object is not yet available");
-		  }
 		};
 	  
 		calculateSuggestedUsers();
@@ -142,6 +143,33 @@ function App() {
 	
 		return () => clearTimeout(timeoutId);
 	}, []);
+
+
+	//Setting Notifications 
+	const initializeSocket = (userId) => {
+		const newSocket = io(import.meta.env.VITE_BASE_URL); // Replace with your server URL
+		newSocket.emit("joinRoom", userId); // Join the user's notification room
+		// setSocket(newSocket);
+	
+		// Listen for live notifications
+		newSocket.on("NEW_ELYSIAN_NOTIFICATION", (notification) => {
+		  dispatch(addNotifications(notification)); // Add live notification to Redux
+		});
+	
+		// Cleanup socket connection on component unmount
+		return () => newSocket.disconnect();
+	};
+
+	const fetchNotifications = async (userId) => {
+		try {
+		  const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/notification/${userId}`);
+		  if (response?.data) {
+			dispatch(setNotifications(response.data)); // Set notifications in Redux state
+		  }
+		} catch (error) {
+		  console.error("Error loading notifications:", error);
+		}
+	  };
 
 	return (
 		<>
@@ -186,9 +214,14 @@ function App() {
 												</ProtectRoute>
 											}>
 												<Route path="/post/create" element={<CreatePost />} />
-												<Route path="/post/story" element={<CreateStory />} />
-												<Route path="/post/story/photo" element={<CreatePhotoStory/>} />
-												<Route path="/post/story/text" element={<CreateTextStory/>} />
+											</Route>
+
+											<Route path='/stories/:userId' element={
+												<ProtectRoute>
+													<FeedLayout />
+												</ProtectRoute>
+											}>
+												<Route path='' element={<StoryViewer/>}></Route>
 											</Route>
 
 											<Route path="/notifications" element={
@@ -212,7 +245,7 @@ function App() {
 													<FeedLayout />
 												</ProtectRoute>
 											}>
-												<Route path="" element={<MyProfile />} />
+												<Route path="" element={<Profile />} />
 											</Route>
 
 											<Route path="/mojo" element={

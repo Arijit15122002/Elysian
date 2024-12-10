@@ -11,6 +11,8 @@ import Settings from '../Settings/Settings'
 
 import FeedOptions from './FeedOptions'
 import FeedFriendSuggestions from './FeedFriendSuggestions'
+import ProfileSideNavigation from '../MyProfile/ProfileSideNavigation'
+import Profile from '../MyProfile/Profile'
 
 function FeedLayout () {
 
@@ -21,18 +23,32 @@ function FeedLayout () {
 	const [settingsOpen, setSettingsOpen] = useState(false)
 
 	const [ nowOnPostScreen, setNowOnPostScreen ] = useState(false)
+	const [ nowOnStoryScreen, setNowOnStoryScreen ] = useState(false)
+	const [ nowOnProfileScreen, setNowOnProfileScreen ] = useState(false)
 
 	useEffect(() => {
 		const urlPath = window.location.pathname
-		if ( urlPath === '/post/story' || urlPath === '/post/create' ) {
-			setNowOnPostScreen(true)
-		} else{
-			setNowOnPostScreen(false)
+		if (urlPath === '/post/create') {
+			setNowOnPostScreen(true);
+			setNowOnProfileScreen(false);
+			setNowOnStoryScreen(false);
+		} else if (urlPath === '/profile') {
+			setNowOnProfileScreen(true);
+			setNowOnPostScreen(false);
+			setNowOnStoryScreen(false);
+		} else if (urlPath.startsWith('/stories')) {
+			setNowOnStoryScreen(true);
+			setNowOnPostScreen(false);
+			setNowOnProfileScreen(false);
+		} else {
+			setNowOnPostScreen(false);
+			setNowOnProfileScreen(false);
+			setNowOnStoryScreen(false); // Reset all states to show feed layout
 		}
 	}, [window.location.pathname]);
 
 	return (
-		<div className=' w-full h-[webkit-fill-available] bg-[#f7f7f7]'>
+		<div className=' w-full h-[webkit-fill-available]'>
 
 			<div className={`${deviceType === 'mobile' ? 'block' : 'hidden'} w-full h-[70px] fixed z-50`}>
 				<MobileNavBar settingsOpen={settingsOpen} setSettingsOpen={setSettingsOpen} />
@@ -48,7 +64,7 @@ function FeedLayout () {
 
 
 			<div className='w-full h-[100vh] flex items-end'>
-				<div className='w-full h-[calc(100vh-70px)] '>
+				<div className='w-full h-[calc(100vh-70px)]'>
 					{
 						deviceType === 'mobile' ? 
 						<Outlet /> : 
@@ -56,16 +72,21 @@ function FeedLayout () {
 							<div className='absolute left-2 lg:hidden z-50'>
 								<ComputerSideNavigation/>
 							</div>
-							<div className='w-[calc(100vw-77px)] lg:w-full h-full flex flex-row justify-center pr-[10px] lg:px-[15px]'>
+							<div className={`${ nowOnProfileScreen ? '' : 'lg:px-[15px]' } w-[calc(100vw-77px)] pr-[10px] lg:pr-0 lg:w-full h-full flex flex-row justify-center`}>
 							{
-								nowOnPostScreen ?
+								nowOnPostScreen || nowOnStoryScreen ?
 								<>
 									<div className='w-[100%] h-full'><Outlet/></div>
 								</> : 
+								nowOnProfileScreen ?
+								<>
+									<div className='hidden md:block w-[25%] min-w-[300px] h-full'><ProfileSideNavigation/></div>
+									<div className='w-[100%] md:w-[75%] h-full'><Outlet/></div>
+								</> :
 								<>
 									<div className='w-[25%] min-w-[230px] h-full hidden lg:flex '><FeedOptions/></div>
 									<div className='w-[100%] md:w-[60%] h-full'><Outlet/></div>
-									<div className='w-[30%] h-full hidden md:flex'><FeedFriendSuggestions/></div>
+									<div className='w-[35%] lg:w-[30%] xl:w-[27%] h-full hidden md:flex'><FeedFriendSuggestions/></div>
 								</>
 							}
 							</div>

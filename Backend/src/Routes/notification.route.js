@@ -1,16 +1,10 @@
 import express from 'express'
 
-import { getNotifications, deleteNotifications, deleteSingleNotification } from '../Controllers/notification.controller.js'
-import protectRoute from '../MiddleWares/protectRoute.js'
+import { getAllNotifications } from '../Controllers/notification.controller.js'
 
 const notificationRouter = express.Router()
 
-
-notificationRouter.get('/', protectRoute, getNotifications)
-
-notificationRouter.delete('/', protectRoute, deleteNotifications)
-
-notificationRouter.delete('/:id', protectRoute, deleteSingleNotification)
+notificationRouter.get('/:userId', getAllNotifications);
 
 
 export default notificationRouter

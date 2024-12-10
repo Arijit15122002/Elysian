@@ -126,7 +126,13 @@ const postSchema = new mongoose.Schema({
 
         type : String
 
-    }
+    },
+
+    hashTags : [
+        {
+            type : String
+        }
+    ]
 
 }, {
 

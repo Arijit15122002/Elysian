@@ -61,3 +61,24 @@
     z-index: -1;
     filter: blur(10px);
 }
+
+
+.content-editable {
+    display: flex;
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    flex-direction: column; /* Ensure content stacks properly */
+    text-align: center;
+    white-space: pre-wrap; /* Preserve whitespace */
+    overflow-wrap: break-word;
+    word-break: break-word;
+    line-height: 1.2; /* Adjust for better spacing */
+    height: 100%;
+    width: 100%;
+    outline: none; /* Remove default focus outline */
+  }
+  
+.content-editable:empty:before {
+    content: "\200B"; /* Zero-width space */
+    display: inline-block;
+  }

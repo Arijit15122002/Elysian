@@ -5,6 +5,16 @@ import User from "../Models/user.model.js"
 import Notification from "../Models/notification.model.js"
 
 
+
+
+
+cloudinary.config({
+    cloud_name : process.env.CLOUDINARY_CLOUD_NAME,
+    api_key : process.env.CLOUDINARY_API_KEY,
+    api_secret : process.env.CLOUDINARY_API_SECRET,
+})
+
+
 const getUserById = async (req, res) => {
     const { id } = req.params
 
@@ -191,13 +201,48 @@ const followOrUnfollowUser = async (req, res) => {
             });
 
             // Send notification to the UserToModify
-            const newNotification = new Notification({
+            const foundSameNotification = await Notification.findOne({
                 type: 'follow',
                 from: currentUser._id,
                 to: userToModify._id
             });
 
-            await newNotification.save();
+            if (foundSameNotification) {
+                foundSameNotification.createdAt = new Date().toISOString();
+                await foundSameNotification.save();
+
+                const notificationData = {
+                    type: 'follow',
+                    from: { 
+                        _id: currentUser._id, 
+                        name: currentUser.name 
+                    },
+                    to: userToModify._id,
+                    date: new Date().toISOString()
+                };
+    
+                req.io.to(userToModify._id.toString()).emit('NEW_ELYSIAN_NOTIFICATION', notificationData);
+            } else {
+                const newNotification = new Notification({
+                    type: 'follow',
+                    from: currentUser._id,
+                    to: userToModify._id
+                });
+    
+                await newNotification.save();
+    
+                const notificationData = {
+                    type: 'follow',
+                    from: { 
+                        _id: currentUser._id, 
+                        name: currentUser.name 
+                    },
+                    to: userToModify._id,
+                    date: new Date().toISOString()
+                };
+    
+                req.io.to(userToModify._id.toString()).emit('NEW_ELYSIAN_NOTIFICATION', notificationData);
+            }
 
             // Re-fetch the updated currentUser
             const updatedCurrentUser = await User.findById(userId);
@@ -206,6 +251,7 @@ const followOrUnfollowUser = async (req, res) => {
                 message: "Followed successfully",
                 currentUser: updatedCurrentUser
             });
+            
         }
 
     } catch (error) {
@@ -216,42 +262,152 @@ const followOrUnfollowUser = async (req, res) => {
     }
 };
 
-
-const updateUserProfilePic = async (req, res) => {
-
-    const { profilePic, userId } = req.body
-
-    const user = await User.findById(userId)
-
+const updateUserProfilePicture = async (req, res) => {
+    
     try {
+        
+        const {userId, profilePic} = req.body
 
-        if( profilePic ) {
+        const user = await User.findById(userId)
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        try {
+
             if(user.profilePic) {
                 await cloudinary.uploader.destroy(user.profilePic.split("/").pop().split(".")[0])
             }
+
+            if( profilePic === '' ) {
+
+                user.profilePic = 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg'
+                
+                await user.save()
+
+            } else {
+                const response = await cloudinary.uploader.upload(profilePic)
+    
+                const uploadedProfilePicUrl = response.secure_url
+        
+                user.profilePic = uploadedProfilePicUrl
+        
+                await user.save()
+            }
+    
+            return res.status(201).json({
+                message : "Profile picture uploaded successfully",
+                user
+            })
+            
+        } catch (error) {
+            
+            console.log("Error in updateUserProfilePic: ", error);
+            
+            return res.status(500).json({
+                message : "Something went wrong while uploading profile picture"
+            })
+    
         }
+
+    } catch (error) {
+        
+    }
+
+}
+
+const updateUserProfile = async (req, res) => {
+    
+    try {
+        
+        const {userId, username, profilePic, coverPic, description, dob, location, offices, schools, colleges, userInterests} = req.body
 
         const user = await User.findById(userId)
 
-        const response = await cloudinary.uploader.upload(profilePic)
+        if( !user ) {
+            return res.status(404).json({
+                message : "User not found"
+            })
+        }
 
-        const uploadedProfilePicUrl = response.secure.url
+        let uploadedProfilePicUrl = user.profilePic; // Default to existing profilePic
+        if (profilePic) {
+            try {
+                // Upload the new profilePic to Cloudinary
+                const result = await cloudinary.uploader.upload(profilePic);
 
-        user.profilePic = uploadedProfilePicUrl
+                // Save the uploaded image URL
+                uploadedProfilePicUrl = result.secure_url;
+            } catch (error) {
+                return res.status(500).json({
+                    message: "Failed to upload profile picture to Cloudinary",
+                    error: error.message,
+                });
+            }
+        }
+
+        let uploadedCoverPicUrl = user.coverPic; // Default to existing coverPic
+        if (coverPic) {
+            try {
+                // Upload the new coverPic to Cloudinary
+                const result = await cloudinary.uploader.upload(coverPic);
+
+                // Save the uploaded image URL
+                uploadedCoverPicUrl = result.secure_url;
+            } catch (error) {
+                return res.status(500).json({
+                    message: "Failed to upload cover picture to Cloudinary",
+                    error: error.message,
+                });
+            }
+        }
+
+        if ( username != user.username ) {
+            user.username = username
+        }
+
+        if ( profilePic ) {
+            user.profilePic = uploadedProfilePicUrl
+        }
+
+        if( coverPic ) {
+            user.coverPic = uploadedCoverPicUrl
+        }
+
+        if ( description != user.description && description ) {
+            user.bio.description = description
+        }
+
+        if ( dob != user.bio.dob && dob ) {
+            user.bio.dob = dob
+            user.markModified("bio");
+        }
+
+        if ( location != user.bio.location && location ) {
+            user.bio.location = location
+            user.markModified("bio");
+        }
+        
+        user.bio.work.offices = offices
+        user.bio.education.schools = schools
+        user.bio.education.colleges = colleges
+        
+        // Update interests and mark `bio` as modified
+        user.bio.interests = userInterests;
+        user.markModified("bio");
 
         await user.save()
 
         return res.status(201).json({
-            message : "Profile picture uploaded successfully",
+            message : "Profile updated successfully",
             user
         })
-        
+
     } catch (error) {
         
-        console.log("Error in updateUserProfilePic: ", error);
-        
+        console.log("Error in updateUserProfile: ", error);
         return res.status(500).json({
-            message : "Something went wrong while uploading profile picture"
+            message : "Something went wrong while updating profile"
         })
 
     }
@@ -267,7 +423,6 @@ const searchUsers = async (req, res) => {
     try {
         
         const { name } = req.params;
-        console.log(name);
 
         const nameRegex = new RegExp(name, 'i');
 
@@ -318,4 +473,37 @@ const getBunchOfUsers = async (req, res) => {
 
 }
 
-export { getUserById, getUserProfile, getSuggestedUsers, getUsersIdontFollowBack, followOrUnfollowUser, updateUserProfilePic, updateUserCoverImage, searchUsers, getBunchOfUsers } 
+const getAvailableUserNames = async (req, res) => {
+
+    try {
+        
+        const { username } = req.params;
+        const { currentUserName } = req.body
+
+        if( !username || !currentUserName ) {
+            return res.status(400).json({
+                message : "Username is required",
+                available : false
+            })
+        }
+
+        if( username.toLowerCase() === currentUserName.toLowerCase() ) {
+            return res.status(400).json({
+                message : "same",
+            })
+        }
+
+        const existingUsername = await User.findOne({ username: { $regex: `^${username}$`, $options: "i" } });
+
+
+        return res.status(201).json({
+            available : !existingUsername
+        })
+
+    } catch (error) {
+        
+    }
+
+}
+
+export { getUserById, getUserProfile, getSuggestedUsers, getUsersIdontFollowBack, followOrUnfollowUser, updateUserProfile, updateUserProfilePicture, updateUserCoverImage, searchUsers, getBunchOfUsers, getAvailableUserNames } 

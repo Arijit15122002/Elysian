@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import PostCard from './PostCard'
 
+import Stories from './Story/Stories'
+
 
 
 function Feed () {
@@ -80,23 +82,15 @@ function Feed () {
 		</> : 
 		<>
 
-			<div className='w-[90%] mx-auto h-[-webkit-fill-available] overflow-y-auto py-8 relative' id='feedScroll'>
-				<div className='w-full max-w-[580px] h-[260px] mx-auto overflow-x-auto mb-4'>
-					<div className='w-[150px] h-[240px] my-auto mx-2 bg-[#ffffff] rounded-2xl overflow-hidden relative group cursor-pointer shadow-[0_0_7px_0_rgba(0,0,0,0.2)]'>
-						<img src={user.profilePic} alt="" className='h-[80%] w-full object-cover object-top group-hover:scale-105 duration-200 ease-in-out'/>
-						<Link className='absolute top-[70%] left-[40%] p-2 bg-[#111111] rounded-full group-hover:scale-125 duration-200 ease-in-out cursor-pointer shadow-[0_0_7px_0_rgba(0,0,0)]'>
-							<svg className='w-[25px] h-[25px]' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M4 12H20M12 4V20" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
-						</Link>
-						<div className='absolute w-full text-center bottom-3 text-[#232323] text-[0.9rem] kanit'>
-							Create Story
-						</div>
-					</div>
+			<div className='w-[95%] mx-auto h-[-webkit-fill-available] overflow-y-auto py-8 relative ' id='feedScroll'>
+				<div className='w-full max-w-[620px] h-[260px] mx-auto mb-4'>
+					<Stories/>
 				</div>
 
-				<div className='w-full max-w-[580px] mx-auto h-auto my-6 flex flex-col justify-center border-[2px] border-[#eeeeee] rounded-2xl p-4 bg-white shadow-[0_0_10px_0_rgba(0,0,0,0.1)]'>
+				<div className='w-[90%] max-w-[620px] mx-auto h-auto my-6 flex flex-col justify-center border-[2px] border-white dark:border-[#232323] rounded-2xl p-4 bg-white dark:bg-[#232323] shadow-[0_0_10px_0_rgba(0,0,0,0.1)]'>
 					<div className='flex flex-row w-[99%] gap-2 items-center'>
 						<img src={user.profilePic} alt=""  className='w-[40px] h-[40px] object-cover object-center rounded-full'/>
-						<div className='w-[92%] rounded-xl bg-[#eeeeee] px-4 py-3 outline-none text-[1rem] radio text-[#888888] cursor-text'
+						<div className='w-[92%] rounded-xl bg-[#eeeeee] dark:bg-[#333333] px-4 py-3 outline-none text-[1rem] radio text-[#888888] cursor-text'
 							onClick={() => {
 								setCreatePostOpen(true)
 							}}
@@ -105,23 +99,23 @@ function Feed () {
 						</div>
 					</div>
 
-					<div className='w-[90%] h-[2px] bg-[#dcdcdc] mx-auto my-4 rounded-full'/>
+					<div className='w-[90%] h-[2px] bg-[#dcdcdc] dark:bg-[#474747] mx-auto my-4 rounded-full'/>
 
 					<div className='w-full justify-center items-center flex flex-row gap-4 h-auto'>
 						
-						<div className='flex flex-row items-center px-[4%] py-2 bg-[#f7f7f7] rounded-xl gap-2 cursor-pointer hover:bg-[#111111] hover:shadow-[0_0_7px_0_rgba(0,0,0,0.5)] group duration-200 ease-in-out'>
+						<div className='flex flex-row items-center px-[4%] py-2 bg-[#f7f7f7] dark:bg-[#373737] rounded-xl gap-2 cursor-pointer hover:bg-[#111111] dark:hover:bg-[#111111] hover:shadow-[0_0_7px_0_rgba(0,0,0,0.5)] group duration-200 ease-in-out'>
 							<img src="/feed/liveVideo.png" alt="" className='w-[30px] h-[30px]'/>
-							<div className='text-[#232323] group-hover:text-[#ffffff] kanit text-[0.8rem] duration-200 ease-in-out'>Live Video</div>
+							<div className='text-[#232323] dark:text-white group-hover:text-[#ffffff] kanit text-[0.8rem] duration-200 ease-in-out hidden sm:flex md:hidden lg:flex'>Live Video</div>
 						</div>
 
-						<div className='flex flex-row items-center px-[4%] py-2 bg-[#f7f7f7] rounded-xl gap-2 cursor-pointer hover:bg-[#c1ff31] hover:shadow-[0_0_7px_0_#c1ff31] duration-200 ease-in-out'>
+						<div className='flex flex-row items-center px-[4%] py-2 bg-[#f7f7f7] dark:bg-[#373737] rounded-xl gap-2 cursor-pointer hover:bg-[#c1ff31] dark:hover:bg-[#c1ff31] hover:shadow-[0_0_7px_0_#c1ff31] duration-200 ease-in-out group'>
 							<img src="/feed/gallery.png" alt="" className='w-[30px] h-[30px]'/>
-							<div className='text-[#232323] kanit text-[0.8rem]'>Photo/Video</div>
+							<div className='text-[#232323] dark:text-white dark:group-hover:text-[#232323] kanit text-[0.8rem] hidden sm:flex md:hidden lg:flex'>Photo/Video</div>
 						</div>
 
-						<div className='flex flex-row items-center px-[4%] py-2 bg-[#f7f7f7] rounded-xl gap-2 cursor-pointer hover:bg-blue-600 hover:shadow-[0_0_7px_0_rgb(37,99,235)] group duration-200 ease-in-out'>
+						<div className='flex flex-row items-center px-[4%] py-2 bg-[#f7f7f7] dark:bg-[#373737] rounded-xl gap-2 cursor-pointer hover:bg-blue-600 dark:hover:bg-blue-600 hover:shadow-[0_0_7px_0_rgb(37,99,235)] group duration-200 ease-in-out'>
 							<img src="/feed/smily.png" alt="" className='w-[28px] h-[28px]'/>
-							<div className='text-[#232323] group-hover:text-[#ffffff] kanit text-[0.8rem] duration-200 ease-in-out'>Feeling Activity</div>
+							<div className='text-black hover:text-white dark:text-[#ffffff] kanit text-[0.8rem] duration-200 ease-in-out hidden sm:flex md:hidden lg:flex'>Feeling Activity</div>
 						</div>
 
 					</div>

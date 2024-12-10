@@ -1,5 +1,16 @@
 import Notification from "../Models/notification.model.js"
 
+export const getAllNotifications = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const notifications = await Notification.find({ to: userId }).sort({ createdAt: -1 }).populate({ path: "from", select: "username, profilePic" });
+        res.status(200).json(notifications);
+    } catch (error) {
+        console.error("Error fetching notifications:", error);
+        res.status(500).json({ message: "Error fetching notifications" });
+    }
+}
+
 const getNotifications = async (req, res) => {
 
     try {
@@ -88,5 +99,3 @@ const deleteSingleNotification = async (req, res) => {
     }
 
 }
-
-export { getNotifications, deleteNotifications, deleteSingleNotification }

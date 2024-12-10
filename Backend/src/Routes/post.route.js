@@ -1,6 +1,6 @@
 import express from 'express'
 
-import { createPost, deletePost, getPost, getAllPosts, updatePost, likePost, commentPost, commentReplyPost, likeCommentReply, likeComment, savePost, getUserPosts, getFollowingPosts } from '../Controllers/post.controller.js'
+import { createPost, deletePost, getPost, getAllPosts, updatePost, likePost, commentPost, commentReplyPost, likeCommentReply, likeComment, savePost, getUserPosts, getFollowingPosts, getProfilePosts, getSearchSuggestions, getPostSearchResults } from '../Controllers/post.controller.js'
 import protectRoute from '../MiddleWares/protectRoute.js'
 
 const postRouter = express.Router()
@@ -31,6 +31,12 @@ postRouter.get('/posts', getAllPosts)
 postRouter.get('/posts/:id', getUserPosts)
 
 postRouter.get('/posts/following', getFollowingPosts)
+
+postRouter.post('/profilePosts', getProfilePosts)
+
+postRouter.get('/searchSuggestions/:query', getSearchSuggestions)
+
+postRouter.get('/search/:query', getPostSearchResults)
 
 
 export default postRouter

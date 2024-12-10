@@ -10,7 +10,9 @@
 
 }
 #scrollHome::-webkit-scrollbar{
-    width: 0rem;
+    height: 0%;
+    width: 0%;
+    background-color: black;
 }
 #scrollHome::-webkit-scrollbar-track{
     visibility: hidden;
@@ -77,6 +79,27 @@
 #feedScroll:hover::-webkit-scrollbar-thumb{
     visibility: none;
     
+}
+
+
+/* Scroll CSS */
+#scrollStories{
+
+}
+#scrollStories::-webkit-scrollbar{
+    height: 0%;
+    width: 0%;
+    background-color: black;
+}
+#scrollStories::-webkit-scrollbar-track{
+    visibility: hidden;
+}
+#scrollStories::-webkit-scrollbar-thumb{
+    width: 0.4rem;
+    border-radius:20px ;
+}
+#scrollStories:hover::-webkit-scrollbar-thumb{
+    visibility: hidden;
 }
 
 
@@ -169,6 +192,10 @@
 
 .glowup {
   text-shadow: 0px 0px 20px #35e8b5;
+}
+
+.profileGlow {
+  text-shadow: 5px 5px 5px #232323;
 }
 
 .custom-height {

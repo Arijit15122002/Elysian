@@ -7,12 +7,12 @@ function PostCreation ({ postCreation, setPostCreation }) {
     const [active2, setActive2] = useState(false)
 
   return (
-    <div className={`${postCreation ? 'blur-0 opacity-100 sclae-100' : 'blur-xl opacity-0 scale-0'} duration-700 ease-in-out w-full fixed top-[70px] z-40 bg-black/20 backdrop-blur-sm`}>
+    <div className={`${postCreation ? 'blur-0 opacity-100 sclae-100' : 'blur-xl opacity-0 scale-0'} duration-300 ease-in-out w-full fixed top-[70px] z-40 bg-black/20 backdrop-blur-sm`}>
         <div 
             className='w-full h-[calc(100vh-70px)] flex items-center justify-center'
             onClick={() => setPostCreation(false)}
         >
-            <div className={`w-auto min-w-[330px] min-h-[230px] bg-white flex flex-col gap-6 items-center justify-center rounded-3xl`}>
+            <div className={`w-auto min-w-[330px] min-h-[220px] bg-white flex flex-col gap-4 items-center justify-center rounded-3xl`}>
                 <NavLink to={'/post/story'} 
                 onClick={() => setPostCreation(false)}
                 className={({isActive}) => {
