@@ -10,10 +10,13 @@ const suggestedUsersSlice = createSlice({
     reducers : {
         setSuggestedUsers : (state, action) => {
             state.suggestedUsers = action.payload
+        },
+        clearSuggestedUsers : (state) => {
+            state.suggestedUsers = []
         }
     }
 })
 
 export default suggestedUsersSlice  
-export const { setSuggestedUsers } = suggestedUsersSlice.actions
+export const { setSuggestedUsers, clearSuggestedUsers } = suggestedUsersSlice.actions
 

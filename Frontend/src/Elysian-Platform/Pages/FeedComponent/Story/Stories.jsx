@@ -263,7 +263,7 @@ return (
 			<div className='h-full w-full flex flex-row gap-1 items-center overflow-x-auto whitespace-nowrap' id='scrollStories'>
 
 				{/* Adding Story Section */}
-				<div className='w-[130px] lg:w-[138px] aspect-[9/15.5] ml-2 mr-1 relative flex-shrink-0'>
+				<div className='w-[130px] lg:w-[138px] aspect-[9/15.5] ml-2 mr-2 relative flex-shrink-0'>
 					<div className='w-full h-full bg-[#ffffff] dark:bg-[#232323] rounded-2xl relative group cursor-pointer shadow-[0_0_7px_0_rgba(0,0,0,0.2)] flex-shrink-0 overflow-hidden'>
 						<img src={user.profilePic} alt="" className='h-[80%] w-full object-cover object-top group-hover:scale-105 duration-200 ease-in-out'/>
 						<div 
@@ -339,7 +339,11 @@ return (
 								to={`/stories/${user._id}`}
 								onClick={() => handleStoryClick(user._id)}
 							>
-								<StoryCard story={usersLastStory} storyAuthor={user}/>
+								<StoryCard 
+									story={usersLastStory} 
+									storyAuthor={user}
+									initializeStories={initializeStories}
+								/>
 							</div>
 						</> : 
 						<>
@@ -363,7 +367,7 @@ return (
 							</div>
 							))
 						) : !loading ? (
-							<p className='kanit text-[1rem] text-[#cdcdcd] bg-[#efefef] px-6 py-2 rounded-xl my-auto rotate-90 -ml-12'>No stories to show</p>
+							<p className='kanit text-[1rem] text-[#cdcdcd] dark:text-[#555555] bg-[#efefef] dark:bg-[#232323] px-6 py-2 rounded-xl my-auto rotate-90 -ml-12'>No stories to show</p>
 						) : null}
 
 					{/* Loading and End Message */}
@@ -386,11 +390,11 @@ return (
 
 			{/* SelectImageModal Handling */}
 			<div className={`${ selectImageModalOpen ? 'scale-100 blur-none opacity-100' : 'scale-0 blur-3xl opacity-0' } duration-500 ease-in-out fixed top-0 left-0 h-full w-full z-50 flex justify-center items-center bg-black/20 backdrop-blur-sm`}>
-				<div className='p-6 w-[400px] h-[300px] bg-[#f1f1f1] rounded-3xl flex flex-col items-center justify-between relative'>
+				<div className='p-6 w-[400px] h-[300px] bg-[#f1f1f1] dark:bg-[#232323] rounded-3xl flex flex-col items-center justify-between relative'>
 					<div className='kanit text-[1.2rem] text-[#777777]'>Select Image</div>
 					<div className='flex flex-row items-center justify-center gap-6'>
 						<img src='/story/media.png' alt="" className='w-[130px] h-[130px]'/>
-						<div className='w-[100px] exo font-semibold text-[1rem] text-[#888888]'>
+						<div className='w-[100px] exo font-semibold text-[1rem] text-[#888888] dark:text-[#bcbcbc]'>
 							Select an image from your device
 						</div>
 					</div>
@@ -415,7 +419,7 @@ return (
 								/>
 						</div>
 						<div 
-							className='kanit text-red-600 bg-red-50 px-6 pt-1 pb-1.5 rounded-lg
+							className='kanit text-red-600 dark:text-white bg-red-50 dark:bg-[#5f2d2d] px-6 pt-1 pb-1.5 rounded-lg
 						 	shadow-[0_0px_10px_0px_rgba(0,0,0,0.1] hover:bg-red-100 hover:scale-105 duration-200 ease-in-out cursor-pointer '
 							onClick={() => {
 								setSelectStoryTypeDropdown(false);

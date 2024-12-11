@@ -18,8 +18,8 @@ function StoryCard ({story, storyAuthor}) {
                     <div className='absolute w-[35px] top-3 left-3 z-10 '>
                         <img src={storyAuthor.profilePic} alt="" className='rounded-full overflow-hidden ring-2 ring-blue-600 w-[35px] h-[35px] object-cover object-center'/>
                     </div>
-                    <div className='absolute bottom-3 left-0 z-10 backdrop-blur-md rounded-r-lg px-2 pt-[3px] pb-[5px] bg-black/30 text-white text-[0.8rem] kanit'>{
-                        user._id === storyAuthor._id ? 'You' : storyAuthor.fullname
+                    <div className='absolute z-10 bottom-0 left-0 h-[35px] w-full flex flex-row justify-center text-[0.9rem] bg-gradient-to-t from-[#000000]/50 radio text-white to-transparent'>{
+                        user._id === storyAuthor._id ? 'You' : storyAuthor.fullname.length > 14 ? `${storyAuthor.fullname.slice(0, 14)}...` : storyAuthor.fullname
                     }</div>
                     
                     {/* Acrual Story Text's miniature */}
@@ -51,7 +51,7 @@ function StoryCard ({story, storyAuthor}) {
                     <div className='absolute w-[35px] top-2 left-2 z-10 '>
                         <img src={storyAuthor.profilePic} alt="" className='rounded-full overflow-hidden ring-2 ring-blue-600 w-[35px] h-[35px] object-cover object-center'/>
                     </div>
-                    <div className='absolute bottom-3 left-0 z-10 backdrop-blur-md rounded-r-lg px-2 pt-[3px] pb-[5px] bg-black/30 text-white text-[0.8rem] kanit'>{storyAuthor.fullname}</div>
+                    <div className='absolute z-10 bottom-0 left-0 h-[35px] w-full flex flex-row justify-center text-[0.9rem] bg-gradient-to-t from-[#000000]/50 radio text-white to-transparent'>{storyAuthor.fullname}</div>
                     <img src={story.image} alt="" className='w-full h-full object-cover object-center group-hover:scale-105 duration-200 ease-in-out z-0'/>
                     <div className='absolute w-full h-full left-0 top-0 group-hover:bg-black/20 duration-200 ease-in-out'></div>
                 </div>

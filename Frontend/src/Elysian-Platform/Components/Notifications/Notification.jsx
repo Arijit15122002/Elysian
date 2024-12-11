@@ -5,11 +5,20 @@ import { useSelector } from 'react-redux'
 function Notification () {
 
 	const notifications = useSelector((state) => state.notifications.notifications)
-	console.log(notifications);
+	const unreadNotifications = notifications.filter((notification) => !notification.read);
+	const readNotifications = notifications.filter((notification) => notification.read);
 
     return (
-		<div className=' bg-green-300 p-2 rounded-xl'>
-			Notificatons...
+		<div className='w-full h-full overflow-y-auto flex flex-col items-center'>
+		{
+			unreadNotifications.length > 0 ?
+			<>
+				<div>
+					
+				</div>
+			</> :
+			<></>
+		}
 		</div>
     )
 }

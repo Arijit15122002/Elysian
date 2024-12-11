@@ -414,10 +414,6 @@ const updateUserProfile = async (req, res) => {
 
 }
 
-const updateUserCoverImage = async (req, res) => {
-
-}
-
 const searchUsers = async (req, res) => {
 
     try {
@@ -506,4 +502,4 @@ const getAvailableUserNames = async (req, res) => {
 
 }
 
-export { getUserById, getUserProfile, getSuggestedUsers, getUsersIdontFollowBack, followOrUnfollowUser, updateUserProfile, updateUserProfilePicture, updateUserCoverImage, searchUsers, getBunchOfUsers, getAvailableUserNames } 
+export { getUserById, getUserProfile, getSuggestedUsers, getUsersIdontFollowBack, followOrUnfollowUser, updateUserProfile, updateUserProfilePicture, searchUsers, getBunchOfUsers, getAvailableUserNames } 

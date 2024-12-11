@@ -8,6 +8,8 @@ import { useSelector, useDispatch } from 'react-redux'
 
 import PostCreation from '../../Pages/Posts/PostCreation.jsx'
 import { userDoesNotExist } from '../../../redux/reducers/auth.reducer.js'
+import { clearSuggestedUsers } from '../../../redux/reducers/suggestedUsers.reducer.js'
+import { clearNotifications } from '../../../redux/reducers/notifications.reducer.js'
 import ThemeButton from '../../../commonComponents/ThemeButton.jsx'
 
 function Navbar ({ postCreation, setPostCreation }) {
@@ -70,6 +72,8 @@ function Navbar ({ postCreation, setPostCreation }) {
 	const dispatch = useDispatch()
 	const logOut = () => {
 		dispatch(userDoesNotExist())
+		dispatch(clearSuggestedUsers())
+		dispatch(clearNotifications())
 		localStorage.clear()
 	}
 	
@@ -146,7 +150,7 @@ function Navbar ({ postCreation, setPostCreation }) {
 					
 					<div className='flex flex-row gap-6 mx-4 dosis text-lg font-semibold items-center relative'>
 
-						<div className={`${postCreation ? 'bg-blue-100' : 'bg-white hover:bg-[#eeeeee] dark:bg-[#111111] dark:hover:bg-black dark:hover:shadow-[0_0_7px_0_rgba(0,0,0,0.2)]'} duration-300 ease-in-out w-[2rem] h-[2rem] cursor-pointer rounded-xl flex items-center justify-center shadow-[0_0_7px_0_rgba(0,0,0,0.2)] dark:shadow-none`}
+						<div className={`${postCreation ? 'bg-blue-100 dark:bg-[#111111]' : 'bg-white hover:bg-[#eeeeee] dark:bg-[#c1ff31] dark:hover:opacity-80 dark:hover:shadow-[0_0_7px_0_rgba(0,0,0,0.2)]'} duration-300 ease-in-out w-[2rem] h-[2rem] cursor-pointer rounded-xl flex items-center justify-center shadow-[0_0_7px_0_rgba(0,0,0,0.2)] dark:shadow-none`}
 						onClick={() => {
 							if( urlPathValue === '/post/story' || urlPathValue === '/post/create' ) {
 								setPostCreation(!postCreation)
@@ -155,7 +159,7 @@ function Navbar ({ postCreation, setPostCreation }) {
 								setPostCreation(!postCreation)
 							}
 						}}>
-							<svg className='w-[1.5rem] h-[1.5rem]' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12 4C12.5523 4 13 4.44772 13 5V11H19C19.5523 11 20 11.4477 20 12C20 12.5523 19.5523 13 19 13H13V19C13 19.5523 12.5523 20 12 20C11.4477 20 11 19.5523 11 19V13H5C4.44772 13 4 12.5523 4 12C4 11.4477 4.44772 11 5 11H11V5C11 4.44772 11.4477 4 12 4Z" fill={postCreation ? ( theme === 'dark' ? '' : '' ) : ( theme === 'dark' ? '#fbfbfb' : "#111111" )}></path> </g></svg>
+							<svg className='w-[1.2rem] h-[1.2rem]' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill-rule="evenodd" clip-rule="evenodd" d="M12 4C12.5523 4 13 4.44772 13 5V11H19C19.5523 11 20 11.4477 20 12C20 12.5523 19.5523 13 19 13H13V19C13 19.5523 12.5523 20 12 20C11.4477 20 11 19.5523 11 19V13H5C4.44772 13 4 12.5523 4 12C4 11.4477 4.44772 11 5 11H11V5C11 4.44772 11.4477 4 12 4Z" fill={postCreation ? ( theme === 'dark' ? '#c1ff31' : '' ) : ( theme === 'dark' ? '#111111' : "#111111" )}></path> </g></svg>
 						</div>
 
 						<Link to={"/mojo"} className='p-2 bg-blue-600 rounded-full'>

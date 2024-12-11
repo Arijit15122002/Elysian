@@ -3,7 +3,12 @@ import Notification from "../Models/notification.model.js"
 export const getAllNotifications = async (req, res) => {
     try {
         const { userId } = req.params;
-        const notifications = await Notification.find({ to: userId }).sort({ createdAt: -1 }).populate({ path: "from", select: "username, profilePic" });
+        const notifications = await Notification.find({ to: userId })
+        .sort({ createdAt: -1 })
+        .populate({ 
+            path: "from", 
+            select: "_id fullname profilePic" 
+        });
         res.status(200).json(notifications);
     } catch (error) {
         console.error("Error fetching notifications:", error);

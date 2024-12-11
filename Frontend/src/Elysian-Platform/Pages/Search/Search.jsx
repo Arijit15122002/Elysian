@@ -70,6 +70,7 @@ function Search () {
 		const userResponse = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/user/search/${searchInput}`)
 		setSearchResultUsers(userResponse.data.users)
 	}
+	console.log(searchResultPosts);
 
 
 	//Showing Search Results
@@ -106,13 +107,13 @@ function Search () {
 			<></> : 
 			<>
 				<div className='w-[90%] h-full mx-auto relative'>
-					<div className=' text-[#232323] w-full sm:w-[90%] md:w-[95%] lg:w-[80%] xl:w-[70%] h-[45px] flex flex-row mx-auto my-4 rounded-xl overflow-hidden' style={{
+					<div className=' text-[#232323] dark:text-white w-full sm:w-[90%] md:w-[95%] lg:w-[80%] xl:w-[70%] h-[45px] flex flex-row mx-auto my-4 rounded-xl overflow-hidden' style={{
 						boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.1)'
 					}}>
 						<input 
 							type="text" 
 							value={searchInput}
-							className='w-[calc(100%-55px)] h-full pl-4 kanit focus:outline-none bg-white' 
+							className='w-[calc(100%-55px)] h-full pl-4 kanit focus:outline-none bg-white dark:bg-[#232323]' 
 							placeholder='Search for people, posts, and more...'
 							onChange={(e) => {
 								setSearchInput(e.target.value)
@@ -124,7 +125,7 @@ function Search () {
 							}}
 							/>
 						<div 
-							className={` ${searchInput.length < 2 ? 'bg-[#cdcdcd]' : 'bg-blue-500'} duration-200 ease-in-out h-full w-[55px] py-2 flex items-center justify-center group cursor-pointer `}
+							className={` ${searchInput.length < 2 ? 'bg-[#cdcdcd] dark:bg-[#777777]' : 'bg-blue-500'} duration-200 ease-in-out h-full w-[55px] py-2 flex items-center justify-center group cursor-pointer `}
 							ref={searchRef}
 							onClick={() => {
 								setSearchSuggestionsActive(false)
@@ -144,7 +145,7 @@ function Search () {
 							<>
 							<div className='absolute top-[70px] w-full flex flex-col items-center'>
 								<div 
-									className='w-full sm:w-[90%] md:w-[95%] lg:w-[80%] xl:w-[70%] h-auto max-h-[200px] overflow-y-auto p-1 pb-0 rounded-2xl bg-white' 
+									className='w-full sm:w-[90%] md:w-[95%] lg:w-[80%] xl:w-[70%] h-auto max-h-[200px] overflow-y-auto p-1 pb-0 rounded-2xl bg-white dark:bg-[#232323]' 
 									id='menuScroll'
 									style={{
 										boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.2)'
@@ -154,7 +155,7 @@ function Search () {
 									searchSuggestions.map((suggestedUsers) =>
 										<div 
 											key={suggestedUsers._id} 
-											className='bg-[#f2f2f2] mb-1 px-6 py-1.5 rounded-xl kanit text-[#777777] cursor-pointer'
+											className='bg-[#f2f2f2] dark:bg-[#232323] dark:hover:bg-[#111111] mb-1 px-6 py-1.5 rounded-xl kanit text-[#777777] dark:text-white cursor-pointer duration-200 ease-in-out'
 											onClick={() => {
 												setSearchSuggestionsActive(false)
 												setSearchInput(suggestedUsers.fullname)
@@ -178,7 +179,7 @@ function Search () {
 						
 						<div className={`w-full flex flex-row gap-4 mt-4 px-2 mb-10`}>
 							<div 
-								className={`${userScreenOpen ? 'bg-[#111111] text-white' : 'bg-[#dfdfdf] hover:bg-[#efefef]'} px-4 py-1.5 kanit cursor-pointer rounded-xl duration-300 ease-in-out`}
+								className={`${userScreenOpen ? 'bg-[#111111] text-white dark:bg-blue-500 dark:text-white' : 'bg-[#dfdfdf] hover:bg-[#efefef] dark:bg-[#232323] dark:text-white'} px-4 py-1.5 kanit cursor-pointer rounded-xl duration-300 ease-in-out`}
 								onClick={() => {
 									setUserScreenOpen(true)
 									setPostScreenOpen(false)
@@ -188,7 +189,7 @@ function Search () {
 								Accounts
 							</div>
 							<div 
-								className={`${postScreenOpen ? 'bg-[#111111] text-white' : 'bg-[#dfdfdf] hover:bg-[#efefef]'} px-4 py-1.5 kanit cursor-pointer rounded-xl duration-300 ease-in-out`}
+								className={`${postScreenOpen ? 'bg-[#111111] text-white dark:bg-blue-500 dark:text-white' : 'bg-[#dfdfdf] hover:bg-[#efefef] dark:bg-[#232323] dark:text-white'} px-4 py-1.5 kanit cursor-pointer rounded-xl duration-300 ease-in-out`}
 								onClick={() => {
 									setUserScreenOpen(false)
 									setPostScreenOpen(true)
@@ -198,7 +199,7 @@ function Search () {
 								Posts
 							</div>
 							<div 
-								className={`${allScreenOpen ? 'bg-[#111111] text-white' : 'bg-[#dfdfdf] hover:bg-[#efefef]'} px-4 py-1.5 kanit cursor-pointer rounded-xl duration-300 ease-in-out`}
+								className={`${allScreenOpen ? 'bg-[#111111] text-white dark:bg-blue-500 dark:text-white' : 'bg-[#dfdfdf] hover:bg-[#efefef] dark:bg-[#232323] dark:text-white'} px-4 py-1.5 kanit cursor-pointer rounded-xl duration-300 ease-in-out`}
 								onClick={() => {
 									setUserScreenOpen(false)
 									setPostScreenOpen(false)
@@ -212,8 +213,9 @@ function Search () {
 						<div className='w-full flex flex-col items-center gap-3'>
 
 							{/* Found Accounts Section */}
-							{
-								userScreenOpen && searchResultUsers.length > 0 ? 
+							{	
+								userScreenOpen ? 
+								searchResultUsers.length > 0 ? 
 								<>
 									{
 										searchResultUsers.map((resultUser) => 
@@ -281,7 +283,18 @@ function Search () {
 											No Elysian accounts Found
 										</div>
 									</div>
-								</>
+								</> : ''
+							}
+							{
+								postScreenOpen ? 
+								searchResultPosts.length > 0 ? 
+								<></> : <>
+									<div className='w-[95%] rounded-[20px] shadow-[0_0_7px_0_rgba(0,0,0,0.2)] p-1 bg-[#ffffff]'>
+										<div className='bg-[#777777] rounded-2xl text-[1.1rem] py-2 quicksand font-semibold text-white text-center'>
+											No Elysian posts Found
+										</div>
+									</div>
+								</> : ''
 							}
 						</div>
 

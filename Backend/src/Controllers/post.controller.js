@@ -69,6 +69,24 @@ const createPost = async (req, res) => {
             $push : { posts : post._id }
         })
 
+        const newPostNotification = new Notification({
+            type : 'post',
+            from : user._id,
+            to : rightUser.followers,
+            post : post._id
+        })
+
+        await newPostNotification.save()
+
+        rightUser.followers.forEach((followerId) => {
+            req.io.to(followerId.toString()).emit('NEW_ELYSIAN_NOTIFICATION', {
+                type: 'post',
+                from: { _id: user._id, name: rightUser.name },
+                post: post._id,
+                date: new Date().toISOString()
+            });
+        });
+
         return res.status(201).json({
             message : "Post created successfully",
             post
@@ -335,7 +353,6 @@ const deleteComment = async (req, res) => {
     }
 
 }
-
 
 const likeComment = async (req, res) => {
     
@@ -685,31 +702,30 @@ const getSearchSuggestions = async (req, res) => {
 }
 
 const getPostSearchResults = async (req, res) => {
-
     try {
+        const { query } = req.params; // Get the query from the request parameters
+        console.log(query);
 
-        const {query} = req.params
-        
+        // Search for posts where the text contains the query or the hashtags array contains the query
         const posts = await Post.find({
-            $or : [
-                {
-                    text : { $regex : query, $options : "i" },
-                    hashTags : { $regex : query, $options : "i" }
-                }
-            ]
-        })
-        
+            $or: [
+                { text: { $regex: query, $options: "i" } }, // Case-insensitive match for the text field
+                { hashTags: { $regex: query, $options: "i" } }, // Case-insensitive match within the hashTags array
+            ],
+        }).populate("user"); // Populate relevant fields if needed
+
         return res.status(200).json({
-            message : "Posts fetched successfully",
-            posts
-        })
-
+            message: "Posts fetched successfully",
+            posts,
+        });
     } catch (error) {
+        console.error(error);
         return res.status(500).json({
-            message : "Something went wrong while fetching posts"
-        })
+            message: "Something went wrong while fetching posts",
+            error: error.message,
+        });
     }
-    
-}
+};
 
-export { createPost, deletePost, getPost, getAllPosts, updatePost, likePost, commentPost, commentReplyPost, likeComment, likeCommentReply, savePost, getUserPosts, getFollowingPosts, getProfilePosts, getSearchSuggestions, getPostSearchResults };
+
+export { createPost, deletePost, getPost, getAllPosts, updatePost, likePost, commentPost, commentReplyPost, likeComment, likeCommentReply, savePost, getUserPosts, getFollowingPosts, getProfilePosts, getSearchSuggestions, getPostSearchResults};

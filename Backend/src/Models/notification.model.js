@@ -5,7 +5,7 @@ const notificationSchema = new mongoose.Schema({
     type : {
         type : String,
         required : true,
-        enum : ['follow', 'like', 'comment', 'tag']
+        enum : ['post', 'follow', 'like', 'comment', 'tag']
     },
 
     read : {
@@ -19,11 +19,31 @@ const notificationSchema = new mongoose.Schema({
         required : true,
     },
 
-    to : {
+    to : [
+        {
+            type : mongoose.Schema.Types.ObjectId,
+            ref : 'User', 
+            required : true,
+        }
+    ],
+
+    post : {
         type : mongoose.Schema.Types.ObjectId,
-        ref : 'User', 
-        required : true,
-    },
+        ref : 'Post',
+        required: function () {
+            return this.type === 'like' || this.type === 'comment' || this.type === 'tag' || this.type === 'post';
+        },
+    }, 
+
+    taggedPeople: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: function () {
+                return this.type === 'tag';
+            },
+        },
+    ],
 
 }, {
 

@@ -1,6 +1,6 @@
 import express from 'express'
 
-import { getUserById, getUserProfile, getSuggestedUsers, getUsersIdontFollowBack, followOrUnfollowUser, updateUserProfile, updateUserProfilePicture, updateUserCoverImage, searchUsers, getBunchOfUsers, getAvailableUserNames } from '../Controllers/user.controller.js'
+import { getUserById, getUserProfile, getSuggestedUsers, getUsersIdontFollowBack, followOrUnfollowUser, updateUserProfile, updateUserProfilePicture, searchUsers, getBunchOfUsers, getAvailableUserNames } from '../Controllers/user.controller.js'
 import protectRoute from '../MiddleWares/protectRoute.js'
 
 
@@ -20,8 +20,6 @@ userRouter.post('/follow/:id', followOrUnfollowUser)
 userRouter.post('/update/profile', updateUserProfile)
 
 userRouter.post('/update/profilePicture', updateUserProfilePicture)
-
-userRouter.post('/update/coverPic', updateUserCoverImage)
 
 userRouter.get('/search/:name', searchUsers)
 

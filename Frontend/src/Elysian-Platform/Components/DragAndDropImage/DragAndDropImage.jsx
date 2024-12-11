@@ -105,7 +105,7 @@ function DragAndDropImage ({ totalImages, setTotalImages }) {
 		onDragEnter = {onDragEnter}
 		onDragLeave = {onDragLeave}
 		onDrop = {onDrop}
-		className='w-full h-[240px] bg-blue-50 rounded-3xl border-2 border-dashed border-[#004b97] flex flex-col items-center justify-center relative drop-file-input'>
+		className='w-full h-[240px] bg-blue-50 dark:bg-[#262b31] rounded-3xl border-2 border-dashed border-[#004b97] dark:border-[#efefef] flex flex-col items-center justify-center relative drop-file-input'>
 			<div className='absolute top-6 w-[30%] opacity-70 flex justify-center items-center'>
 				<img src="/public/posts/upload.png" alt="" />
 			</div>
@@ -115,10 +115,10 @@ function DragAndDropImage ({ totalImages, setTotalImages }) {
 			</div>
 
 			<div className='absolute bottom-4 w-auto flex flex-col gap-1 items-center'>
-				<div className='text-[#232323c5] text-[0.9rem] radio font-semibold'>
+				<div className='text-[#232323c5] dark:text-[#ffffff] text-[0.9rem] radio font-semibold'>
 					Drag and Drop image files to upload
 				</div>
-				<div className='text-[#23232391] kanit font-semibold text-[0.7rem]'>
+				<div className='text-[#23232391] dark:text-[#cdcdcd] kanit font-semibold text-[0.7rem]'>
 					Or, Click to browse
 				</div>
 			</div>
@@ -129,8 +129,6 @@ function DragAndDropImage ({ totalImages, setTotalImages }) {
 			accept='image/*'
 			onChange = {onSelectFile}
 			className='w-[100%] h-[100%] absolute rounded-3xl overflow-hidden opacity-0 focus:outline-none cursor-pointer'/>
-			
-			
 		</div>
 
 		{

@@ -100,20 +100,21 @@ function App() {
 		
 	}, [])
 
-	useEffect(() => {
-		const calculateSuggestedUsers = async () => {
-			// Check if user object is available before making the API call
-			if (user) {
-				const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/user/suggested/${user._id}`);
-				if ( response?.data?.suggestedUsers.length ) {
-					dispatch(setSuggestedUsers(response?.data?.suggestedUsers));
-				}
-			} else {
-				console.log("User object is not yet available");
+	const calculateSuggestedUsers = async () => {
+		// Check if user object is available before making the API call
+		if (user) {
+			const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/user/suggested/${user?._id}`);
+			if ( response?.data?.suggestedUsers.length ) {
+				dispatch(setSuggestedUsers(response?.data?.suggestedUsers));
 			}
-		};
-	  
+		} else {
+			console.log("User object is not yet available");
+		}
+	};
+
+	useEffect(() => {
 		calculateSuggestedUsers();
+		fetchNotifications(user?._id);
 	  }, [ user ]);
 
 
