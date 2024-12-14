@@ -156,111 +156,98 @@ const getUsersIdontFollowBack = async (req, res) => {
 }
 
 const followOrUnfollowUser = async (req, res) => {
-    const { id } = req.params;
-    const { userId } = req.body;
+    const { id } = req.params; // ID of the user to be followed/unfollowed
+    const { userId } = req.body; // ID of the current user making the request
 
     try {
-        const userToModify = await User.findById(id);
-        const currentUser = await User.findById(userId);
+        // Fetch the target user and current user
+        const [userToModify, currentUser] = await Promise.all([
+            User.findById(id),
+            User.findById(userId),
+        ]);
 
         if (!userToModify || !currentUser) {
             return res.status(404).json({
-                message: "User-To-Follow OR CurrentUser was not found"
+                message: "User-To-Follow OR CurrentUser was not found",
             });
         }
 
         if (id === currentUser._id.toString()) {
             return res.status(400).json({
-                message: "You can't follow OR unfollow yourself"
+                message: "You can't follow OR unfollow yourself",
             });
         }
+
+        let message;
 
         if (userToModify.followers.includes(currentUser._id)) {
-            await userToModify.updateOne({
-                $pull: { followers: currentUser._id }
-            });
+            // Unfollow Logic
+            await Promise.all([
+                userToModify.updateOne({ $pull: { followers: currentUser._id } }),
+                currentUser.updateOne({ $pull: { following: userToModify._id } }),
+            ]);
 
-            await currentUser.updateOne({
-                $pull: { following: userToModify._id }
-            });
-
-            // Re-fetch the updated currentUser
-            const updatedCurrentUser = await User.findById(userId);
-
-            return res.status(201).json({
-                message: "Unfollowed successfully",
-                currentUser: updatedCurrentUser
-            });
+            message = "Unfollowed successfully";
         } else {
-            await userToModify.updateOne({
-                $push: { followers: currentUser._id }
-            });
+            // Follow Logic
+            await Promise.all([
+                userToModify.updateOne({ $push: { followers: currentUser._id } }),
+                currentUser.updateOne({ $push: { following: userToModify._id } }),
+            ]);
 
-            await currentUser.updateOne({
-                $push: { following: userToModify._id }
-            });
-
-            // Send notification to the UserToModify
-            const foundSameNotification = await Notification.findOne({
-                type: 'follow',
+            // Check and handle follow notifications
+            const foundNotification = await Notification.findOne({
+                type: "follow",
                 from: currentUser._id,
-                to: userToModify._id
+                to: userToModify._id,
             });
 
-            if (foundSameNotification) {
-                foundSameNotification.createdAt = new Date().toISOString();
-                await foundSameNotification.save();
-
-                const notificationData = {
-                    type: 'follow',
-                    from: { 
-                        _id: currentUser._id, 
-                        name: currentUser.fullname 
-                    },
-                    to: [userToModify._id],
-                    date: new Date().toISOString()
-                };
-    
-                req.io.to(userToModify._id.toString()).emit('NEW_ELYSIAN_NOTIFICATION', notificationData);
+            if (foundNotification) {
+                foundNotification.createdAt = new Date();
+                await foundNotification.save();
             } else {
-                const newNotification = new Notification({
-                    type: 'follow',
+                await new Notification({
+                    type: "follow",
                     from: currentUser._id,
-                    to: [userToModify._id]
-                });
-    
-                await newNotification.save();
-    
-                const notificationData = {
-                    type: 'follow',
-                    from: { 
-                        _id: currentUser._id, 
-                        name: currentUser.name 
-                    },
-                    to: userToModify._id,
-                    date: new Date().toISOString()
-                };
-    
-                req.io.to(userToModify._id.toString()).emit('NEW_ELYSIAN_NOTIFICATION', notificationData);
+                    to: [userToModify._id],
+                }).save();
             }
 
-            // Re-fetch the updated currentUser
-            const updatedCurrentUser = await User.findById(userId);
+            // Emit notification via Socket.IO
+            const notificationData = {
+                type: "follow",
+                from: {
+                    _id: currentUser._id,
+                    name: currentUser.fullname || currentUser.name, // Use fullname if available
+                },
+                to: [userToModify._id],
+                date: new Date().toISOString(),
+            };
 
-            return res.status(201).json({
-                message: "Followed successfully",
-                currentUser: updatedCurrentUser
-            });
-            
+            req.io.to(userToModify._id.toString()).emit(
+                "NEW_ELYSIAN_NOTIFICATION",
+                notificationData
+            );
+
+            message = "Followed successfully";
         }
 
+        // Fetch and return the updated current user
+        const updatedCurrentUser = await User.findById(userId);
+
+        return res.status(200).json({
+            message,
+            currentUser: updatedCurrentUser,
+        });
     } catch (error) {
-        console.log("Error in followOrUnfollowUser: ", error);
+        console.error("Error in followOrUnfollowUser:", error);
+
         return res.status(500).json({
-            message: "Something went wrong while following or unfollowing user"
+            message: "Something went wrong while following or unfollowing user",
         });
     }
 };
+
 
 const updateUserProfilePicture = async (req, res) => {
     

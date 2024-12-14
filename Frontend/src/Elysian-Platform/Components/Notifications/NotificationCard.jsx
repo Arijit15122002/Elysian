@@ -50,7 +50,7 @@ function NotificationCard ({notification, key, deleteNotificationHandler}) {
     const [ showFollowBack, setShowFollowBack ] = useState(false)
     useEffect(() => {
         if( notification.type === 'follow' ) {
-            if( user.following.includes(notification.from._id) ) {
+            if( !user.following.includes(notification.from._id) ) {
                 setShowFollowBack(true)
             } else {
                 setShowFollowBack(false)
