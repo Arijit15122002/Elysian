@@ -12,7 +12,10 @@ const notificationsSlice = createSlice({
             state.notifications = action.payload
         },
         addNotifications : (state, action) => {
-            state.notifications.push(action.payload)
+            return {
+                ...state,
+                notifications: [action.payload, ...state.notifications],
+            };
         }, 
         clearNotifications : (state) => {
             state.notifications = []

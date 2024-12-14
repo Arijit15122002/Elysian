@@ -148,18 +148,19 @@ function App() {
 
 	//Setting Notifications 
 	const initializeSocket = (userId) => {
-		const newSocket = io(import.meta.env.VITE_BASE_URL); // Replace with your server URL
-		newSocket.emit("joinRoom", userId); // Join the user's notification room
-		// setSocket(newSocket);
+		const socket = io(import.meta.env.VITE_BASE_URL); // Replace with the correct server URL
+		socket.emit("joinRoom", userId); // Join user's notification room
 	
 		// Listen for live notifications
-		newSocket.on("NEW_ELYSIAN_NOTIFICATION", (notification) => {
-		  dispatch(addNotifications(notification)); // Add live notification to Redux
+		socket.on("NEW_ELYSIAN_NOTIFICATION", (notification) => {
+			console.log("Received notification:", notification); // Debugging logs
+			dispatch(addNotifications(notification)); // Update Redux state
 		});
 	
-		// Cleanup socket connection on component unmount
-		return () => newSocket.disconnect();
+		// Cleanup socket connection on unmount
+		return () => socket.disconnect();
 	};
+	
 
 	const fetchNotifications = async (userId) => {
 		try {
