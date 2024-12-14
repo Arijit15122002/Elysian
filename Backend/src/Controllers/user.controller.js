@@ -215,9 +215,9 @@ const followOrUnfollowUser = async (req, res) => {
                     type: 'follow',
                     from: { 
                         _id: currentUser._id, 
-                        name: currentUser.name 
+                        name: currentUser.fullname 
                     },
-                    to: userToModify._id,
+                    to: [userToModify._id],
                     date: new Date().toISOString()
                 };
     
@@ -226,7 +226,7 @@ const followOrUnfollowUser = async (req, res) => {
                 const newNotification = new Notification({
                     type: 'follow',
                     from: currentUser._id,
-                    to: userToModify._id
+                    to: [userToModify._id]
                 });
     
                 await newNotification.save();

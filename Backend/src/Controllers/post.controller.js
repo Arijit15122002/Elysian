@@ -153,14 +153,13 @@ const updatePost = async (req, res) => {
 }
 
 const likePost = async (req, res) => {
-
     try {
-
-        const { id : postId } = req.params
-        const { userId } = req.body;
+        const { id: postId } = req.params; // Post ID from route params
+        const { userId } = req.body; // User ID from request body
 
         console.log(postId, userId);
-        
+
+        // Fetch post and user details in parallel
         const [post, user] = await Promise.all([
             Post.findById(postId),
             User.findById(userId),
@@ -173,28 +172,65 @@ const likePost = async (req, res) => {
         const isAlreadyLiked = post.likes.includes(userId);
 
         if (isAlreadyLiked) {
+            // Unlike post
             await Post.findByIdAndUpdate(postId, {
                 $pull: { likes: userId },
             });
-            
+
             return res.status(200).json({ message: 'Post unliked successfully' });
         } else {
+            // Like post
             await Post.findByIdAndUpdate(postId, {
                 $push: { likes: userId },
             });
 
+            // Check for existing like notification
+            const existingNotification = await Notification.findOne({
+                post: postId,
+                type: 'like',
+                from: userId,
+            });
+
+            if (existingNotification) {
+                existingNotification.createdAt = new Date();
+                await existingNotification.save();
+            } else {
+                // Create a new like notification
+                const newNotification = new Notification({
+                    type: 'like',
+                    from: user._id, // Use ObjectId for 'from'
+                    to: [post.user], // 'to' expects an array of ObjectId(s)
+                    post: post._id,
+                });
+
+                await newNotification.save();
+            }
+
+            // Emit notification via Socket.IO
+            req.io.to(post.user.toString()).emit('NEW_ELYSIAN_NOTIFICATION', {
+                type: 'like',
+                from: {
+                    _id: user._id,
+                    name: user.fullname, // Assuming `fullname` exists in the user schema
+                },
+                to: post.user,
+                post: post._id,
+                date: new Date().toISOString(),
+            });
+
             return res.status(200).json({ message: 'Post liked successfully' });
         }
-        
     } catch (error) {
-        
+        console.error('Error in likePost:', error);
+
         return res.status(500).json({
-            message : "Something went wrong while liking post"
-        })
-
+            message: 'Something went wrong while liking the post',
+        });
     }
+};
 
-}
+
+
 
 const commentPost = async (req, res) => {
 

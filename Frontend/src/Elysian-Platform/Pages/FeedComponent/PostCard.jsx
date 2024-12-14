@@ -71,7 +71,7 @@ function PostCard ({ post }) {
                         </Link>
                         <div className='flex flex-col px-4'>
                             <div className={`${ deviceType === 'mobile' ? 'flex-col' : 'flex-row items-center' } flex`}>
-                                <Link className={`${ deviceType === 'mobile' ? 'text-[0.9rem] font-semibold' : 'text-[1.1rem]' } kanit text-[#000000] dark:text-white hover:underline cursor-pointer `}>
+                                <Link className={`${ deviceType === 'mobile' ? 'text-[0.9rem] font-semibold' : 'text-[1rem]' } kanit text-[#000000] dark:text-white hover:underline cursor-pointer `}>
                                     {post.user.fullname}
                                 </Link>
                                 {
