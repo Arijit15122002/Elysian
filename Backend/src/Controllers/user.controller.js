@@ -202,16 +202,16 @@ const followOrUnfollowUser = async (req, res) => {
                 to: userToModify._id,
             });
 
+            // if any Notification found then delete it
             if (foundNotification) {
-                foundNotification.createdAt = new Date();
-                await foundNotification.save();
-            } else {
-                await new Notification({
-                    type: "follow",
-                    from: currentUser._id,
-                    to: [userToModify._id],
-                }).save();
+                await Notification.findByIdAndDelete(foundNotification._id);
             }
+
+            await new Notification({
+                type: "follow",
+                from: currentUser._id,
+                to: [userToModify._id],
+            }).save();
 
             // Emit notification via Socket.IO
             const notificationData = {
