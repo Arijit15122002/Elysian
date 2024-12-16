@@ -1,20 +1,30 @@
 import Notification from "../Models/notification.model.js"
+import mongoose from "mongoose"
 
 export const getAllNotifications = async (req, res) => {
     try {
         const { userId } = req.params;
-        const notifications = await Notification.find({ to: userId })
-        .sort({ createdAt: -1 })
-        .populate({ 
-            path: "from", 
-            select: "_id fullname profilePic" 
-        });
+
+        // Validate if userId exists and is a valid ObjectId
+        if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ message: "Invalid or missing user ID" });
+        }
+
+        // Fetch notifications for the user
+        const notifications = await Notification.find({ to: { $in: [userId] } })
+            .sort({ createdAt: -1 })
+            .populate({ 
+                path: "from", 
+                select: "_id fullname profilePic" 
+            })
+
         res.status(200).json(notifications);
     } catch (error) {
-        console.error("Error fetching notifications:", error);
+        console.error("Error fetching notifications:", error.message);
         res.status(500).json({ message: "Error fetching notifications" });
     }
-}
+};
+
 
 const getNotifications = async (req, res) => {
 

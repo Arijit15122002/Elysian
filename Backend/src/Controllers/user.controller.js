@@ -160,6 +160,11 @@ const followOrUnfollowUser = async (req, res) => {
     const { userId } = req.body; // ID of the current user making the request
 
     try {
+        // Validate input IDs
+        if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ message: "Invalid user IDs." });
+        }
+
         // Fetch the target user and current user
         const [userToModify, currentUser] = await Promise.all([
             User.findById(id),
@@ -202,7 +207,6 @@ const followOrUnfollowUser = async (req, res) => {
                 to: userToModify._id,
             });
 
-            // if any Notification found then delete it
             if (foundNotification) {
                 await Notification.findByIdAndDelete(foundNotification._id);
             }
@@ -242,12 +246,18 @@ const followOrUnfollowUser = async (req, res) => {
     } catch (error) {
         console.error("Error in followOrUnfollowUser:", error);
 
+        // Handle specific error cases for debugging
+        if (error instanceof mongoose.Error.CastError) {
+            return res.status(400).json({
+                message: `Invalid ID format for ${error.path}: ${error.value}`,
+            });
+        }
+
         return res.status(500).json({
             message: "Something went wrong while following or unfollowing user",
         });
     }
 };
-
 
 const updateUserProfilePicture = async (req, res) => {
     

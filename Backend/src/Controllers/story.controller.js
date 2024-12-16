@@ -363,8 +363,6 @@ export const cleanStoriesContainer = async () => {
                 console.log(`Updated StoriesContainer: ${container._id}`);
             }
         }
-
-        console.log('StoriesContainer cleanup completed.');
     } catch (error) {
         console.error('Error during StoriesContainer cleanup:', error);
     }
@@ -384,7 +382,7 @@ export const cleanStoryFromUser = async () => {
             );
 
             if( updatedStories.length === user.stories.length ) {
-                console.log("No change in stories");
+                console.log("");
             } else {
                 user.stories = updatedStories;
                 await user.save();

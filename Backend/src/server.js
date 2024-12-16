@@ -29,10 +29,9 @@ const server = createServer(app)
 const io = new Server(server, {
     cors: {
         origin: process.env.CORS_ORIGIN || 'http://localhost:5173', // Allow requests from the frontend
-        methods: ['GET', 'POST'], // Allowed HTTP methods
-        allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
         credentials: true, // Allow credentials (e.g., cookies or headers)
     },
+    pingTimeout: 60000,
 });
 const userSocketIDs = new Map()
 
@@ -42,12 +41,15 @@ app.use((req, res, next) => {
 })
 
 io.use((socket, next) => {
-
+    console.log('Middleware triggered');
+    next(); // Always call next() to allow connections
 })
 
 io.on( 'connection' , ( socket ) => {
 
-    socket.on('joinRoom', (userId) => {
+    console.log(`User connected: ${socket.id}`);
+
+    socket.on("joinRoom", (userId) => {
         console.log(`User ${userId} joined their notification room`);
         socket.join(userId);
     });

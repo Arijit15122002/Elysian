@@ -49,7 +49,6 @@ function Stories () {
 	// Fetching Followings' Stories
 	const [lastStories, setLastStories] = useState([]);
 	const [page, setPage] = useState(1);
-	console.log(page);
 	const [hasMore, setHasMore] = useState(true);
 	const [loading, setLoading] = useState(false);
 
@@ -61,7 +60,6 @@ function Stories () {
 			const response = await axios.get(
 				`${import.meta.env.VITE_BASE_URL}/api/story/followings/${user._id}/last-stories?page=${page}&limit=4`
 			);
-			console.log(response);
 	
 			const { followingsLastStories, currentPage, totalPages, hasMore } = response.data;
 	

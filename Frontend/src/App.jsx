@@ -97,7 +97,6 @@ function App() {
 				dispatch(userExists(response.data.user))
 			}
 		}
-		
 	}, [])
 
 	const calculateSuggestedUsers = async () => {
@@ -147,7 +146,9 @@ function App() {
 
 
 	//Setting Notifications 
+
 	const initializeSocket = (userId) => {
+		console.log(import.meta.env.VITE_BASE_URL);
 		const socket = io(import.meta.env.VITE_BASE_URL); // Replace with the correct server URL
 		socket.emit("joinRoom", userId); // Join user's notification room
 	

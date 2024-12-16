@@ -3,7 +3,6 @@ import { cleanStoriesContainer, cleanStoryFromUser } from '../Controllers/story.
 
 const startCronJobs = () => {
     cron.schedule('* * * * *', async () => {
-        console.log('Starting cron jobs...');
         await cleanStoriesContainer()
         await cleanStoryFromUser()
     })
