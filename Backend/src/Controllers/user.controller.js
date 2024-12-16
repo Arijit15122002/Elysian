@@ -178,6 +178,7 @@ const followOrUnfollowUser = async (req, res) => {
             });
         }
 
+        var message;
         if (userToModify.followers.includes(currentUser._id)) {
             // Unfollow Logic
             await Promise.all([
