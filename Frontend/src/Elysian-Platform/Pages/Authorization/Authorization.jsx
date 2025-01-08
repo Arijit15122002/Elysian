@@ -18,6 +18,8 @@ import ScaleLoader from "react-spinners/ScaleLoader";
 
 function Authorization ({type}) {
 
+	const {theme} = useTheme()
+
 	const dispatch = useDispatch()
 
 	//Animate Background
@@ -39,7 +41,7 @@ function Authorization ({type}) {
 
 
 	//Password Visibility
-	const [watchPassword, setWatchPassword] = useState(false)
+	const [ConfirmwatchPassword, setConfirmWatchPassword] = useState(false)
     const [watchConfirmPassword, setWatchConfirmPassword] = useState(false)
 
 
@@ -144,7 +146,7 @@ function Authorization ({type}) {
 		<div className='w-full flex flex-row'>
 
 			{/* THE LOADING PAGE */}
-			<div className={`${loading ? 'block' : 'hidden'} h-[100svh] w-full bg-white absolute z-40 flex flex-row items-center justify-center`}>
+			<div className={`${loading ? 'block' : 'hidden'} h-[100svh] w-full bg-[#f7f7f7] dark:bg-[#111111] absolute z-40 flex flex-row items-center justify-center`}>
 			<ScaleLoader 
 				color='#232323'
 				loading={loading}
@@ -183,11 +185,11 @@ function Authorization ({type}) {
 				{/* FORM VIEW */}
 				<div className='w-full mt-[70px] md:mt-0 h-auto md:h-[100vh] flex items-center justify-end
 				'>
-					<form action="" className={`backdrop-blur-sm w-full h-auto md:h-full bg-[#ffffff] flex flex-col items-center justify-center ${animateForm ? 'formShow' : 'formHidden'}`}>
+					<form action="" className={`backdrop-blur-sm w-full h-auto md:h-full bg-[#f7f7f7] dark:bg-[#111111] flex flex-col items-center justify-center ${animateForm ? 'formShow' : 'formHidden'}`}>
 
 						<div className='w-full h-auto px-6 flex flex-col gap-5 items-center justify-center mt-10'>
 
-							<div className='w-full text-center h-auto px-6 text-3xl belanosima text-black'>
+							<div className='w-full text-center h-auto px-6 text-3xl belanosima text-black dark:text-white'>
 								{
 									type === 'signup' ? 'Create an Account!' : 'Welcome Back!'
 								}
@@ -198,7 +200,7 @@ function Authorization ({type}) {
 								type="text" 
 								name='fullname'
 								onChange={handleChange}
-								className='w-full text-[1rem] px-6 py-3 rounded-xl bg-[#111111] radio relative focus:outline-none  inputAction text-white focus:bg-black duration-300 ease-in-out'/>
+								className='w-full text-[1rem] px-6 py-3 rounded-xl bg-[#111111] dark:bg-[#232323] radio relative focus:outline-none dark:focus:text-black dark:text-white inputAction text-white dark:text-black focus:bg-black dark:focus:bg-white duration-300 ease-in-out'/>
 								<label className={`${formData?.fullname?.length ? 'opacity-0' : 'opacity-100'} duration-1500 ease-in-out placeholder absolute text-[1rem] radio px-6`}>Full Name</label>
 							</div>
 
@@ -207,7 +209,7 @@ function Authorization ({type}) {
 								type="text" 
 								name='username'
 								onChange={handleChange}
-								className='w-full text-[1rem] px-6 py-3 rounded-xl bg-[#111111] radio relative focus:outline-none  inputAction text-white focus:bg-black duration-300 ease-in-out'/>
+								className='w-full text-[1rem] px-6 py-3 rounded-xl bg-[#111111] dark:bg-[#232323] radio relative focus:outline-none dark:focus:text-black dark:text-white inputAction text-white dark:text-black focus:bg-black dark:focus:bg-white duration-300 ease-in-out'/>
 								<label className={`${formData?.username?.length ? 'opacity-0' : 'opacity-100'} placeholder absolute text-[1rem] radio px-6`}>User Name</label>
 							</div>
 
@@ -216,30 +218,30 @@ function Authorization ({type}) {
 								type="text" 
 								name='email'
 								onChange={handleChange}
-								className='w-full text-[1rem] px-6 py-3 rounded-xl bg-[#111111] radio relative focus:outline-none inputAction text-white focus:bg-black duration-300 ease-in-out'/>
+								className='w-full text-[1rem] px-6 py-3 rounded-xl bg-[#111111] dark:bg-[#232323] radio relative focus:outline-none dark:focus:text-black dark:text-white inputAction text-white dark:text-black focus:bg-black dark:focus:bg-white duration-300 ease-in-out'/>
 								<label className={`${formData?.email?.length ? 'opacity-0' : 'opacity-100'} placeholder absolute text-[1rem] radio px-6`}>Email</label>
 							</div>
 
 							<div className='w-[90%] flex items-center max-w-[350px]'>
 								<input 
-								type={watchPassword ? 'text' : 'password'} 
+								type={ConfirmwatchPassword ? 'text' : 'password'} 
 								name='password'
 								onChange={handleChange}
-								className='w-full text-[1rem] px-6 py-3 rounded-xl bg-[#111111] radio relative focus:outline-none  inputAction text-white focus:bg-black duration-300 ease-in-out'/>
+								className='w-full text-[1rem] px-6 py-3 rounded-xl bg-[#111111] dark:bg-[#232323] radio relative focus:outline-none dark:focus:text-black dark:text-white inputAction text-white dark:text-black focus:bg-black dark:focus:bg-white duration-300 ease-in-out'/>
 								<label className={`${formData?.password?.length ? 'opacity-0' : 'opacity-100'} placeholder absolute text-[1rem] radio px-6`}>Password</label>
 								<div
-								onClick={() => setWatchPassword(!watchPassword)} 
+								onClick={() => setConfirmWatchPassword(!ConfirmwatchPassword)} 
 								className='w-[42px] h-[45px] mx-2'
 								>
 									<div className='w-full h-full relative flex items-center justify-center cursor-pointer'>
-										<div className={`absolute z-0 h-[65%] w-[50%] bg-[#232323] top-1 rounded-t-full flex items-end justify-center ${watchPassword ? '-mt-[5px]' : 'top-0'} duration-300 ease-in-out`}>
-											<div className={`w-[72%] h-[92%] rounded-full rounded-b-none bg-[#ffffff]`}/>
-											<div className='absolute w-[10px] h-[15.5px] bg-[#ffffff] -left-1'/>
+										<div className={`absolute z-0 h-[65%] w-[50%] bg-[#232323] dark:bg-white top-1 rounded-t-full flex items-end justify-center ${ConfirmwatchPassword ? '-mt-[5px]' : 'top-0'} duration-300 ease-in-out`}>
+											<div className={`w-[72%] h-[92%] rounded-full rounded-b-none bg-[#ffffff] dark:bg-[#111111]`}/>
+											<div className='absolute w-[10px] h-[15.5px] bg-[#ffffff] dark:bg-[#111111] -left-1'/>
 										</div>
 										<svg className='absolute top-[17px] z-10 bottom-0'
 										version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 										width="100%" viewBox="0 0 491 296" enable-background="new 0 0 491 296" xml:space="preserve">
-											<path fill="#232323" opacity="1.000000" stroke="none" 
+											<path fill={theme === 'dark' ? '#ffffff' : '#232323'} opacity="1.000000" stroke="none" 
 												d="M316.000000,0.999999 
 												C330.020905,1.000000 344.041779,1.000000 358.663086,1.363822 
 												C360.708618,2.087259 362.141327,2.509461 363.600586,2.797377 
@@ -306,20 +308,20 @@ function Authorization ({type}) {
 								type={ watchConfirmPassword ? "text" : "password"} 
 								name='confirmPassword'
 								onChange={handleChange}
-								className='w-full text-[1rem] px-6 py-3 rounded-xl bg-[#111111] radio relative focus:outline-none  inputAction text-white focus:bg-black duration-300 ease-in-out'/>
+								className='w-full text-[1rem] px-6 py-3 rounded-xl bg-[#111111] dark:bg-[#232323] radio relative focus:outline-none dark:focus:text-black dark:text-white inputAction text-white dark:text-black focus:bg-black dark:focus:bg-white duration-300 ease-in-out'/>
 								<label className={`${formData?.confirmPassword?.length ? 'opacity-0' : 'opacity-100'} placeholder absolute text-[1rem] radio px-6`}>Confirm Password</label>
 								<div
 								onClick={() => setWatchConfirmPassword(!watchConfirmPassword)} 
 								className='w-[42px] h-[45px] mx-2'>
 									<div className='w-full h-full relative flex items-center justify-center cursor-pointer'>
-										<div className={`absolute z-0 h-[65%] w-[50%] bg-[#232323] top-1 rounded-t-full flex items-end justify-center ${watchConfirmPassword ? '-mt-[5px]' : 'top-0'} duration-300 ease-in-out`}>
-											<div className={`w-[72%] h-[92%] rounded-full rounded-b-none bg-[#ffffff]`}/>
-											<div className='absolute w-[10px] h-[15.5px] bg-[#ffffff] -left-1'/>
+										<div className={`absolute z-0 h-[65%] w-[50%] bg-[#232323] dark:bg-white top-1 rounded-t-full flex items-end justify-center ${watchConfirmPassword ? '-mt-[5px]' : 'top-0'} duration-300 ease-in-out`}>
+											<div className={`w-[72%] h-[92%] rounded-full rounded-b-none bg-[#ffffff] dark:bg-[#111111]`}/>
+											<div className='absolute w-[10px] h-[15.5px] bg-[#ffffff] dark:bg-[#111111] -left-1'/>
 										</div>
 										<svg className='absolute top-[17px] z-10 bottom-0'
 										version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 										width="100%" viewBox="0 0 491 296" enable-background="new 0 0 491 296" xml:space="preserve">
-											<path fill="#232323" opacity="1.000000" stroke="none" 
+											<path fill={theme === 'dark' ? '#ffffff' : '#232323'} opacity="1.000000" stroke="none" 
 												d="M316.000000,0.999999 
 												C330.020905,1.000000 344.041779,1.000000 358.663086,1.363822 
 												C360.708618,2.087259 362.141327,2.509461 363.600586,2.797377 
@@ -395,9 +397,9 @@ function Authorization ({type}) {
 						<div className='w-full flex items-center justify-center'>
 							{
 								type === 'signup' ? 
-								<div className='text-lg text-black flex flex-row py-5 items-center font-bold'>
+								<div className='text-lg text-black dark:text-white flex flex-row py-5 items-center font-bold'>
 									Already have an account ? 
-									<Link to={'/login'} className=' mx-2 px-6 py-2  bg-blue-300 rounded-2xl belanosima shadow-md shadow-black/80 font-normal hover:scale-110 duration-300 ease-in-out cursor-pointer'>
+									<Link to={'/login'} className=' mx-2 px-6 py-2  bg-blue-300 text-black rounded-2xl belanosima shadow-md shadow-black/80 font-normal hover:scale-110 duration-300 ease-in-out cursor-pointer'>
 										Log in
 									</Link>
 								</div> : 

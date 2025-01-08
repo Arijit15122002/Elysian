@@ -70,7 +70,6 @@ function Search () {
 		const userResponse = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/user/search/${searchInput}`)
 		setSearchResultUsers(userResponse.data.users)
 	}
-	console.log(searchResultPosts);
 
 
 	//Showing Search Results

@@ -1,28 +1,77 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import PostCard from './PostCard'
-
 import Stories from './Story/Stories'
+import ClipLoader from "react-spinners/ClipLoader";
 
+import debounce from '../../utils/debounce'
+import { useTheme } from '../../../context/contextAPI'
 
 
 function Feed () {
 
+	const { theme } = useTheme()
+
 	const deviceType = useSelector(state => state.device.deviceType)
 	const user = useSelector(state => state.auth.user)
 
+
+	//Fetching posts here
 	const [posts, setPosts] = useState([])
+	const [page, setPage] = useState(1)
+	const [hasMore, setHasMore] = useState(true)
+	const [loading, setLoading] = useState(false)
+	const feedScrollRef = useRef(null);
+
+
+	//Fetching posts
+	const fetchPosts = useCallback(async (page) => {
+		if (loading || !hasMore) return; 
+		setLoading(true);
+		try {
+			const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/post/posts?page=${page}&limit=10`, { userId: user._id });
+
+			if (response.data) {
+				const { posts: newPosts, currentPage, hasMore } = response.data;
+
+				setPosts((prevPosts) => {
+					// Filter duplicates by post._id
+					const mergedPosts = [...prevPosts, ...newPosts];
+					const uniquePosts = Array.from(new Map(mergedPosts.map(post => [post._id, post])).values());
+					return uniquePosts;
+				});
+
+				setPage(currentPage + 1);
+				setHasMore(hasMore);
+			}
+		} catch (error) {
+			console.error("Error fetching posts:", error);
+		} finally {
+			setLoading(false);
+		}
+	}, [hasMore, loading, user._id]);
+
+	const handleInfiniteScroll = useCallback(debounce((e) => {
+		const scrollElement = e.target;
+		if (scrollElement.scrollTop + scrollElement.clientHeight >= scrollElement.scrollHeight - 2) {
+			fetchPosts(page);
+		}
+	}, 200), [page, fetchPosts]);
 
 	useEffect(() => {
-		const fetchPosts = async () => {
-			const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/post/posts`)
-			setPosts(response.data)
-		}
+		const scrollElement = feedScrollRef.current;
+		if (!scrollElement) return;
 
-		fetchPosts()
-	}, [])
+		scrollElement.addEventListener('scroll', handleInfiniteScroll);
+		return () => scrollElement.removeEventListener('scroll', handleInfiniteScroll);
+	}, [handleInfiniteScroll]);
+
+	// Initial fetch of first page of posts
+	useEffect(() => {
+		fetchPosts(1);
+	}, []);
 
 	//Handling Post Create section on Feed
 	const [ createPostOpen, setCreatePostOpen ] = useState(false)
@@ -82,7 +131,11 @@ function Feed () {
 		</> : 
 		<>
 
-			<div className='w-[95%] mx-auto h-[-webkit-fill-available] overflow-y-auto py-8 relative ' id='feedScroll'>
+			<div 
+				className='w-[95%] mx-auto h-[-webkit-fill-available] overflow-y-auto py-8 relative ' 
+				id='feedScroll' 
+				ref={feedScrollRef}
+			>
 				<div className='w-full max-w-[620px] h-[260px] mx-auto mb-4'>
 					<Stories/>
 				</div>
@@ -90,12 +143,15 @@ function Feed () {
 				<div className='w-[90%] max-w-[620px] mx-auto h-auto my-6 flex flex-col justify-center border-[2px] border-white dark:border-[#232323] rounded-2xl p-4 bg-white dark:bg-[#232323] shadow-[0_0_10px_0_rgba(0,0,0,0.1)]'>
 					<div className='flex flex-row w-[99%] gap-2 items-center'>
 						<img src={user.profilePic} alt=""  className='w-[40px] h-[40px] object-cover object-center rounded-full'/>
-						<div className='w-[92%] rounded-xl bg-[#eeeeee] dark:bg-[#333333] px-4 py-3 outline-none text-[1rem] radio text-[#888888] cursor-text'
+						<div className='w-[calc(100%-80px)] rounded-xl bg-[#eeeeee] dark:bg-[#333333] px-4 py-3 outline-none text-[1rem] radio text-[#888888] cursor-text'
 							onClick={() => {
 								setCreatePostOpen(true)
 							}}
 						>
 							What's on your mind, {user.fullname.split(' ')[0]}?
+						</div>
+						<div className='w-[40px] h-[40px] rounded-xl hover:bg-[#dfdfdf] dark:hover:bg-[#111111] flex flex-row items-center justify-center cursor-pointer duration-200 ease-in-out'>
+							<svg className='pl-[2px]' height="22px" width="22px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="send" class="icon glyph" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M21.66,12a2,2,0,0,1-1.14,1.81L5.87,20.75A2.08,2.08,0,0,1,5,21a2,2,0,0,1-1.82-2.82L5.46,13H11a1,1,0,0,0,0-2H5.46L3.18,5.87A2,2,0,0,1,5.86,3.25h0l14.65,6.94A2,2,0,0,1,21.66,12Z" fill={theme === 'dark' ? '#ffffff' : '#777777'}></path></g></svg>
 						</div>
 					</div>
 
@@ -115,7 +171,7 @@ function Feed () {
 
 						<div className='flex flex-row items-center px-[4%] py-2 bg-[#f7f7f7] dark:bg-[#373737] rounded-xl gap-2 cursor-pointer hover:bg-blue-600 dark:hover:bg-blue-600 hover:shadow-[0_0_7px_0_rgb(37,99,235)] group duration-200 ease-in-out'>
 							<img src="/feed/smily.png" alt="" className='w-[28px] h-[28px]'/>
-							<div className='text-black hover:text-white dark:text-[#ffffff] kanit text-[0.8rem] duration-200 ease-in-out hidden sm:flex md:hidden lg:flex'>Feeling Activity</div>
+							<div className='text-black group-hover:text-white dark:text-[#ffffff] kanit text-[0.8rem] duration-200 ease-in-out hidden sm:flex md:hidden lg:flex'>Feeling Activity</div>
 						</div>
 
 					</div>
@@ -128,9 +184,26 @@ function Feed () {
 				{
 					posts.map((post) => 
 					<>
-						<PostCard post={post} />
+						<PostCard 
+							post={post} 
+							fetchPosts={fetchPosts}
+							/>
 					</>
 					)
+				}
+				{
+					loading ? <>
+						<div className='w-[90%] max-w-[620px] mx-auto my-4 py-6 flex flex-row items-center justify-center'>
+							<ClipLoader 
+								className=''
+								color={theme === 'dark' ? '#ffffff' : '#232323'}
+								loading={loading}
+								size={30}
+								aria-label="Loading Spinner"
+								data-testid="loader"
+							/>
+						</div>
+					</> : ''
 				}
 			</div>
 		</>

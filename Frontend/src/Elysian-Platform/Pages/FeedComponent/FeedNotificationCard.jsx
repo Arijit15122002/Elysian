@@ -78,13 +78,24 @@ function FeedNotificationCard ({ notification, key }) {
             </div>
         }
         {
-            notification.type === 'post' &&
+            notification.type === 'post' || notification.type === 'share' || notification.type === 'tag' || notification.type === 'comment' || notification.type === 'like' &&
             <div className='w-full h-auto flex flex-col items-center rounded-2xl bg-[#efefef] dark:bg-[#151515] hover:bg-[#e7e7e7] dark:hover:bg-[#050505] duration-200 ease-in-out py-3 cursor-default'>
             <div className='w-[calc(100%-40px)] h-auto flex flex-row items-center justify-between'>
                     <img src={notification.from.profilePic} alt="" className='w-[50px] h-[50px] rounded-full object-cover object-center'/>
                     <div className='w-[calc(100%-60px)] h-auto flex flex-col items-start ml-4'>
                         <div className='radio '>
-                            <span className='text-[0.9rem] text-[#232323] dark:text-white'>{notification?.from?.fullname}</span><span className='text-[0.85rem] text-[#777777]'> posted something on your feed</span>
+                            <span className='text-[0.9rem] text-[#232323] dark:text-white'>{notification?.from?.fullname}</span><span className='text-[0.85rem] text-[#777777]'>{
+                                notification.type === 'post' ? 
+                                ' posted a new post' : 
+                                notification.type === 'share' ? 
+                                ' shared a post' : 
+                                notification.type === 'tag' ?
+                                ' tagged you in a post' : 
+                                notification.type === 'comment' ?
+                                ' commented on your post' : 
+                                notification.type === 'like' ?
+                                ' liked your post' : ''
+                            }</span>
                             <div className='text-[0.8rem] text-[#777777] radio'>
                                 {formattedTime}
                             </div>
@@ -93,6 +104,7 @@ function FeedNotificationCard ({ notification, key }) {
                 </div>
             </div>
         }
+
         </>
     )
 }

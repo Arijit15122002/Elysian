@@ -6,23 +6,28 @@ function DeleteComment ({
     postId,
     postAuthorId,
     userId,
-    allComments,
-    setAllComments,
-    fetchAndSetComments
+    deleteDropdown,
+    setDeleteDropdown,
 }) {
 
-    const [ deleteDropDownOptions, setDeleteDropDownOptions ] = useState(false)
+    const isDropdownOpen = deleteDropdown === commentId; 
+
+    const toggleDropdown = () => {
+    if (isDropdownOpen) {
+      setDeleteDropdown(null); // Close the dropdown
+    } else {
+      setDeleteDropdown(commentId); // Open this dropdown
+    }
+  };
 
   return (
     <div className='relative w-full h-full z-30'
-        onClick={() => {
-            setDeleteDropDownOptions(!deleteDropDownOptions)
-        }}
+        onClick={toggleDropdown}
     >
         <svg className='w-[19px] h-[19px]' viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M5 14C6.10457 14 7 13.1046 7 12C7 10.8954 6.10457 10 5 10C3.89543 10 3 10.8954 3 12" stroke="#232323" stroke-width="1.5" stroke-linecap="round"></path> <circle cx="12" cy="12" r="2" stroke="#232323" stroke-width="1.5"></circle> <path d="M21 12C21 13.1046 20.1046 14 19 14C17.8954 14 17 13.1046 17 12C17 10.8954 17.8954 10 19 10" stroke="#232323" stroke-width="1.5" stroke-linecap="round"></path> </g></svg>
 
         {
-            deleteDropDownOptions && <div className='absolute w-[200px] h-auto rounded-xl bg-white shadow-md shadow-black/20 right-0'>
+            isDropdownOpen && <div className='absolute w-[200px] h-auto rounded-xl bg-white shadow-md shadow-black/20 right-0'>
             {
                 postAuthorId === userId || commentAuthorId === userId ?
                 <div>

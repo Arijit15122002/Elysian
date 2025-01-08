@@ -54,9 +54,9 @@ io.on( 'connection' , ( socket ) => {
         socket.join(userId);
     });
 
-    socket.on(NEW_ELYSIAN_NOTIFICATION, async ({ recipientId, notification }) => {
+    socket.on("NEW_ELYSIAN_NOTIFICATION", async ({ recipientId, notification }) => {
         console.log(`Sending notification to user with ID ${recipientId}`);
-        io.to(recipientId.toString()).emit(NEW_ELYSIAN_NOTIFICATION, notification);
+        io.to(recipientId.toString()).emit("NEW_ELYSIAN_NOTIFICATION", notification);
     });
     
     // temporary user 

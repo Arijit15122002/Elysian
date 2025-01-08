@@ -5,9 +5,13 @@ import moment from 'moment'
 
 import '../../../Mojo-Platform/Pages/MojoNotification/Notifications.css'
 import NotificationCard from './NotificationCard'
+import axios from 'axios'
 function Notification () {
 
+	const user = useSelector(state => state.auth.user)
+
 	const notifications = useSelector((state) => state.notifications.notifications)
+	console.log(notifications);
 	const unreadNotifications = notifications.filter((notification) => !notification.read);
 	const readNotifications = notifications.filter((notification) => notification.read);
 
@@ -50,6 +54,9 @@ function Notification () {
 
 	const unreadGrouped = groupNotifications(unreadNotifications);
 	const readGrouped = groupNotifications(readNotifications);
+
+	console.log(unreadGrouped)
+	console.log(readGrouped);
 	
 
 	// Render notifications for a group
@@ -58,7 +65,7 @@ function Notification () {
 			key={groupName}
 			className='w-[90%] max-w-[600px]'
 		>
-			<div className="w-full text-[1.1rem] kanit text-[#555555] dark:text-white pt-5 pb-2">{groupName}</div>
+			<div className="w-full text-[1.1rem] kanit text-[#555555] dark:text-white pt-5 pb-2 dark:font-light">{groupName}</div>
 			<div className='w-full flex flex-col gap-4'>
 			{
 				notifications.map((notification, index) => (
@@ -75,14 +82,23 @@ function Notification () {
 
 
 	//Handling deletion of Notifications 
-	const deleteNotificationHandler = async (notificationId) => {}
+	const deleteNotificationHandler = async (notificationId) => {
+		try {
+			
+			const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/notification/deleteNotification/${notificationId}`, { userId : user._id });
+			console.log(response);
+
+		} catch (error) {
+			console.log("Error while deleting notification:", error);
+		}
+	}
 
   return (
     <div className="w-full h-full overflow-y-auto flex flex-col items-center">
 		{/* Unread Notifications */}
 		{Object.keys(unreadGrouped).length > 0 && (
 			<>
-			<div className="w-[90%] pt-8 pb-3 kanit text-[1.2rem] text-[#999999]">Unread Notifications</div>
+			<div className="w-[90%] pt-8 pb-3 kanit text-[1.2rem] text-[#999999] font-light">Unread Notifications</div>
 			{
 				Object.entries(unreadGrouped).map(([group, notifications]) => renderGroup(group, notifications))
 			}

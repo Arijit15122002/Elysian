@@ -35,7 +35,12 @@ function SplashScreen () {
 
 
   return (
-    <div className='flex flex-col w-screen h-screen justify-center items-center'>
+    <div 
+        className='flex flex-col w-screen h-screen justify-center items-center'
+        style={{
+            '--text-color': theme === 'dark' ? 'white' : 'black', // Set the CSS variable
+        }}
+    >
         
         <svg
         className={`logo ${animate ? 'bounce-animation' : ''}`}

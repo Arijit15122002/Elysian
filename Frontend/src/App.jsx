@@ -41,7 +41,7 @@ import ProtectRoute from './ProtectRoute'
 import { Loader } from './Elysian-Platform/Pages/ElysianLoaders'
 import CreateStory from './Elysian-Platform/Pages/FeedComponent/Story/CreateStory'
 
-
+let socket;
 
 function App() {
 
@@ -78,32 +78,31 @@ function App() {
 
 	useEffect(() => {
 		const token = localStorage.getItem('token')
-		if( token ) {
+		if (token) {
 			const decoded = jwtDecode(token);
 			const currentTime = Math.floor(Date.now() / 1000);
-			if( decoded.exp < currentTime ) {
+			if (decoded.exp < currentTime) {
 				localStorage.removeItem('token')
 				return
 			} else {
 				fetchUser(decoded.userId)
 				initializeSocket(decoded.userId);
-        		fetchNotifications(decoded.userId);
+				fetchNotifications(decoded.userId);
 			}
 		}
 
 		async function fetchUser(userId) {
 			const response  = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/user/profile/${userId}`)
-			if(response?.data?.user) {
+			if (response?.data?.user) {
 				dispatch(userExists(response.data.user))
 			}
 		}
 	}, [])
 
 	const calculateSuggestedUsers = async () => {
-		// Check if user object is available before making the API call
 		if (user) {
 			const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/user/suggested/${user?._id}`);
-			if ( response?.data?.suggestedUsers.length ) {
+			if (response?.data?.suggestedUsers.length) {
 				dispatch(setSuggestedUsers(response?.data?.suggestedUsers));
 			}
 		} else {
@@ -114,7 +113,7 @@ function App() {
 	useEffect(() => {
 		calculateSuggestedUsers();
 		fetchNotifications(user?._id);
-	  }, [ user ]);
+	}, [ user ]);
 
 
 	//SETTING THEME
@@ -131,6 +130,25 @@ function App() {
 		document.querySelector('html').classList.add(theme)
 	}, [theme])
 
+	//Adaptive theme changing setup
+	useEffect(() => {
+		const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+		if (prefersDark) {
+			setTheme("dark");
+		} else {
+			setTheme("light");
+		}
+		const themeChangeListener = (e) => {
+			setTheme(e.matches ? "dark" : "light");
+		};
+	
+		const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+		darkModeMediaQuery.addEventListener("change", themeChangeListener);
+		return () => {
+			darkModeMediaQuery.removeEventListener("change", themeChangeListener);
+		};
+	}, []);
+
 
 
 	//SETTING BROWSER ANIMATION CONFIGURATION
@@ -146,33 +164,43 @@ function App() {
 
 
 	//Setting Notifications 
-
 	const initializeSocket = (userId) => {
-		console.log(import.meta.env.VITE_BASE_URL);
-		const socket = io(import.meta.env.VITE_BASE_URL); // Replace with the correct server URL
-		socket.emit("joinRoom", userId); // Join user's notification room
-	
-		// Listen for live notifications
+		if (!socket) {
+			socket = io(import.meta.env.VITE_BASE_URL, { withCredentials: true }) 
+			socket.emit("joinRoom", userId)
+		}
+
+		socket.removeAllListeners("NEW_ELYSIAN_NOTIFICATION") // Remove all listeners for this event
 		socket.on("NEW_ELYSIAN_NOTIFICATION", (notification) => {
-			console.log("Received notification:", notification); // Debugging logs
-			dispatch(addNotifications(notification)); // Update Redux state
-		});
+			console.log("Received notification:", notification)
+			dispatch(addNotifications(notification))
+		})
+	}
 	
-		// Cleanup socket connection on unmount
-		return () => socket.disconnect();
-	};
-	
+
+	useEffect(() => {
+		if (user && !socket) {
+			initializeSocket(user._id)
+		}
+		return () => {
+			if (socket) {
+				socket.disconnect()
+				socket = null
+			}
+		}
+	}, [user])
+
 
 	const fetchNotifications = async (userId) => {
 		try {
-		  const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/notification/${userId}`);
-		  if (response?.data) {
-			dispatch(setNotifications(response.data)); // Set notifications in Redux state
-		  }
+			const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/notification/${userId}`, { userId });
+			if (response?.data) {
+				dispatch(setNotifications(response.data));
+			}
 		} catch (error) {
-		  console.error("Error loading notifications:", error);
+			console.error("Error loading notifications:", error);
 		}
-	  };
+	};
 
 	return (
 		<>

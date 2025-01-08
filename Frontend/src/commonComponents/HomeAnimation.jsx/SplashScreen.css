@@ -18,9 +18,10 @@
     }
   }
   
-.bounce-animation {
+  .bounce-animation {
     animation: bounceIn 1s ease-in-out;
     transition: opacity 1s ease-in-out;
+    color: var(--text-color); /* Use the CSS variable */
 }
 
 
@@ -39,6 +40,7 @@
 .letter {
     opacity: 0;
     animation: letterFadeIn 0.5s forwards;
+    color: var(--text-color);
 }
 
 .letter:nth-child(1) {

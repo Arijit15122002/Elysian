@@ -1,10 +1,12 @@
 import express from 'express'
 
-import { getAllNotifications } from '../Controllers/notification.controller.js'
+import { deleteSingleNotification, getAllNotifications } from '../Controllers/notification.controller.js'
 
 const notificationRouter = express.Router()
 
-notificationRouter.get('/:userId', getAllNotifications);
+notificationRouter.post('/:userId', getAllNotifications);
+
+notificationRouter.post('/deleteNotification/:id', deleteSingleNotification);
 
 
 export default notificationRouter

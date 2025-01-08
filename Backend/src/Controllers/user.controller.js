@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs'
 import { v2 as cloudinary } from 'cloudinary'
 
 import User from "../Models/user.model.js"
+import Post from '../Models/post.model.js'
 import Notification from "../Models/notification.model.js"
 
 
@@ -186,6 +187,15 @@ const followOrUnfollowUser = async (req, res) => {
                 currentUser.updateOne({ $pull: { following: userToModify._id } }),
             ]);
 
+            //Check previously follow notification 
+            const foundNotification = await Notification.findOne({
+                type: "follow",
+                from: currentUser._id,
+                to: userToModify._id,
+            })
+
+            await Notification.findByIdAndDelete(foundNotification._id);
+
             message = "Unfollowed successfully";
         } else {
             // Follow Logic
@@ -206,26 +216,21 @@ const followOrUnfollowUser = async (req, res) => {
                 await Notification.findByIdAndDelete(foundNotification._id);
             }
 
-            await new Notification({
+            let newNotification = await new Notification({
                 type: "follow",
                 from: currentUser._id,
                 to: [userToModify._id],
             }).save();
 
             // Emit notification via Socket.IO
-            const notificationData = {
-                type: "follow",
-                from: {
-                    _id: currentUser._id,
-                    name: currentUser.fullname || currentUser.name, // Use fullname if available
-                },
-                to: [userToModify._id],
-                date: new Date().toISOString(),
-            };
+            newNotification = await newNotification.populate({
+                path: "from",
+                select: "fullname profilePic",
+            })
 
             req.io.to(userToModify._id.toString()).emit(
                 "NEW_ELYSIAN_NOTIFICATION",
-                notificationData
+                newNotification
             );
 
             message = "Followed successfully";
@@ -437,19 +442,22 @@ const getBunchOfUsers = async (req, res) => {
     try {
 
         const { userIds } = req.body;
+        console.log(userIds);
 
         const users = await User.find({ _id : { $in : userIds } }).select("fullname username profilePic _id");
 
         return res.status(201).json({
             message : "Users found successfully",
-            users
+            users,
+            success : true
         })
         
 
     } catch (error) {
         console.log("Error in getBunchOfUsers: ", error);
         return res.status(500).json({
-            message : "Something went wrong while getting bunch of users"
+            message : "Something went wrong while getting bunch of users",
+            success : false
         })
     }
 
@@ -488,4 +496,21 @@ const getAvailableUserNames = async (req, res) => {
 
 }
 
-export { getUserById, getUserProfile, getSuggestedUsers, getUsersIdontFollowBack, followOrUnfollowUser, updateUserProfile, updateUserProfilePicture, searchUsers, getBunchOfUsers, getAvailableUserNames } 
+
+const cleanUsersDeletedPosts = async (req, res) => {
+    const allUsers = await User.find({});
+
+    for (const user of allUsers) {
+        if( user.posts.length > 0 ) {
+            for (const post of user.posts) {
+                const postExists = await Post.findById(post);
+                if( !postExists ) {
+                    user.posts.pull(post);
+                }
+            }
+            await user.save();
+        }
+    }
+}
+
+export { getUserById, getUserProfile, getSuggestedUsers, getUsersIdontFollowBack, followOrUnfollowUser, updateUserProfile, updateUserProfilePicture, searchUsers, getBunchOfUsers, getAvailableUserNames, cleanUsersDeletedPosts } 

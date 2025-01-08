@@ -2,12 +2,18 @@ import mongoose from "mongoose";
 
 const postSchema = new mongoose.Schema({
 
-    postType : {
+    postPrivacy : {
 
         type : String,
         required : true,
         enum : ['Public', 'Private'],
 
+    },
+
+    postType : {
+        type : String,
+        required : true,
+        enum : ['Own', 'Shared']
     },
 
     user : {
@@ -21,7 +27,6 @@ const postSchema = new mongoose.Schema({
     text : {
 
         type : String,
-        required : true
 
     },
 
@@ -132,7 +137,22 @@ const postSchema = new mongoose.Schema({
         {
             type : String
         }
-    ]
+    ],
+
+    shares : [
+        {
+            type : mongoose.Schema.Types.ObjectId,
+            ref : 'User'
+        }
+    ],
+
+    sharedPost : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : 'Post',
+        required : function () {
+            return this.postType === 'Shared'
+        }
+    }, 
 
 }, {
 

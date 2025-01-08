@@ -248,7 +248,6 @@ export const getAllFollowingStories = async (req, res) => {
         const { userId } = req.params;
         const { exceptUserId } = req.body;
         const { page, limit } = req.query;
-        console.log(exceptUserId);
 
         const user = await User.findById(userId)
 
@@ -382,7 +381,7 @@ export const cleanStoryFromUser = async () => {
             );
 
             if( updatedStories.length === user.stories.length ) {
-                console.log("");
+                continue
             } else {
                 user.stories = updatedStories;
                 await user.save();

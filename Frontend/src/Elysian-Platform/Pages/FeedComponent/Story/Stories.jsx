@@ -20,12 +20,12 @@ function Stories () {
 
 
 	//Fetching User stories
-	const [usersLastStory, setUsersLastStory] = useState(null)
+	const [usersLastStory, setUsersLastStory] = useState({})
 
 	const fetchUserStories = async () => {
 		try {
 			const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/story/userStories/${user._id}`)
-			const userStories = response.data.storyContainer.storyArray
+			const userStories = response?.data.storyContainer?.storyArray ?? []
 			setUsersLastStory(userStories[userStories.length - 1])
 		} catch (error) {
 			console.log(error)
@@ -38,7 +38,7 @@ function Stories () {
 
 
 	
-
+	
 
 
 
@@ -273,7 +273,7 @@ return (
 						>
 							<svg className='w-[25px] h-[25px]' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M4 12H20M12 4V20" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
 						</div>
-						<div className='absolute w-full text-center bottom-3 text-[#232323] dark:text-white text-[0.9rem] kanit'>
+						<div className='absolute w-full text-center bottom-3 text-[#232323] dark:text-white text-[0.9rem] kanit dark:font-light'>
 							Create Story
 						</div>
 					</div>

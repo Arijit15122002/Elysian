@@ -13,7 +13,8 @@ function Carousel ({ images }) {
     }
 
   return (
-    <div className='w-full h-full bg-cover bg-center duration-200 ease-in-out rounded-xl relative cursor-pointer' 
+    <div
+        className='w-full h-full bg-cover bg-center duration-200 ease-in-out rounded-xl relative cursor-pointer' 
         style={{
             backgroundImage: `url(${images[slideNumber]})`  ,
         }}
@@ -35,7 +36,10 @@ function Carousel ({ images }) {
         <div className='w-full flex flex-row gap-1 justify-center top-[92%] absolute'>
         {
             images.map((image, index) => (
-                <div className={`${ slideNumber === index ? 'bg-white' : 'bg-[#aaaaaa]' } h-[7px] w-[7px] rounded-full duration-200 ease-in-out`} />
+                <div  
+                    key={index}
+                    className={`${ slideNumber === index ? 'bg-white' : 'bg-[#aaaaaa]' } h-[7px] w-[7px] rounded-full duration-200 ease-in-out`} 
+                />
             ))
         }
         </div>

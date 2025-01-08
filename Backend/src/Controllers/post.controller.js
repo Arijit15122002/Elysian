@@ -17,97 +17,119 @@ const createPost = async (req, res) => {
 
     try {
 
-        const { user, postType, message, images, hashTags, taggedPeople, checkIn, backgroundColor, feelingActivity } = req.body
+        const { userId, postType, postPrivacy, message, images, hashTags, taggedPeople, checkIn, backgroundColor, feelingActivity, sharedPost } = req.body
+        console.log(req.body);
 
-        const rightUser = await User.findById(user._id)
+        const rightUser = await User.findById(userId);
 
-        if( !rightUser ) {
-            return res.status(404).json({
-                message : "User not found"
-            })
-        }   
-
-        if( !message && !images ) {
-            return res.status(400).json({
-                message : "Post text or image is required"
-            })
+        if (!rightUser) {
+            return res.status(404).json({ message: "User not found" });
         }
 
-        const imageURLs = []
+        if (!message && !images) {
+            return res.status(400).json({ message: "Post text or image is required" });
+        }
 
-        if( images ) {
-            const imagesToUpload = images.map((image) => {
-                return limit( async() => {
-                    const result = await cloudinary.uploader.upload(image)
-                    return result
+        const imageURLs = [];
+        if (images) {
+            const imagesToUpload = images.map((image) =>
+                limit(async () => {
+                    const result = await cloudinary.uploader.upload(image);
+                    return result;
                 })
-            })
+            );
 
-            let uploads = await Promise.all(imagesToUpload)
+            const uploads = await Promise.all(imagesToUpload);
             uploads.forEach((upload) => {
-                imageURLs.push(upload.secure_url)
-            })
+                imageURLs.push(upload.secure_url);
+            });
         }
 
+        // Create the new post
         const post = new Post({
             postType,
-            user,
-            text : message,
-            images : imageURLs,
-            likes : [],
-            comments : [],
+            postPrivacy,
+            user: rightUser._id,
+            text: message,
+            images: imageURLs,
+            likes: [],
+            comments: [],
             hashTags,
             taggedPeople,
             checkIn,
             backgroundColor,
-            feelingActivity
-        })
+            feelingActivity,
+            sharedPost,
+        });
 
-        await post.save()
+        await post.save();
 
-        await User.findByIdAndUpdate(user._id, {
-            $push : { posts : post._id }
-        })
+        // Add post to user's posts array
+        await User.findByIdAndUpdate(rightUser._id, {
+            $push: { posts: post._id },
+        });
 
-        const newPostNotification = new Notification({
-            type : 'post',
-            from : user._id,
-            to : rightUser.followers,
-            post : post._id
-        })
+        // Determine notification type
+        let notificationType = "post";
+        let notificationData = {
+            type: notificationType,
+            from: rightUser._id,
+            to: rightUser.followers,
+            post: post._id,
+        };
 
-        await newPostNotification.save()
+        if (sharedPost && postType === "Shared") {
+            notificationType = "share";
+        } else if (!sharedPost && postType === "Own" && taggedPeople?.length > 0) {
+            notificationType = "tag";
+            notificationData.taggedPeople = taggedPeople;
+        }
 
+        // Update the notification type and send accordingly
+        notificationData.type = notificationType;
+
+        const newNotification = new Notification(notificationData);
+        await newNotification.save();
+
+        // Emit notifications to followers
         rightUser.followers.forEach((followerId) => {
-            req.io.to(followerId.toString()).emit('NEW_ELYSIAN_NOTIFICATION', {
-                type: 'post',
-                from: { _id: user._id, name: rightUser.name },
+            const notificationPayload = {
+                type: notificationType,
+                from: {
+                    _id: rightUser._id,
+                    fullname: rightUser.name,
+                    profilePic: rightUser.profilePic,
+                },
                 post: post._id,
-                date: new Date().toISOString()
-            });
+                ...(notificationType === "tag" && { taggedPeople }),
+                date: new Date().toISOString(),
+            };
+
+            req.io.to(followerId.toString()).emit("NEW_ELYSIAN_NOTIFICATION", notificationPayload);
         });
 
         return res.status(201).json({
-            message : "Post created successfully",
-            post
-        })
-        
+            message: "Post created successfully",
+            post,
+            success: true,
+        });
     } catch (error) {
-        
+        console.error("Error creating post:", error); // Log the error for debugging
         return res.status(500).json({
-            message : "Something went wrong while creating post"
-        })
-
+            message: "Something went wrong while creating post",
+            success: false,
+        });
     }
-
-}
+};
 
 const deletePost = async (req, res) => {
 
     try {
 
-        const { id } = req.params
-        const post = await Post.findById(id)
+        const { postId } = req.params
+        const { userId } = req.body
+        const post = await Post.findById(postId)
+        const user = await User.findById(userId)
 
         if( !post ) {
             return res.status(404).json({
@@ -115,21 +137,32 @@ const deletePost = async (req, res) => {
             })
         }
 
-        if( post.user.toString() !== req.user._id.toString() ) {
+        if( !user ) {
+            return res.status(404).json({
+                message : "User not found"
+            })
+        }
+
+        if( post.user.toString() !== userId.toString() ) {
             return res.status(401).json({
                 message : "Unauthorized : You can only delete your own posts"
             })
         }
 
-        if( post.image ) {
-            const img_id = post.image.split("/").pop().split(".")[0]
-            await cloudinary.uploader.destroy(img_id)
+        if( post.images ) {
+            //delete images from cloudinary
+            post.images.forEach((image) => {
+                const img_id = image.split("/").pop().split(".")[0]
+                cloudinary.uploader.destroy(img_id)
+            })
         }
 
-        await Post.findByIdAndDelete(id)
+        await Post.findByIdAndDelete(postId)
+        await User.findByIdAndUpdate(userId, { $pull : { posts : postId }})
 
         return res.status(200).json({
-            message : "Post deleted successfully"
+            message : "Post deleted successfully & User updated successfully",
+            success : true
         })
         
     } catch (error) {
@@ -184,39 +217,46 @@ const likePost = async (req, res) => {
                 $push: { likes: userId },
             });
 
-            // Check for existing like notification
-            const existingNotification = await Notification.findOne({
-                post: postId,
-                type: 'like',
-                from: userId,
-            });
-
-            if (existingNotification) {
-                existingNotification.createdAt = new Date();
-                await existingNotification.save();
-            } else {
-                // Create a new like notification
-                const newNotification = new Notification({
+            // Check if the post author is liking the post for creating notification purpose 
+            if( post.user.toString() !== userId.toString() ) {
+                
+                //Create notification here 
+                const existingNotification = await Notification.findOne({
+                    post: postId,
                     type: 'like',
-                    from: user._id, // Use ObjectId for 'from'
-                    to: [post.user], // 'to' expects an array of ObjectId(s)
+                    from: userId,
+                });
+    
+                if (existingNotification) {
+                    existingNotification.createdAt = new Date();
+                    await existingNotification.save();
+                } else {
+                    // Create a new like notification
+                    const newNotification = new Notification({
+                        type: 'like',
+                        from: user._id, // Use ObjectId for 'from'
+                        to: [post.user], // 'to' expects an array of ObjectId(s)
+                        post: post._id,
+                    });
+    
+                    await newNotification.save();
+                }
+    
+                // Emit notification via Socket.IO
+                req.io.to(post.user.toString()).emit('NEW_ELYSIAN_NOTIFICATION', {
+                    type: 'like',
+                    from: {
+                        _id: user._id,
+                        profilePic: user.profilePic,
+                        fullname: user.fullname, // Assuming `fullname` exists in the user schema
+                    },
+                    to: post.user,
                     post: post._id,
+                    createdAt: new Date().toISOString(),
                 });
 
-                await newNotification.save();
             }
-
-            // Emit notification via Socket.IO
-            req.io.to(post.user.toString()).emit('NEW_ELYSIAN_NOTIFICATION', {
-                type: 'like',
-                from: {
-                    _id: user._id,
-                    name: user.fullname, // Assuming `fullname` exists in the user schema
-                },
-                to: post.user,
-                post: post._id,
-                date: new Date().toISOString(),
-            });
+            
 
             return res.status(200).json({ message: 'Post liked successfully' });
         }
@@ -228,9 +268,6 @@ const likePost = async (req, res) => {
         });
     }
 };
-
-
-
 
 const commentPost = async (req, res) => {
 
@@ -587,35 +624,63 @@ const getPost = async (req, res) => {
 }
 
 const getAllPosts = async (req, res) => {
-
     try {
+        const { userId } = req.body;
+        const { page, limit } = req.query;
 
-        const posts = await Post.find().sort({ createdAt : -1 }).populate({
-            path : "user",
-            select : "-password"
-        }).populate({ 
-            path : "comments.user", 
-            select : "-password" 
-        }).populate({
-            path : "comments.replies.user",
-            select : "-password"
-        })
-
-        if( posts.length === 0 ) {
-            return res.status(404).json([])
-        } else {
-            return res.status(200).json(posts)
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found",
+            });
         }
-        
+
+        // Fetch the total number of posts for the current user and their following
+        const totalPosts = await Post.countDocuments({
+            user: { $in: [user._id, ...user.following] },
+        });
+
+        // Fetch posts of the current user and their following
+        const posts = await Post.find({ user: { $in: [user._id, ...user.following] } })
+            .sort({ createdAt: -1 })
+            .skip((page - 1) * limit)
+            .limit(parseInt(limit))
+            .populate({
+                path: "user",
+                select: "-password",
+            })
+            .populate({
+                path: "comments.user",
+                select: "-password",
+            })
+            .populate({
+                path: "comments.replies.user",
+                select: "-password",
+            })
+            .populate({
+                path: "sharedPost",
+                populate: {
+                    path: "user",
+                    select: "profilePic fullname createdAt", // Nested population for sharedPost.user
+                },
+            });
+
+        return res.status(200).json({
+            message: "Posts fetched successfully",
+            posts: posts || [],
+            totalPosts,
+            currentPage: parseInt(page),
+            totalPages: Math.ceil(totalPosts / limit),
+            hasMore: parseInt(page) <= Math.ceil(totalPosts / limit),
+        });
     } catch (error) {
-        
+        console.error(error);
         return res.status(500).json({
-            message : "Something went wrong while fetching posts"
-        })
-
+            message: "Something went wrong while fetching posts",
+        });
     }
+};
 
-}
 
 const getUserPosts = async (req, res) => {
 
@@ -762,6 +827,8 @@ const getPostSearchResults = async (req, res) => {
         });
     }
 };
+
+
 
 
 export { createPost, deletePost, getPost, getAllPosts, updatePost, likePost, commentPost, commentReplyPost, likeComment, likeCommentReply, savePost, getUserPosts, getFollowingPosts, getProfilePosts, getSearchSuggestions, getPostSearchResults};

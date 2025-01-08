@@ -6,6 +6,7 @@ import videoBG from '../../assets/videoplayback.webm'
 import { HomeScreenImagesArray, TransitionalBG } from '../../constants/Constant'
 
 import { useSelector } from 'react-redux'
+import { useTheme } from '../../context/contextAPI'
 
 function Home () {
 
@@ -62,6 +63,8 @@ function Home () {
   
 	  return () => clearInterval(intervalId); // Cleanup function to stop interval on unmount
 	}, [wallpapers.length]); // Run effect only when wallpapers change
+
+	const {theme} = useTheme()
 	
 	return (
 		<>
@@ -164,8 +167,8 @@ function Home () {
 				<div className='flex flex-col h-[90%] w-[45%] lg:w-[30%] items-center'>
 					<div className='h-[40%] flex flex-col justify-center'>
 						<span className='radio text-[#555555] font-bold text-3xl'>Where</span>
-						<span className='radio text-black font-bold text-4xl'>Connections</span>
-						<span className='protest text-black text-3xl pl-32'>Ignite</span>
+						<span className='radio text-black dark:text-white font-bold text-4xl'>Connections</span>
+						<span className='protest text-black dark:text-white text-3xl pl-32'>Ignite</span>
 					</div>
 					<div className='w-[85%] h-full min-h-[350px] max-w-[450px] bg-cover bg-center rounded-3xl shadow-md shadow-black/50 relative' style={{
 						backgroundImage: `url("${randomImage?.url}")`,
@@ -199,25 +202,25 @@ function Home () {
 						</div>
 					</div>
 					<div 
-					className='w-[85%] h-[45%] bg-[#111111] rounded-3xl flex flex-row shadow-md shadow-black/40 overflow-hidden' 
+					className='w-[85%] h-[45%] bg-[#111111] dark:bg-[#efefef] rounded-3xl flex flex-row shadow-md shadow-black/40 overflow-hidden' 
 					>
 						<div className='bg-[url(https://images.unsplash.com/photo-1470434767159-ac7bf1b43351?q=80&w=1587&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)] bg-cover h-full w-[30%] '/>
 						<div className='flex flex-col w-[70%] h-full'>
-							<div className='dosis text-lg font-semibold text-white px-6 xl:px-10 pt-10 pb-2'>
+							<div className='dosis text-lg font-semibold text-white dark:text-black px-6 xl:px-10 pt-10 pb-2'>
 								'A stranger is a friend you haven't met yet.'
 							</div>
 							<div className='w-full flex justify-end px-6'>
-								<div className='protest text-[#2eeaa8]'>
+								<div className='protest text-[#0f4b36] dark:text-[#107954]'>
 									- WILL ROGERS
 								</div>
 							</div>
 
 							<div className='flex flex-col px-6 py-4 justify-end items-end'>
-								<div className='lg:text-xl xl:text-2xl anton text-[#cccccc]'>
+								<div className='lg:text-xl xl:text-2xl anton text-[#cccccc] dark:text-[#bbbbbb]'>
 									Then, what are you waiting for?
 								</div>
 
-								<div className='kanit text-[#75ffcf] font-bold text-xl inline-block '>Meet'em</div>
+								<div className='kanit text-[#75ffcf] dark:text-[#107954] font-bold text-xl inline-block '>Meet'em</div>
 							</div>
 						</div>
 					</div>

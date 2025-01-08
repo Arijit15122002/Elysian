@@ -8,7 +8,7 @@ const postRouter = express.Router()
 
 postRouter.post('/create', createPost)
 
-postRouter.delete('/delete/:id', deletePost)
+postRouter.post('/delete/:postId', deletePost)
 
 postRouter.post('/update/:id', updatePost)
 
@@ -26,7 +26,7 @@ postRouter.post('/save/:id', savePost)
 
 postRouter.get('/likes/:id', getPost)
 
-postRouter.get('/posts', getAllPosts)
+postRouter.post('/posts', getAllPosts)
 
 postRouter.get('/posts/:id', getUserPosts)
 

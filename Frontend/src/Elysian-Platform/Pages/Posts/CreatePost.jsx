@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import axios from 'axios'
 import ScaleLoader from "react-spinners/ScaleLoader";
 
-import { postTypes, postTypesChange } from '../../../constants/Constant'
+import { postPrivacies, postPrivacyChange } from '../../../constants/Constant'
 
 import './PostCreation.css'
 import './CreatePost.css'
@@ -22,22 +22,24 @@ function CreatePost () {
 
 	const user = useSelector(state => state.auth.user)
 
-	const [ postTypeChangeComponent, setPostTypeChangeComponent ] = useState(false)
-
-	const togglePostTypeChangeComponent = () => {
-		setPostTypeChangeComponent(!postTypeChangeComponent)
-	}
-
+	
+	const [ postPrivacy, setPostPrivacy ] = useState('Public')
 	const [ postable, setPostable ] = useState(false)
-	const [ postType, setPostType ] = useState('Public')
+	const [ postType, setPostType ] = useState('Own')
 	const [message, setMessage] = useState('');
 	const [hashTagMessage, setHashTagMessage] = useState('#');
 	const [hashTags, setHashTags] = useState([])
 	const [taggedPeople, setTaggedPeople] = useState([])
+	console.log(taggedPeople);
 	const [checkIn, setCheckIn] = useState('')
 	const [backgroundColor, setBackgroundColor] = useState('')
 	const [feelingActivity, setFeelingActivity] = useState('')
 	const [ totalImages, setTotalImages ] = useState([])
+
+	const [ postPrivacyChangeComponent, setPostPrivacyChangeComponent ] = useState(false)
+	const togglePostPrivacyChangeComponent = () => {
+		setPostPrivacyChangeComponent(!postPrivacyChangeComponent)
+	}
 
 	//HANDLING POST BUTTON COLOR CHANGE
 	const handleMessageChange = (event) => {
@@ -51,7 +53,7 @@ function CreatePost () {
 			} else {
 				setPostable(false);
 			}
-		}, 2000);
+		}, 1000);
 		return () => clearTimeout(timer);
 	}, [message, totalImages]);
 
@@ -60,23 +62,18 @@ function CreatePost () {
 	//Handling the HashTags
 	const handleHashTagChange = (e) => {
 		const inputValue = e.target.value;
-	
-		// Split the input by spaces and check if each word starts with '#'
 		const words = inputValue.split(' ');
 		const allWordsAreHashtags = words.every(word => word === '' || word.startsWith('#'));
-	
-		// Update state only if all words start with '#'
 		if (allWordsAreHashtags) {
 		  setHashTagMessage(inputValue);
 		}
 	};
 
 	useEffect(() => {
-		// Extract hashtags without '#' and update the hashtags state
 		const updatedHashtags = hashTagMessage
 		.split(' ')
-		.filter(word => word.startsWith('#') && word.length > 1) // Check that the word is not just '#'
-		.map(word => word.slice(1)); // Remove the '#' from each word
+		.filter(word => word.startsWith('#') && word.length > 1)
+		.map(word => word.slice(1));
 	
 		setHashTags(updatedHashtags);
 	}, [hashTagMessage]);
@@ -97,7 +94,8 @@ function CreatePost () {
 
 	//POST DATA HADNLING
 	const postData = {
-		user,
+		userId : user?._id,
+		postPrivacy,
 		postType,
 		message,
 		images : totalImages,
@@ -105,7 +103,8 @@ function CreatePost () {
 		taggedPeople,
 		checkIn,
 		backgroundColor,
-		feelingActivity
+		feelingActivity, 
+		sharedPost : null
 	}
 	console.log(postData);
 
@@ -130,7 +129,28 @@ function CreatePost () {
 
 	}
 
+	//Handling the tagger people screen
+	const [ taggedScreenLoading, setTaggedScreenLoading ] = useState(false)
+	const allFollowersOrFollowingsIds = [...user?.followers, ...user?.following ]
+	const [ allFollowersOrFollowings, setAllFollowersOrFollowings ] = useState([])
 	const [ handleTagPeopleScreen, setHandleTagPeopleScreen ] = useState(false)
+	const fetchFollowersOrFollowings = async () => {
+		setTaggedScreenLoading(true)
+		try {
+			const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/user/bunchOfUsers`, { userIds : allFollowersOrFollowingsIds })
+			console.log(response);
+			if( response?.data?.success) {
+				setAllFollowersOrFollowings(response?.data?.users)
+			}
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setTaggedScreenLoading(false)
+		}
+	}
+
+
+
 	const [ handnleCheckInScreen, setHandnleCheckInScreen ] = useState(false)
 	const [ handleFeelingActivityScreen, setHandleFeelingActivityScreen ] = useState(false)
 	const [ handleBackgroundColorScreen, setHandleBackgroundColorScreen ] = useState(false)
@@ -168,35 +188,35 @@ function CreatePost () {
 				<div className='w-[80%] h-full flex flex-col gap-[1px] justify-center mb-[20px]'>
 					<div className='text-[#232323] text-xl kanit pb-1'>{user?.fullname}</div>
 					<div className=' flex flex-row items-center gap-3 bg-blue-200 w-[120px] py-0.5 justify-center rounded-[4px]'
-					onClick={togglePostTypeChangeComponent}>
+					onClick={togglePostPrivacyChangeComponent}>
 						<div>
 						{
 							postType === 'Public' ? 
 							<div className='flex flex-row items-center gap-1'>
 								<div className='w-[12px] h-[12px]'>
-									{postTypes[0].icon}
+									{postPrivacies[0].icon}
 								</div> 
 								<div className='text-[#025FBC] text-[0.9rem] kanit'>
-									{postTypes[0].type}
+									{postPrivacies[0].type}
 								</div>
 							</div> : 
 							<div className='flex flex-row items-center gap-1'>
 								<div className='w-[12px] h-[12px] mb-[2px]'>
-									{postTypes[1].icon}
+									{postPrivacies[1].icon}
 								</div>
 								<div className='text-[#025FBC] text-[0.9rem] kanit'>
-									{postTypes[1].type}
+									{postPrivacies[1].type}
 								</div>
 							</div>
 						}
 						</div>
-						<div className={`${postTypeChangeComponent ? 'rotate-180' : ''} duration-300 w-[12px] h-[12px] `}>
+						<div className={`${postPrivacyChangeComponent ? 'rotate-180' : ''} duration-300 w-[12px] h-[12px] `}>
 							<svg className='w-[12px] h-[12px]' fill="#025FBC" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M11.178 19.569a.998.998 0 0 0 1.644 0l9-13A.999.999 0 0 0 21 5H3a1.002 1.002 0 0 0-.822 1.569l9 13z"></path></g></svg>
 						</div>
 					</div>
 				</div>
 
-				<div className={`${postTypeChangeComponent ? 'scale-100 opacity-100 translate-y-0' : 'scale-0 opacity-0 translate-y-[-100%]'} duration-300 ease-in-out absolute top-[110%] flex flex-col w-[100%] gap-2 rounded-3xl bg-[#efefef] py-2 items-center`}
+				<div className={`${postPrivacyChangeComponent ? 'scale-100 opacity-100 translate-y-0' : 'scale-0 opacity-0 translate-y-[-100%]'} duration-300 ease-in-out absolute top-[110%] flex flex-col w-[100%] gap-2 rounded-3xl bg-[#efefef] py-2 items-center`}
 				style={{
 					boxShadow: '0 0 20px #aaaaaa'
 				}}>
@@ -204,13 +224,13 @@ function CreatePost () {
 					className='w-full flex flex-row py-2 px-2 items-center justify-between rounded-2xl '
 					onClick={() => {
 						setPostType('Public')
-						setPostTypeChangeComponent(!postTypeChangeComponent)
+						setPostPrivacyChangeComponent(!postPrivacyChangeComponent)
 					}}
 					>
 						<div className='flex flex-row items-center gap-4'>
 							<div className='p-3 rounded-full bg-[#eeeeee]'>
 								<div className='w-[28px] h-[28px]'>
-									{postTypesChange[0].icon}
+									{postPrivacyChange[0].icon}
 								</div>
 							</div>
 							<div className='flex flex-col justify-center'>
@@ -227,13 +247,13 @@ function CreatePost () {
 					className='w-full flex flex-row py-2 px-2 items-center justify-between rounded-2xl'
 					onClick={() => {
 						setPostType('Private')
-						setPostTypeChangeComponent(!postTypeChangeComponent)
+						setPostPrivacyChangeComponent(!postPrivacyChangeComponent)
 					}}
 					>
 						<div className='flex flex-row items-center gap-4'>
 							<div className='p-3 rounded-full bg-[#eeeeee]'>
 								<div className='w-[30px] h-[30px]'>
-									{postTypesChange[1].icon}
+									{postPrivacyChange[1].icon}
 								</div>
 							</div>
 							<div className='flex flex-col justify-center'>
@@ -346,7 +366,7 @@ function CreatePost () {
 				
 				{/* Post Preview Goes Here */}
 				<div className='w-[40%] xl:w-[30%] h-full hidden lg:flex flex-col items-center overflow-y-auto' id='scrollHome'>
-					<div className='w-[80%] kanit text-[1.4rem] text-[#cccccc] dark:text-white py-4'>
+					<div className='w-[80%] kanit text-[1.2rem] text-[#ababab] font-light dark:text-[#efefef] py-4'>
 						Your Post Preview
 					</div>
 					<div className='w-[90%] max-w-[420px] h-auto px-6 py-4 my-6 bg-[#ffffff] dark:bg-[#232323] rounded-3xl border-[1px] border-[#888888] dark:border-[#232323]'>
@@ -354,7 +374,7 @@ function CreatePost () {
 							<div className=' h-auto flex flex-row'>
 								<img src={user?.profilePic} alt="" className='w-[40px] h-[40px] rounded-full object-cover'/>
 								<div className='flex flex-col w-auto h-full px-3 mb-[3px]'>
-									<div className='text-[1rem] kanit text-[#232323] dark:text-white'>{user?.fullname} 
+									<div className='text-[1rem] kanit text-[#232323] dark:text-white dark:font-light'>{user?.fullname} 
 									{
 										checkIn.length > 0 ? 
 											<>
@@ -422,29 +442,37 @@ function CreatePost () {
 				{/* Actual Creation Part */}
 				<div className='w-full max-w-[800px] mx-auto lg:w-[60%] xl:w-[45%] h-full flex flex-col items-center overflow-y-auto' id='scrollHome'>
 					<div className='w-full lg:w-[80%] h-[50px] flex flex-row items-center justify-between px-6 py-3 relative'>
-						<div className=' text-[1.5rem] font-semibold text-[#cccccc] dark:text-white'>
+						<div className=' text-[1.2rem] kanit text-[#ababab] dark:text-[#efefef] font-light'>
 							Create Post
 						</div>
-						<div 
-							className={`${ postable ? 'bg-[#147ee8] text-white cursor-pointer hover:shadow-md hover:shadow-[#555555]/20' : 'bg-[#eeeeee] text-[#bbbbbb] cursor-default' } duration-300 ease-in-out px-[1rem] py-1 mx-4 dosis rounded-xl text-[1rem]`}
-							onClick={post}
-						>
-							POST
-						</div>
-						<div 
-							className={`${ postable ? 'flex' : 'hidden' } absolute -right-[60px] text-[1rem] font-semibold bg-red-200 dark:bg-[#fefefe] px-[1rem] py-1 text-red-600 rounded-xl dosis cursor-pointer`}
-							onClick={() => {
-								setPostable(false)
-								setPostType('Public')
-								setMessage('')
-								setTaggedPeople([])
-								setCheckIn('')
-								setBackgroundColor('')
-								setFeelingActivity('')
-								setTotalImages([])
-							}}
-						>
-							CANCEL
+
+						<div className='absolute right-2 flex flex-row'>
+							{/* POST button */}
+							<div 
+								className={`${ postable ? 'bg-[#147ee8] text-white cursor-pointer hover:shadow-md hover:shadow-[#555555]/20' : 'bg-[#eeeeee] text-[#bbbbbb] cursor-default' } xl:right-6 duration-300 ease-in-out px-[1rem] pt-1 pb-[5px] mx-4 kanit font-light rounded-lg text-[0.9rem]`}
+								onClick={() => {
+									post()
+								}}
+							>
+								POST
+							</div>
+
+							{/* CANCEL button */}
+							<div 
+								className={`${ postable ? 'flex' : 'hidden' } text-[0.9rem] bg-black dark:bg-red-500 px-[1rem] pt-1 pb-[5px] text-white rounded-lg kanit font-light cursor-pointer`}
+								onClick={() => {
+									setPostable(false)
+									setPostType('Public')
+									setMessage('')
+									setTaggedPeople([])
+									setCheckIn('')
+									setBackgroundColor('')
+									setFeelingActivity('')
+									setTotalImages([])
+								}}
+							>
+								CANCEL
+							</div>
 						</div>
 					</div>
 					<div className='mt-[20px] w-[85%] lg:w-[70%] h-[70px] flex flex-row gap-3 items-center'>
@@ -456,45 +484,45 @@ function CreatePost () {
 								{user?.fullname}
 							</div>
 							<div className=' flex flex-row items-center gap-1 bg-blue-200 w-auto py-0.5 justify-center rounded-[4px] cursor-pointer'
-							onClick={togglePostTypeChangeComponent}>
+							onClick={togglePostPrivacyChangeComponent}>
 							<div>
 							{
 								postType === 'Public' ? 
 								<div className='flex flex-row items-center gap-1'>
 									<div className='w-[10px] h-[10px] mb-[1px]'>
-										{postTypes[0].icon}
+										{postPrivacies[0].icon}
 									</div> 
 									<div className='text-[#025FBC] text-[0.7rem] kanit'>
-										{postTypes[0].type}
+										{postPrivacies[0].type}
 									</div>
 								</div> : 
 								<div className='flex flex-row items-center gap-1'>
 									<div className='w-[10px] h-[10px] mb-[2px]'>
-										{postTypes[1].icon}
+										{postPrivacies[1].icon}
 									</div>
 									<div className='text-[#025FBC] text-[0.7rem] kanit'>
-										{postTypes[1].type}
+										{postPrivacies[1].type}
 									</div>
 									</div>
 								}
 								</div>
-								<div className={`${postTypeChangeComponent ? 'rotate-180' : ''} duration-300 w-[10px] h-[10px] `}>
+								<div className={`${postPrivacyChangeComponent ? 'rotate-180' : ''} duration-300 w-[10px] h-[10px] `}>
 									<svg className='w-[10px] h-[10px]' fill="#025FBC" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M11.178 19.569a.998.998 0 0 0 1.644 0l9-13A.999.999 0 0 0 21 5H3a1.002 1.002 0 0 0-.822 1.569l9 13z"></path></g></svg>
 								</div>
 							</div>
 
-							<div className={`${postTypeChangeComponent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-[-200%]'} absolute duration-200 ease-in-out h-[160px] w-[360px] flex flex-col items-center justify-center bg-[#eeeeee] rounded-3xl z-10 top-16`}>
+							<div className={`${postPrivacyChangeComponent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-[-200%]'} absolute duration-200 ease-in-out h-[160px] w-[360px] flex flex-col items-center justify-center bg-[#eeeeee] rounded-3xl z-10 top-16`}>
 								<div 
 								className='w-full flex flex-row py-2 px-2 items-center justify-between rounded-2xl cursor-pointer '
 								onClick={() => {
 									setPostType('Public')
-									setPostTypeChangeComponent(!postTypeChangeComponent)
+									setPostPrivacyChangeComponent(!postPrivacyChangeComponent)
 								}}
 								>
 									<div className='flex flex-row items-center gap-4'>
 										<div className='p-3 rounded-full bg-[#eeeeee]'>
 											<div className='w-[28px] h-[28px]'>
-												{postTypesChange[0].icon}
+												{postPrivacyChange[0].icon}
 											</div>
 										</div>
 										<div className='flex flex-col justify-center'>
@@ -511,13 +539,13 @@ function CreatePost () {
 								className='w-full flex flex-row py-2 px-2 items-center justify-between rounded-2xl cursor-pointer'
 								onClick={() => {
 									setPostType('Private')
-									setPostTypeChangeComponent(!postTypeChangeComponent)
+									setPostPrivacyChangeComponent(!postPrivacyChangeComponent)
 								}}
 								>
 									<div className='flex flex-row items-center gap-4'>
 										<div className='p-3 rounded-full bg-[#eeeeee]'>
 											<div className='w-[30px] h-[30px]'>
-												{postTypesChange[1].icon}
+												{postPrivacyChange[1].icon}
 											</div>
 										</div>
 										<div className='flex flex-col justify-center'>
@@ -545,7 +573,7 @@ function CreatePost () {
 										placeholder="What's on your mind?"
 										value={message}
 										onChange={handleMessageChange}
-										className='w-full min-w-[380px] max-w-[450px] min-h-[4rem] h-[4rem] text-[#232323] dark:text-[#efefef] bg-[#eeeeee] dark:bg-[#232323] focus:outline-none p-4 rounded-2xl radio border-2 border-[#dddddd] dark:border-[#232323] m-4'
+										className='w-full min-w-[380px] max-w-[450px] min-h-[4rem] h-[4rem] text-[#232323] dark:text-[#efefef] bg-[#eeeeee] dark:bg-[#232323] focus:outline-none p-4 rounded-full radio border-2 border-[#dddddd] dark:border-[#232323] m-4'
 									/>
 									<input 
 										type="text"
@@ -556,48 +584,81 @@ function CreatePost () {
 									/>
 								</div>
 
-								<div className='w-full flex flex-col items-center xl:hidden'>
-									<div className='text-[#aaaaaa] dark:text-[#efefef] text-radio text-[1.2rem] font-semibold mt-8 px-6'>
+								<div className='w-full flex flex-col items-end xl:hidden'>
+									<div className='w-auto text-[#aaaaaa] dark:text-[#efefef] kanit font-light text-[1.2rem] mt-8 px-6 inline-block'>
 										Add to your POST
 									</div>
 
-									<div className=' flex flex-col gap-2 w-full h-auto items-center mt-8 mb-6'>
+									<div className=' flex flex-col gap-3 w-full h-auto items-center mt-8 mb-6'>
 
-										<div className=' flex flex-row w-[80%] max-w-[400px] h-[55px] bg-[#eeeeee] dark:bg-[#232323] rounded-xl border-2 border-[#dddddd] dark:border-[#232323] items-center cursor-pointer hover:opacity-80 duration-200 ease-in-out'
-											onClick={() => setHandleTagPeopleScreen( !handleTagPeopleScreen )}
+										<div className='flex flex-row w-full max-w-[400px] p-3 bg-[#ffffff] dark:bg-[#232323] rounded-full items-center cursor-pointer shadow-[0_0_10px_0_rgba(0,0,0,0.1)] hover:opacity-80 duration-200 ease-in-out'
+											onClick={() => {
+												if( allFollowersOrFollowings.length === 0 ) {
+													fetchFollowersOrFollowings()
+												}
+												setHandleTagPeopleScreen( !handleTagPeopleScreen )
+											}}
 										>
-											<svg className='w-[40px] h-[40px] ml-6 mr-2' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M14.1297 11.3401C14.5197 9.70008 13.0897 8.27003 11.4497 8.66003C10.6797 8.85003 10.0497 9.48005 9.85974 10.2501C9.46974 11.8901 10.8997 13.32 12.5397 12.93C13.3197 12.74 13.9497 12.1101 14.1297 11.3401Z" fill="#025ac5"></path> <path opacity="0.4" d="M6.02094 17.97C5.84093 17.97 5.65093 17.9 5.51093 17.77C3.57093 15.97 2.46094 13.43 2.46094 10.79C2.46094 5.52998 6.74093 1.25 12.0009 1.25C17.2609 1.25 21.5409 5.52998 21.5409 10.79C21.5409 13.45 20.4709 15.91 18.5309 17.74C18.2309 18.02 17.7509 18.01 17.4709 17.71C17.1909 17.41 17.2009 16.93 17.5009 16.65C19.1409 15.11 20.0409 13.04 20.0409 10.8C20.0409 6.36999 16.4309 2.76001 12.0009 2.76001C7.57093 2.76001 3.96094 6.36999 3.96094 10.8C3.96094 13.06 4.87093 15.14 6.53093 16.68C6.83093 16.96 6.85094 17.44 6.57094 17.74C6.42094 17.89 6.22094 17.97 6.02094 17.97Z" fill="#025ac5"></path> <path opacity="0.4" d="M15.9995 15.3C15.8195 15.3 15.6295 15.23 15.4895 15.1C15.1895 14.82 15.1695 14.34 15.4595 14.04C16.2895 13.16 16.7495 12 16.7495 10.8C16.7495 8.18005 14.6195 6.06006 12.0095 6.06006C9.39952 6.06006 7.26953 8.19005 7.26953 10.8C7.26953 12.01 7.72952 13.16 8.55952 14.04C8.83952 14.34 8.82953 14.82 8.52953 15.1C8.22953 15.39 7.74953 15.3701 7.46953 15.0701C6.37953 13.9101 5.76953 12.39 5.76953 10.8C5.76953 7.36005 8.56952 4.56006 12.0095 4.56006C15.4495 4.56006 18.2495 7.36005 18.2495 10.8C18.2495 12.39 17.6495 13.9101 16.5495 15.0701C16.3995 15.2201 16.1995 15.3 15.9995 15.3Z" fill="#025ac5"></path> <path d="M10.3007 16.66L8.86071 18.4501C7.72071 19.8801 8.73071 21.99 10.5607 21.99H13.4307C15.2607 21.99 16.2807 19.8701 15.1307 18.4501L13.6907 16.66C12.8307 15.57 11.1707 15.57 10.3007 16.66Z" fill="#025ac5"></path> </g></svg>
-											<div className='text-[#555555] dark:text-white radio'>
-												Tag People
+											<div className='w-[50px] h-[50px] rounded-full flex items-center justify-center bg-blue-100'>
+												<svg height="37px" width="37px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M14.1297 11.3401C14.5197 9.70008 13.0897 8.27003 11.4497 8.66003C10.6797 8.85003 10.0497 9.48005 9.85974 10.2501C9.46974 11.8901 10.8997 13.32 12.5397 12.93C13.3197 12.74 13.9497 12.1101 14.1297 11.3401Z" fill="#025ac5"></path> <path opacity="0.4" d="M6.02094 17.97C5.84093 17.97 5.65093 17.9 5.51093 17.77C3.57093 15.97 2.46094 13.43 2.46094 10.79C2.46094 5.52998 6.74093 1.25 12.0009 1.25C17.2609 1.25 21.5409 5.52998 21.5409 10.79C21.5409 13.45 20.4709 15.91 18.5309 17.74C18.2309 18.02 17.7509 18.01 17.4709 17.71C17.1909 17.41 17.2009 16.93 17.5009 16.65C19.1409 15.11 20.0409 13.04 20.0409 10.8C20.0409 6.36999 16.4309 2.76001 12.0009 2.76001C7.57093 2.76001 3.96094 6.36999 3.96094 10.8C3.96094 13.06 4.87093 15.14 6.53093 16.68C6.83093 16.96 6.85094 17.44 6.57094 17.74C6.42094 17.89 6.22094 17.97 6.02094 17.97Z" fill="#025ac5"></path> <path opacity="0.4" d="M15.9995 15.3C15.8195 15.3 15.6295 15.23 15.4895 15.1C15.1895 14.82 15.1695 14.34 15.4595 14.04C16.2895 13.16 16.7495 12 16.7495 10.8C16.7495 8.18005 14.6195 6.06006 12.0095 6.06006C9.39952 6.06006 7.26953 8.19005 7.26953 10.8C7.26953 12.01 7.72952 13.16 8.55952 14.04C8.83952 14.34 8.82953 14.82 8.52953 15.1C8.22953 15.39 7.74953 15.3701 7.46953 15.0701C6.37953 13.9101 5.76953 12.39 5.76953 10.8C5.76953 7.36005 8.56952 4.56006 12.0095 4.56006C15.4495 4.56006 18.2495 7.36005 18.2495 10.8C18.2495 12.39 17.6495 13.9101 16.5495 15.0701C16.3995 15.2201 16.1995 15.3 15.9995 15.3Z" fill="#025ac5"></path> <path d="M10.3007 16.66L8.86071 18.4501C7.72071 19.8801 8.73071 21.99 10.5607 21.99H13.4307C15.2607 21.99 16.2807 19.8701 15.1307 18.4501L13.6907 16.66C12.8307 15.57 11.1707 15.57 10.3007 16.66Z" fill="#025ac5"></path> </g></svg>
+											</div>
+											<div className='flex flex-col gap-1 ml-4'>
+												<div className='text-[#555555] text-[0.9rem] dark:text-white radio'>
+													Tag People
+												</div>
+												<div className='text-[#777777] text-[0.75rem] dark:text-[#ababab] radio'>
+													Tag your followers...
+												</div>
 											</div>
 										</div>
 
-										<div className=' flex flex-row w-[80%] max-w-[400px] h-[55px] bg-[#eeeeee] dark:bg-[#232323] rounded-xl border-2 border-[#dddddd] dark:border-[#232323] items-center cursor-pointer hover:opacity-80 duration-200 ease-in-out'
+										<div className=' flex flex-row w-full max-w-[400px] p-3 bg-[#ffffff] dark:bg-[#232323] rounded-full items-center cursor-pointer shadow-[0_0_10px_0_rgba(0,0,0,0.1)] hover:opacity-80 duration-200 ease-in-out'
 											onClick={() => setHandnleCheckInScreen( !handnleCheckInScreen )}
 										>
-											<svg className='w-[33px] h-[33px] ml-7 mr-3' viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M9 0a7 7 0 0 0-7 7v.04a6.863 6.863 0 0 0 1.09 3.7l.6.81L8.2 17.6a1 1 0 0 0 1.6 0l4.51-6.05.6-.81A6.863 6.863 0 0 0 16 7.04V7a7 7 0 0 0-7-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8z" fill="#05b339" fill-rule="evenodd"></path> </g></svg>
-											<div className='text-[#555555] dark:text-white radio'>
-												Add Location
+											<div className='w-[50px] h-[50px] rounded-full flex items-center justify-center bg-green-100'>
+												<svg height="25px" width="25px" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M9 0a7 7 0 0 0-7 7v.04a6.863 6.863 0 0 0 1.09 3.7l.6.81L8.2 17.6a1 1 0 0 0 1.6 0l4.51-6.05.6-.81A6.863 6.863 0 0 0 16 7.04V7a7 7 0 0 0-7-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8z" fill="#05b339" fill-rule="evenodd"></path> </g></svg>
+											</div>
+											<div className='flex flex-col gap-1 ml-4'>
+												<div className='text-[#555555] text-[0.9rem] dark:text-white radio'>
+													Add Location
+												</div>
+												<div className='text-[#777777] text-[0.75rem] dark:text-[#ababab] radio'>
+													Add your check in location
+												</div>
 											</div>
 										</div>
 
-										<div className=' flex flex-row w-[80%] max-w-[400px] h-[55px] bg-[#eeeeee] dark:bg-[#232323] rounded-xl border-2 border-[#dddddd] dark:border-[#232323] items-center cursor-pointer hover:opacity-80 duration-200 ease-in-out'
+										<div className='flex flex-row w-full max-w-[400px] p-3 bg-[#ffffff] dark:bg-[#232323] rounded-full items-center cursor-pointer shadow-[0_0_10px_0_rgba(0,0,0,0.1)] hover:opacity-80 duration-200 ease-in-out'
 											onClick={() => setHandleFeelingActivityScreen( !handleFeelingActivityScreen )}
 										>
-											<div className='w-[30px] h-[30px] ml-6 mr-3 rounded-full bg-[#fff41c]'>
-												<svg className='mt-[1.5px] ml-[1px]' viewBox="0 0 76 76" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="full" enable-background="new 0 0 76.00 76.00" xml:space="preserve" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill="#232323" fill-opacity="1" stroke-width="0.2" stroke-linejoin="round" d="M 26.7728,20.5833C 29.8731,20.5833 32.3864,23.0966 32.3864,26.197C 32.3864,29.2973 29.8731,31.8106 26.7728,31.8106C 23.6724,31.8106 21.1591,29.2973 21.1591,26.197C 21.1591,23.0966 23.6724,20.5833 26.7728,20.5833 Z M 49.2273,20.5833C 52.3276,20.5833 54.8409,23.0967 54.8409,26.197C 54.8409,29.2973 52.3276,31.8106 49.2273,31.8106C 46.127,31.8106 43.6136,29.2973 43.6136,26.197C 43.6136,23.0967 46.127,20.5833 49.2273,20.5833 Z M 20.5833,39.5834L 55.4166,39.5834C 57.1655,39.5834 58.5833,41.0011 58.5833,42.75C 58.5833,44.4989 57.1655,45.9167 55.4166,45.9167L 55.4166,49.875C 55.4166,55.5589 49.2256,60.1667 43.5417,60.1667C 37.8577,60.1667 31.6667,55.5589 31.6667,49.875L 31.6667,45.9167L 20.5833,45.9167C 18.8344,45.9167 17.4167,44.4989 17.4167,42.75C 17.4167,41.0011 18.8344,39.5834 20.5833,39.5834 Z M 36.4167,45.9167L 36.4167,48.2917C 36.4167,52.2267 39.6066,55.4167 43.5417,55.4167C 47.4767,55.4167 50.6667,52.2267 50.6667,48.2917L 50.6667,45.9167L 45.9166,45.9167L 45.9166,49.875C 45.9166,51.1867 44.8533,52.25 43.5416,52.25C 42.23,52.25 41.1666,51.1867 41.1666,49.875L 41.1666,45.9167L 36.4167,45.9167 Z "></path> </g></svg>
+											<div className='w-[50px] h-[50px] rounded-full flex items-center justify-center bg-[#fffbab]'>
+												<div className='w-[25px] h-[25px] rounded-full bg-[#fff41c] flex items-center justify-center'>
+													<svg height="20px" width="20px" viewBox="0 0 76 76" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="full" enable-background="new 0 0 76.00 76.00" xml:space="preserve" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill="#232323" fill-opacity="1" stroke-width="0.2" stroke-linejoin="round" d="M 26.7728,20.5833C 29.8731,20.5833 32.3864,23.0966 32.3864,26.197C 32.3864,29.2973 29.8731,31.8106 26.7728,31.8106C 23.6724,31.8106 21.1591,29.2973 21.1591,26.197C 21.1591,23.0966 23.6724,20.5833 26.7728,20.5833 Z M 49.2273,20.5833C 52.3276,20.5833 54.8409,23.0967 54.8409,26.197C 54.8409,29.2973 52.3276,31.8106 49.2273,31.8106C 46.127,31.8106 43.6136,29.2973 43.6136,26.197C 43.6136,23.0967 46.127,20.5833 49.2273,20.5833 Z M 20.5833,39.5834L 55.4166,39.5834C 57.1655,39.5834 58.5833,41.0011 58.5833,42.75C 58.5833,44.4989 57.1655,45.9167 55.4166,45.9167L 55.4166,49.875C 55.4166,55.5589 49.2256,60.1667 43.5417,60.1667C 37.8577,60.1667 31.6667,55.5589 31.6667,49.875L 31.6667,45.9167L 20.5833,45.9167C 18.8344,45.9167 17.4167,44.4989 17.4167,42.75C 17.4167,41.0011 18.8344,39.5834 20.5833,39.5834 Z M 36.4167,45.9167L 36.4167,48.2917C 36.4167,52.2267 39.6066,55.4167 43.5417,55.4167C 47.4767,55.4167 50.6667,52.2267 50.6667,48.2917L 50.6667,45.9167L 45.9166,45.9167L 45.9166,49.875C 45.9166,51.1867 44.8533,52.25 43.5416,52.25C 42.23,52.25 41.1666,51.1867 41.1666,49.875L 41.1666,45.9167L 36.4167,45.9167 Z "></path> </g></svg>
+												</div>
 											</div>
-											<div className='text-[#555555] dark:text-white radio'>
-												Feeling Activity
+											<div className='flex flex-col gap-1 ml-4'>
+												<div className='text-[#555555] text-[0.9rem] dark:text-white radio'>
+													Feeling Activity
+												</div>
+												<div className='text-[#777777] text-[0.75rem] dark:text-[#ababab] radio'>
+													Express how you're feeling...
+												</div>
 											</div>
 										</div>
 
-										<div className=' flex flex-row w-[80%] max-w-[400px] h-[55px] bg-[#eeeeee] dark:bg-[#232323] rounded-xl border-2 border-[#dddddd] dark:border-[#232323] items-center cursor-pointer hover:opacity-80 duration-200 ease-in-out'>
-											<div className='w-[30px] h-[30px] ml-6 mr-3 rounded-full bg-[#e01b1b]'>
-												<svg className='w-[20px] h-[20px] ml-[6px] mt-[5px]' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M5 12H12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2H7.6087C6.16795 2 5 3.16795 5 4.6087V12ZM5 12H14C16.7614 12 19 14.2386 19 17C19 19.7614 16.7614 22 14 22H7.05882C5.92177 22 5 21.1371 5 20M5 12V15.9706" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"></path> </g></svg>
+										<div className=' flex flex-row w-full max-w-[400px] p-3 bg-[#ffffff] dark:bg-[#232323] rounded-full items-center cursor-pointer shadow-[0_0_10px_0_rgba(0,0,0,0.1)] hover:opacity-80 duration-200 ease-in-out'>
+											<div className='w-[50px] h-[50px] flex items-center justify-center rounded-full bg-red-100'>
+												<div className='w-[25px] h-[25px] flex items-center justify-center rounded-full bg-[#e01b1b]'>
+													<svg height="15px" width="15px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M5 12H12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2H7.6087C6.16795 2 5 3.16795 5 4.6087V12ZM5 12H14C16.7614 12 19 14.2386 19 17C19 19.7614 16.7614 22 14 22H7.05882C5.92177 22 5 21.1371 5 20M5 12V15.9706" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"></path> </g></svg>
+												</div>
 											</div>
-											<div className='text-[#555555] dark:text-white radio'>
-												Text Background Color
+											<div className='flex flex-col gap-1 ml-4'>
+												<div className='text-[#555555] text-[0.9rem] dark:text-white radio'>
+													Text Background Color
+												</div>
+												<div className='text-[#777777] text-[0.75rem] dark:text-[#ababab] radio'>
+													Select a background color...
+												</div>
 											</div>
 										</div>
 
@@ -608,26 +669,177 @@ function CreatePost () {
 					</div>
 				</div>
 
-				<div className='w-[25%] hidden xl:flex h-full'>
-					
+				<div className='w-[25%] hidden xl:flex flex-col h-full'>
+					<div className='w-full lg:w-[90%] h-full flex flex-col items-end justify-end mt-1 px-6 py-3 relative'>
+						<div className='w-auto h-auto flex flex-row gap-2 items-center'>
+							<svg height="18px" width="18px" viewBox="0 -6.5 38 38" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill={ theme === 'dark' ? '#fff' : '#777777' }><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><g id="icons" stroke="none" stroke-width="0.8" fill="none" fill-rule="evenodd"> <g id="ui-gambling-website-lined-icnos-casinoshunter" transform="translate(-1511.000000, -158.000000)" fill={ theme === 'dark' ? '#fff' : '#bbbbbb' } fill-rule="nonzero"> <g id="1" transform="translate(1350.000000, 120.000000)"> <path d="M187.812138,38.5802109 L198.325224,49.0042713 L198.41312,49.0858421 C198.764883,49.4346574 198.96954,49.8946897 199,50.4382227 L198.998248,50.6209428 C198.97273,51.0514917 198.80819,51.4628128 198.48394,51.8313977 L198.36126,51.9580208 L187.812138,62.4197891 C187.031988,63.1934036 185.770571,63.1934036 184.990421,62.4197891 C184.205605,61.6415481 184.205605,60.3762573 184.990358,59.5980789 L192.274264,52.3739093 L162.99947,52.3746291 C161.897068,52.3746291 161,51.4850764 161,50.3835318 C161,49.2819872 161.897068,48.3924345 162.999445,48.3924345 L192.039203,48.3917152 L184.990421,41.4019837 C184.205605,40.6237427 184.205605,39.3584519 184.990421,38.5802109 C185.770571,37.8065964 187.031988,37.8065964 187.812138,38.5802109 Z" id="right-arrow"> </path> </g> </g> </g> </g></svg>
+							<div className='text-[1.1rem] kanit text-[#ababab] font-light dark:text-white'>
+								add to your Post
+							</div>
+						</div>
+
+						<div className=' flex flex-col gap-3 w-full h-auto items-center mt-8 mb-6'>
+
+							<div className='flex flex-row w-full max-w-[400px] p-3 bg-[#ffffff] dark:bg-[#232323] rounded-full items-center cursor-pointer shadow-[0_0_10px_0_rgba(0,0,0,0.1)] hover:opacity-80 duration-200 ease-in-out'
+								onClick={() => {
+									if( allFollowersOrFollowings.length === 0 ) {
+										fetchFollowersOrFollowings()
+									}
+									setHandleTagPeopleScreen( true )
+								}}
+							>
+								<div className='w-[50px] h-[50px] rounded-full flex items-center justify-center bg-blue-100'>
+									<svg height="37px" width="37px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M14.1297 11.3401C14.5197 9.70008 13.0897 8.27003 11.4497 8.66003C10.6797 8.85003 10.0497 9.48005 9.85974 10.2501C9.46974 11.8901 10.8997 13.32 12.5397 12.93C13.3197 12.74 13.9497 12.1101 14.1297 11.3401Z" fill="#025ac5"></path> <path opacity="0.4" d="M6.02094 17.97C5.84093 17.97 5.65093 17.9 5.51093 17.77C3.57093 15.97 2.46094 13.43 2.46094 10.79C2.46094 5.52998 6.74093 1.25 12.0009 1.25C17.2609 1.25 21.5409 5.52998 21.5409 10.79C21.5409 13.45 20.4709 15.91 18.5309 17.74C18.2309 18.02 17.7509 18.01 17.4709 17.71C17.1909 17.41 17.2009 16.93 17.5009 16.65C19.1409 15.11 20.0409 13.04 20.0409 10.8C20.0409 6.36999 16.4309 2.76001 12.0009 2.76001C7.57093 2.76001 3.96094 6.36999 3.96094 10.8C3.96094 13.06 4.87093 15.14 6.53093 16.68C6.83093 16.96 6.85094 17.44 6.57094 17.74C6.42094 17.89 6.22094 17.97 6.02094 17.97Z" fill="#025ac5"></path> <path opacity="0.4" d="M15.9995 15.3C15.8195 15.3 15.6295 15.23 15.4895 15.1C15.1895 14.82 15.1695 14.34 15.4595 14.04C16.2895 13.16 16.7495 12 16.7495 10.8C16.7495 8.18005 14.6195 6.06006 12.0095 6.06006C9.39952 6.06006 7.26953 8.19005 7.26953 10.8C7.26953 12.01 7.72952 13.16 8.55952 14.04C8.83952 14.34 8.82953 14.82 8.52953 15.1C8.22953 15.39 7.74953 15.3701 7.46953 15.0701C6.37953 13.9101 5.76953 12.39 5.76953 10.8C5.76953 7.36005 8.56952 4.56006 12.0095 4.56006C15.4495 4.56006 18.2495 7.36005 18.2495 10.8C18.2495 12.39 17.6495 13.9101 16.5495 15.0701C16.3995 15.2201 16.1995 15.3 15.9995 15.3Z" fill="#025ac5"></path> <path d="M10.3007 16.66L8.86071 18.4501C7.72071 19.8801 8.73071 21.99 10.5607 21.99H13.4307C15.2607 21.99 16.2807 19.8701 15.1307 18.4501L13.6907 16.66C12.8307 15.57 11.1707 15.57 10.3007 16.66Z" fill="#025ac5"></path> </g></svg>
+								</div>
+								<div className='flex flex-col gap-1 ml-4'>
+									<div className='text-[#555555] text-[0.9rem] dark:text-white radio'>
+										Tag People
+									</div>
+									<div className='text-[#777777] text-[0.75rem] dark:text-[#ababab] radio'>
+										Tag your followers...
+									</div>
+								</div>
+							</div>
+
+							<div className=' flex flex-row w-full max-w-[400px] p-3 bg-[#ffffff] dark:bg-[#232323] rounded-full items-center cursor-pointer shadow-[0_0_10px_0_rgba(0,0,0,0.1)] hover:opacity-80 duration-200 ease-in-out'
+								onClick={() => setHandnleCheckInScreen( !handnleCheckInScreen )}
+							>
+								<div className='w-[50px] h-[50px] rounded-full flex items-center justify-center bg-green-100'>
+									<svg height="25px" width="25px" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M9 0a7 7 0 0 0-7 7v.04a6.863 6.863 0 0 0 1.09 3.7l.6.81L8.2 17.6a1 1 0 0 0 1.6 0l4.51-6.05.6-.81A6.863 6.863 0 0 0 16 7.04V7a7 7 0 0 0-7-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8z" fill="#05b339" fill-rule="evenodd"></path> </g></svg>
+								</div>
+								<div className='flex flex-col gap-1 ml-4'>
+									<div className='text-[#555555] text-[0.9rem] dark:text-white radio'>
+										Add Location
+									</div>
+									<div className='text-[#777777] text-[0.75rem] dark:text-[#ababab] radio'>
+										Add your check in location
+									</div>
+								</div>
+							</div>
+
+							<div className='flex flex-row w-full max-w-[400px] p-3 bg-[#ffffff] dark:bg-[#232323] rounded-full items-center cursor-pointer shadow-[0_0_10px_0_rgba(0,0,0,0.1)] hover:opacity-80 duration-200 ease-in-out'
+								onClick={() => setHandleFeelingActivityScreen( !handleFeelingActivityScreen )}
+							>
+								<div className='w-[50px] h-[50px] rounded-full flex items-center justify-center bg-[#fffbab]'>
+									<div className='w-[25px] h-[25px] rounded-full bg-[#fff41c] flex items-center justify-center'>
+										<svg height="20px" width="20px" viewBox="0 0 76 76" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="full" enable-background="new 0 0 76.00 76.00" xml:space="preserve" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill="#232323" fill-opacity="1" stroke-width="0.2" stroke-linejoin="round" d="M 26.7728,20.5833C 29.8731,20.5833 32.3864,23.0966 32.3864,26.197C 32.3864,29.2973 29.8731,31.8106 26.7728,31.8106C 23.6724,31.8106 21.1591,29.2973 21.1591,26.197C 21.1591,23.0966 23.6724,20.5833 26.7728,20.5833 Z M 49.2273,20.5833C 52.3276,20.5833 54.8409,23.0967 54.8409,26.197C 54.8409,29.2973 52.3276,31.8106 49.2273,31.8106C 46.127,31.8106 43.6136,29.2973 43.6136,26.197C 43.6136,23.0967 46.127,20.5833 49.2273,20.5833 Z M 20.5833,39.5834L 55.4166,39.5834C 57.1655,39.5834 58.5833,41.0011 58.5833,42.75C 58.5833,44.4989 57.1655,45.9167 55.4166,45.9167L 55.4166,49.875C 55.4166,55.5589 49.2256,60.1667 43.5417,60.1667C 37.8577,60.1667 31.6667,55.5589 31.6667,49.875L 31.6667,45.9167L 20.5833,45.9167C 18.8344,45.9167 17.4167,44.4989 17.4167,42.75C 17.4167,41.0011 18.8344,39.5834 20.5833,39.5834 Z M 36.4167,45.9167L 36.4167,48.2917C 36.4167,52.2267 39.6066,55.4167 43.5417,55.4167C 47.4767,55.4167 50.6667,52.2267 50.6667,48.2917L 50.6667,45.9167L 45.9166,45.9167L 45.9166,49.875C 45.9166,51.1867 44.8533,52.25 43.5416,52.25C 42.23,52.25 41.1666,51.1867 41.1666,49.875L 41.1666,45.9167L 36.4167,45.9167 Z "></path> </g></svg>
+									</div>
+								</div>
+								<div className='flex flex-col gap-1 ml-4'>
+									<div className='text-[#555555] text-[0.9rem] dark:text-white radio'>
+										Feeling Activity
+									</div>
+									<div className='text-[#777777] text-[0.75rem] dark:text-[#ababab] radio'>
+										Express how you're feeling...
+									</div>
+								</div>
+							</div>
+
+							<div className=' flex flex-row w-full max-w-[400px] p-3 bg-[#ffffff] dark:bg-[#232323] rounded-full items-center cursor-pointer shadow-[0_0_10px_0_rgba(0,0,0,0.1)] hover:opacity-80 duration-200 ease-in-out'>
+								<div className='w-[50px] h-[50px] flex items-center justify-center rounded-full bg-red-100'>
+									<div className='w-[25px] h-[25px] flex items-center justify-center rounded-full bg-[#e01b1b]'>
+										<svg height="15px" width="15px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M5 12H12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2H7.6087C6.16795 2 5 3.16795 5 4.6087V12ZM5 12H14C16.7614 12 19 14.2386 19 17C19 19.7614 16.7614 22 14 22H7.05882C5.92177 22 5 21.1371 5 20M5 12V15.9706" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"></path> </g></svg>
+									</div>
+								</div>
+								<div className='flex flex-col gap-1 ml-4'>
+									<div className='text-[#555555] text-[0.9rem] dark:text-white radio'>
+										Text Background Color
+									</div>
+									<div className='text-[#777777] text-[0.75rem] dark:text-[#ababab] radio'>
+										Select a background color...
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
 				</div>
 			</div>
 
-			<div className={`${handleTagPeopleScreen ? 'opacity-100 blur-0 backdrop-blur-sm scale-100' : 'opacity-0 blur-2xl backdrop-blur-0 scale-0'} fixed top-0 left-0 w-[100vw] h-[100vh] bg-black/50 duration-300 flex items-end justify-center`}>
+			<div className={`${handleTagPeopleScreen ? 'opacity-100 blur-0 scale-100' : 'opacity-0 blur-2xl backdrop-blur-0 scale-0'} fixed top-0 left-0 w-[100vw] h-[100vh] bg-black/50 duration-300 flex items-end justify-center`}>
 				<div className='w-full h-[calc(100vh-70px)] flex items-center justify-center'>
-					<div className='w-[500px] h-[400px] bg-[#eeeeee] rounded-3xl flex justify-center relative'>
-						<div className=' w-[90%] h-[60px] px-6 py-4 text-[#888888] text-[1.2rem] flex flex-row items-center'>
-							<svg className='w-[40px] h-[40px] ml-6 mr-2' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M14.1297 11.3401C14.5197 9.70008 13.0897 8.27003 11.4497 8.66003C10.6797 8.85003 10.0497 9.48005 9.85974 10.2501C9.46974 11.8901 10.8997 13.32 12.5397 12.93C13.3197 12.74 13.9497 12.1101 14.1297 11.3401Z" fill="#025ac5"></path> <path opacity="0.4" d="M6.02094 17.97C5.84093 17.97 5.65093 17.9 5.51093 17.77C3.57093 15.97 2.46094 13.43 2.46094 10.79C2.46094 5.52998 6.74093 1.25 12.0009 1.25C17.2609 1.25 21.5409 5.52998 21.5409 10.79C21.5409 13.45 20.4709 15.91 18.5309 17.74C18.2309 18.02 17.7509 18.01 17.4709 17.71C17.1909 17.41 17.2009 16.93 17.5009 16.65C19.1409 15.11 20.0409 13.04 20.0409 10.8C20.0409 6.36999 16.4309 2.76001 12.0009 2.76001C7.57093 2.76001 3.96094 6.36999 3.96094 10.8C3.96094 13.06 4.87093 15.14 6.53093 16.68C6.83093 16.96 6.85094 17.44 6.57094 17.74C6.42094 17.89 6.22094 17.97 6.02094 17.97Z" fill="#025ac5"></path> <path opacity="0.4" d="M15.9995 15.3C15.8195 15.3 15.6295 15.23 15.4895 15.1C15.1895 14.82 15.1695 14.34 15.4595 14.04C16.2895 13.16 16.7495 12 16.7495 10.8C16.7495 8.18005 14.6195 6.06006 12.0095 6.06006C9.39952 6.06006 7.26953 8.19005 7.26953 10.8C7.26953 12.01 7.72952 13.16 8.55952 14.04C8.83952 14.34 8.82953 14.82 8.52953 15.1C8.22953 15.39 7.74953 15.3701 7.46953 15.0701C6.37953 13.9101 5.76953 12.39 5.76953 10.8C5.76953 7.36005 8.56952 4.56006 12.0095 4.56006C15.4495 4.56006 18.2495 7.36005 18.2495 10.8C18.2495 12.39 17.6495 13.9101 16.5495 15.0701C16.3995 15.2201 16.1995 15.3 15.9995 15.3Z" fill="#025ac5"></path> <path d="M10.3007 16.66L8.86071 18.4501C7.72071 19.8801 8.73071 21.99 10.5607 21.99H13.4307C15.2607 21.99 16.2807 19.8701 15.1307 18.4501L13.6907 16.66C12.8307 15.57 11.1707 15.57 10.3007 16.66Z" fill="#025ac5"></path> </g></svg>
-							<div className='text-[#888888] text-[1.2rem] kanit'>
+					<div className='w-[500px] h-[420px] bg-[#eeeeee] dark:bg-[#232323] rounded-3xl flex flex-col items-center justify-start relative'>
+								
+						{/* Tag your friends */}
+						<div 
+							className=' w-[85%] h-[80px] pt-6 pb-4 text-[#888888] text-[1.2rem] flex flex-row items-center'
+						>
+							<svg className='w-[45px] h-[45px] ml-6 mr-2' viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M14.1297 11.3401C14.5197 9.70008 13.0897 8.27003 11.4497 8.66003C10.6797 8.85003 10.0497 9.48005 9.85974 10.2501C9.46974 11.8901 10.8997 13.32 12.5397 12.93C13.3197 12.74 13.9497 12.1101 14.1297 11.3401Z" fill={ theme === 'dark' ? '#efefef' : "#025ac5" }></path> <path opacity="0.4" d="M6.02094 17.97C5.84093 17.97 5.65093 17.9 5.51093 17.77C3.57093 15.97 2.46094 13.43 2.46094 10.79C2.46094 5.52998 6.74093 1.25 12.0009 1.25C17.2609 1.25 21.5409 5.52998 21.5409 10.79C21.5409 13.45 20.4709 15.91 18.5309 17.74C18.2309 18.02 17.7509 18.01 17.4709 17.71C17.1909 17.41 17.2009 16.93 17.5009 16.65C19.1409 15.11 20.0409 13.04 20.0409 10.8C20.0409 6.36999 16.4309 2.76001 12.0009 2.76001C7.57093 2.76001 3.96094 6.36999 3.96094 10.8C3.96094 13.06 4.87093 15.14 6.53093 16.68C6.83093 16.96 6.85094 17.44 6.57094 17.74C6.42094 17.89 6.22094 17.97 6.02094 17.97Z" fill={ theme === 'dark' ? '#efefef' : "#025ac5" }></path> <path opacity="0.4" d="M15.9995 15.3C15.8195 15.3 15.6295 15.23 15.4895 15.1C15.1895 14.82 15.1695 14.34 15.4595 14.04C16.2895 13.16 16.7495 12 16.7495 10.8C16.7495 8.18005 14.6195 6.06006 12.0095 6.06006C9.39952 6.06006 7.26953 8.19005 7.26953 10.8C7.26953 12.01 7.72952 13.16 8.55952 14.04C8.83952 14.34 8.82953 14.82 8.52953 15.1C8.22953 15.39 7.74953 15.3701 7.46953 15.0701C6.37953 13.9101 5.76953 12.39 5.76953 10.8C5.76953 7.36005 8.56952 4.56006 12.0095 4.56006C15.4495 4.56006 18.2495 7.36005 18.2495 10.8C18.2495 12.39 17.6495 13.9101 16.5495 15.0701C16.3995 15.2201 16.1995 15.3 15.9995 15.3Z" fill={ theme === 'dark' ? '#efefef' : "#025ac5" }></path> <path d="M10.3007 16.66L8.86071 18.4501C7.72071 19.8801 8.73071 21.99 10.5607 21.99H13.4307C15.2607 21.99 16.2807 19.8701 15.1307 18.4501L13.6907 16.66C12.8307 15.57 11.1707 15.57 10.3007 16.66Z" fill={ theme === 'dark' ? '#efefef' : "#025ac5" }></path> </g></svg>
+							<div className='text-[#888888] text-[1.1rem] dark:font-light dark:text-white kanit'>
 								Tag Your Friends
 							</div>
 						</div>
-						<div className='absolute bottom-0 right-0 w-[90%] flex flex-row justify-end items-center px-6 py-4 gap-3'>
-							<div className='text-white bg-blue-600 px-4 py-1.5 rounded-lg dosis font-semibold cursor-pointer'>
+
+						<div className='w-[80%] h-[1px] rounded-full bg-[#888888] mb-2' />
+
+						{/* Friends List */}
+						<div 
+							className=' w-full h-[calc(100%-120px)] flex flex-col gap-2 items-center overflow-y-auto'
+							id='menuScroll'
+						>
+						{
+							taggedScreenLoading ? <>
+								<ScaleLoader
+									color={theme === 'dark' ? '#efefef' : '#111111'}
+									loading={taggedScreenLoading}
+									size={20}
+								/>
+							</> : <>
+							{
+								allFollowersOrFollowings?.length > 0 ? <>
+								{
+									allFollowersOrFollowings?.map((users, index) => (
+										<div className='w-[80%] h-auto flex-shrink-0 flex flex-row items-center justify-between py-2 px-4' key={index}>
+											
+											<div className='flex flex-row items-center gap-2'>
+												<img src={users.profilePic} alt="" className='w-[50px] h-[50px] rounded-full '/>
+												<div className='flex flex-col ml-1'>
+													<div className='kanit text-[0.9rem] dark:text-white dark:font-light'>{users.username}</div>
+													<div className='radio text-[0.75rem] dark:text-[#888888] dark:font-light'>{users.fullname}</div>
+												</div>
+											</div>
+											<div>
+											<input
+												type="checkbox"
+												id="checkbox"
+												class="w-4 h-4 text-blue-500 bg-gray-200 border-gray-300 rounded-xl focus:ring-blue-500 focus:ring-[1px] focus:outline-none cursor-pointer"
+												onChange={(e) => {
+													if(e.target.checked ) {
+														setTaggedPeople([...taggedPeople, users._id])
+													} else {
+														setTaggedPeople(taggedPeople.filter((id) => id !== users._id))
+													}
+												}}
+											/>
+											</div>
+										</div>
+									))
+								}
+								</> : <>
+									<div className='kanit text-[0.9rem] px-6 dark:text-white'>You haven't followed anyone or you have no followers yet</div>
+								</>
+							}
+							</>
+						}
+						</div>
+
+						<div className='absolute bottom-0 right-0 w-[90%] flex flex-row justify-end items-center px-4 py-2 gap-3'>
+							<div 
+								className='text-white bg-blue-600 px-4 py-1.5 rounded-lg kanit font-light text-[0.9rem] cursor-pointer'
+								onClick={() => setHandleTagPeopleScreen(false)}
+							>
 								ENTER
 							</div>
-							<div className='text-[#e02b2b] bg-red-100 px-4 p-1.5 rounded-lg dosis font-semibold cursor-pointer '
-								onClick={() => setHandleTagPeopleScreen(false)}
+							<div className='text-[#e02b2b] bg-red-100 px-4 p-1.5 rounded-lg kanit text-[0.9rem] cursor-pointer '
+								onClick={() => {
+									setHandleTagPeopleScreen(false)
+									setTaggedPeople([])
+									//uncheck all the checkboxes
+									const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+									checkboxes.forEach((checkbox) => {
+										checkbox.checked = false;
+									});
+								}}
 							>
 								CANCEL
 							</div>
@@ -636,7 +848,7 @@ function CreatePost () {
 				</div>
 			</div>
 
-			<div className={`${handnleCheckInScreen ? 'opacity-100 blur-0 backdrop-blur-sm scale-100' : 'opacity-0 blur-2xl backdrop-blur-0 scale-0'} fixed top-0 left-0 w-[100vw] h-[100vh] bg-black/50 duration-300 flex items-end justify-center}`}>
+			<div className={`${handnleCheckInScreen ? 'opacity-100 blur-0 scale-100' : 'opacity-0 blur-2xl backdrop-blur-0 scale-0'} fixed top-0 left-0 w-[100vw] h-[100vh] bg-black/50 duration-300 flex items-end justify-center}`}>
 				<div className='w-full h-[calc(100vh-70px)] flex items-center justify-center'>
 					<div className='w-[500px] h-auto bg-[#eeeeee] rounded-3xl flex flex-col justify-center relative'>
 						<div className='w-[90%] h-[60px] px-6 py-4 flex flex-row items-center'>
@@ -679,9 +891,9 @@ function CreatePost () {
 				</div>
 			</div>
 
-			<div className={`${handleFeelingActivityScreen ? 'opacity-100 blur-0 backdrop-blur-sm scale-100' : 'opacity-0 blur-2xl backdrop-blur-0 scale-0'} fixed top-0 left-0 w-[100vw] h-[100vh] bg-black/50 duration-300 flex items-end justify-center`}>
+			<div className={`${handleFeelingActivityScreen ? 'opacity-100 blur-0 scale-100' : 'opacity-0 blur-2xl backdrop-blur-0 scale-0'} fixed top-0 left-0 w-[100vw] h-[100vh] bg-black/50 duration-300 flex items-end justify-center`}>
 				<div className='w-full h-[calc(100vh-70px)] flex items-center justify-center'>
-					<div className='w-[500px] h-auto bg-[#eeeeee] rounded-3xl flex flex-col justify-center relative'>
+					<div className='w-[500px] h-auto bg-[#eeeeee] dark:bg-[#232323] rounded-3xl flex flex-col justify-center relative'>
 						<div className='flex flex-row w-[90%] px-6 py-4'>
 							<div className='w-[30px] h-[30px] ml-6 mr-3 rounded-full bg-[#fff41c]'>
 								<svg className='mt-[1.5px] ml-[1px]' viewBox="0 0 76 76" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="full" enable-background="new 0 0 76.00 76.00" xml:space="preserve" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill="#232323" fill-opacity="1" stroke-width="0.2" stroke-linejoin="round" d="M 26.7728,20.5833C 29.8731,20.5833 32.3864,23.0966 32.3864,26.197C 32.3864,29.2973 29.8731,31.8106 26.7728,31.8106C 23.6724,31.8106 21.1591,29.2973 21.1591,26.197C 21.1591,23.0966 23.6724,20.5833 26.7728,20.5833 Z M 49.2273,20.5833C 52.3276,20.5833 54.8409,23.0967 54.8409,26.197C 54.8409,29.2973 52.3276,31.8106 49.2273,31.8106C 46.127,31.8106 43.6136,29.2973 43.6136,26.197C 43.6136,23.0967 46.127,20.5833 49.2273,20.5833 Z M 20.5833,39.5834L 55.4166,39.5834C 57.1655,39.5834 58.5833,41.0011 58.5833,42.75C 58.5833,44.4989 57.1655,45.9167 55.4166,45.9167L 55.4166,49.875C 55.4166,55.5589 49.2256,60.1667 43.5417,60.1667C 37.8577,60.1667 31.6667,55.5589 31.6667,49.875L 31.6667,45.9167L 20.5833,45.9167C 18.8344,45.9167 17.4167,44.4989 17.4167,42.75C 17.4167,41.0011 18.8344,39.5834 20.5833,39.5834 Z M 36.4167,45.9167L 36.4167,48.2917C 36.4167,52.2267 39.6066,55.4167 43.5417,55.4167C 47.4767,55.4167 50.6667,52.2267 50.6667,48.2917L 50.6667,45.9167L 45.9166,45.9167L 45.9166,49.875C 45.9166,51.1867 44.8533,52.25 43.5416,52.25C 42.23,52.25 41.1666,51.1867 41.1666,49.875L 41.1666,45.9167L 36.4167,45.9167 Z "></path> </g></svg>

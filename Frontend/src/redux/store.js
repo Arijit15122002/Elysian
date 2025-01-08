@@ -6,6 +6,7 @@ import deviceTypeSlice from './reducers/deviceType.reducer'
 import suggestedUsersSlice from './reducers/suggestedUsers.reducer'
 import currentStoryContainerSlice from './reducers/story.reducer'
 import notificationsSlice from './reducers/notifications.reducer'
+import deleteCommentSlice from './reducers/deleteComment.reducer'
 
 const store =  configureStore({
     
@@ -16,7 +17,8 @@ const store =  configureStore({
         [api.reducerPath] : api.reducer,
         [suggestedUsersSlice.name] : suggestedUsersSlice.reducer,
         [currentStoryContainerSlice.name] : currentStoryContainerSlice.reducer,
-        [notificationsSlice.name] : notificationsSlice.reducer
+        [notificationsSlice.name] : notificationsSlice.reducer,
+        [deleteCommentSlice.name] : deleteCommentSlice.reducer
         
     },
     middleware : (defaultMiddleware) => [...defaultMiddleware(), api.middleware]

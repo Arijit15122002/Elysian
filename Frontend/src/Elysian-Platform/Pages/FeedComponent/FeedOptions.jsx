@@ -62,7 +62,7 @@ function FeedOptions () {
 							</div>
 							<div className='mx-auto w-[80%] h-[1.8px] bg-[#dddddd] dark:bg-[#444444] rounded-full mb-2'></div>
 							<div className='flex w-full justify-center'>
-								<Link to={"/profile"} className='px-4 py-2 mt-2 mb-3 rounded-xl font-semibold dark:font-normal bg-[#b1ff16] dark:bg-gradient-to-tr from-blue-700 to-blue-500 text-[#1111111] dark:text-white hover:scale-110 radio duration-200 ease-in-out cursor-pointer'>Your Profile</Link>
+								<Link to={"/profile"} className='px-4 py-2 mt-2 mb-3 rounded-xl kanit bg-[#b1ff16] dark:bg-gradient-to-tr from-blue-700 to-blue-500 text-[#1111111] dark:text-white hover:scale-110 radio duration-200 ease-in-out cursor-pointer'>Your Profile</Link>
 							</div>
 						</div>
 

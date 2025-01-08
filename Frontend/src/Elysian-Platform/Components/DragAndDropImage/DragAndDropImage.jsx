@@ -115,10 +115,10 @@ function DragAndDropImage ({ totalImages, setTotalImages }) {
 			</div>
 
 			<div className='absolute bottom-4 w-auto flex flex-col gap-1 items-center'>
-				<div className='text-[#232323c5] dark:text-[#ffffff] text-[0.9rem] radio font-semibold'>
+				<div className='text-[#232323c5] dark:text-[#ffffff] text-[0.9rem] radio dark:font-extralight'>
 					Drag and Drop image files to upload
 				</div>
-				<div className='text-[#23232391] dark:text-[#cdcdcd] kanit font-semibold text-[0.7rem]'>
+				<div className='text-[#23232391] dark:text-[#cdcdcd] kanit font-extralight text-[0.7rem]'>
 					Or, Click to browse
 				</div>
 			</div>
